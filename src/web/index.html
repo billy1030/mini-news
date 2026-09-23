@@ -175,59 +175,63 @@
     .card {
       background: var(--card-bg);
       border: 1px solid var(--card-border);
-      border-radius: 16px;
+      border-radius: 14px;
       backdrop-filter: blur(16px);
-      padding: 1.5rem;
-      margin-bottom: 1.5rem;
+      padding: 1.15rem;
+      margin-bottom: 1.15rem;
       box-shadow: var(--shadow-md);
       transition: all 0.3s ease;
     }
 
     .card-title {
-      font-size: 1rem;
+      font-size: 0.9375rem;
       font-weight: 600;
-      margin-bottom: 1.25rem;
+      margin-bottom: 0.85rem;
       display: flex;
       align-items: center;
       justify-content: space-between;
       color: var(--text-main);
     }
 
-    .stat-grid {
+    .stat-grid-3 {
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1rem;
-      margin-bottom: 1.5rem;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.5rem;
+      margin-bottom: 1rem;
     }
 
     .stat-item {
       background: var(--code-bg);
-      padding: 1rem;
-      border-radius: 10px;
+      padding: 0.65rem 0.5rem;
+      border-radius: 8px;
       border: 1px solid var(--card-border);
+      text-align: center;
     }
-    .stat-label { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; margin-bottom: 0.25rem; }
-    .stat-val { font-size: 1.25rem; font-weight: 700; color: var(--text-main); font-family: var(--font-mono); }
+    .stat-label { font-size: 0.6875rem; color: var(--text-muted); text-transform: uppercase; margin-bottom: 0.2rem; font-weight: 600; white-space: nowrap; }
+    .stat-val { font-size: 1.15rem; font-weight: 700; color: var(--text-main); font-family: var(--font-mono); line-height: 1.2; }
 
     .setting-group {
-      margin-bottom: 1.25rem;
+      margin-bottom: 0.75rem;
+    }
+    .setting-group:last-child {
+      margin-bottom: 0;
     }
     .setting-label {
-      font-size: 0.8125rem;
+      font-size: 0.75rem;
       font-weight: 500;
       color: var(--text-muted);
-      margin-bottom: 0.5rem;
+      margin-bottom: 0.3rem;
       display: block;
     }
     .setting-input {
       width: 100%;
-      padding: 0.65rem 0.85rem;
+      padding: 0.45rem 0.65rem;
       background: var(--input-bg);
       border: 1px solid var(--card-border);
-      border-radius: 8px;
+      border-radius: 6px;
       color: var(--text-main);
       font-family: var(--font-mono);
-      font-size: 0.8125rem;
+      font-size: 0.75rem;
       box-shadow: var(--shadow-sm);
     }
 
@@ -606,14 +610,21 @@
     <!-- Left Sidebar: Settings & SQL Playground -->
     <aside>
       <div class="card">
-        <div class="card-title">System Metrics</div>
-        <div class="stat-grid">
+        <div class="card-title">
+          <span>System Metrics</span>
+          <span id="metric-date" style="font-size: 0.6875rem; color: var(--text-muted); font-weight: 500;">HKT</span>
+        </div>
+        <div class="stat-grid-3">
           <div class="stat-item">
-            <div class="stat-label">Stored Flashes</div>
+            <div class="stat-label">Stored Total</div>
             <div class="stat-val" id="stat-total">--</div>
           </div>
           <div class="stat-item">
-            <div class="stat-label">Dashboard Port</div>
+            <div class="stat-label">Today's Flashes</div>
+            <div class="stat-val" id="stat-daily" style="color: var(--accent);">--</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-label">Port</div>
             <div class="stat-val" id="stat-port">5200</div>
           </div>
         </div>
@@ -814,6 +825,10 @@ LIMIT 10;</textarea>
         const res = await fetch('/api/status');
         const data = await res.json();
         document.getElementById('stat-total').innerText = data.totalRecords || '0';
+        const dailyElem = document.getElementById('stat-daily');
+        if (dailyElem) dailyElem.innerText = data.dailyRecords !== undefined ? data.dailyRecords : '--';
+        const dateElem = document.getElementById('metric-date');
+        if (dateElem && data.todayHkt) dateElem.innerText = data.todayHkt;
         document.getElementById('stat-port').innerText = data.port || '5200';
         document.getElementById('cfg-db').value = data.dbUrl || '';
         const intervalSelect = document.getElementById('cfg-interval');

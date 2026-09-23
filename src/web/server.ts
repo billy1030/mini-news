@@ -6,7 +6,7 @@ import { db } from "../db/index.js";
 import { flashNews } from "../db/schema.js";
 import { pollOnce, setPollInterval } from "../poller/index.js";
 import { executeReadOnlySql } from "../mcp/sqlSafety.js";
-import { desc, count } from "drizzle-orm";
+import { desc, count, eq } from "drizzle-orm";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -29,13 +29,19 @@ export function startWebServer(port: number = Number(process.env.PORT) || 5200) 
     try {
       // 1. API: Get System Status & Config
       if (url.pathname === "/api/status" && req.method === "GET") {
-        const [totalCount] = await db.select({ value: count() }).from(flashNews);
+        const todayHkt = new Date().toLocaleDateString("en-CA", { timeZone: "Asia/Hong_Kong" });
+        const [[totalCount], [dailyCount]] = await Promise.all([
+          db.select({ value: count() }).from(flashNews),
+          db.select({ value: count() }).from(flashNews).where(eq(flashNews.dateHkt, todayHkt)),
+        ]);
         const config = {
           port,
           dbUrl: (process.env.DATABASE_URL || "").replace(/:[^:@]+@/, ":****@"),
           pollInterval: Number(process.env.POLL_INTERVAL_SECONDS) || 60,
           sourceUrl: process.env.SOURCE_API_URL || "https://mutemute.com/mutenews/ajax/app-news.php",
           totalRecords: totalCount?.value || 0,
+          dailyRecords: dailyCount?.value || 0,
+          todayHkt,
           nodeEnv: process.env.NODE_ENV || "development",
         };
         res.writeHead(200, { "Content-Type": "application/json" });
