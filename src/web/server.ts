@@ -43,6 +43,32 @@ export function startWebServer(port: number = Number(process.env.PORT) || 5200) 
         return;
       }
 
+      // 1.1 API: Update System Configuration (Poll Frequency)
+      if (url.pathname === "/api/config" && req.method === "POST") {
+        let body = "";
+        req.on("data", (chunk) => (body += chunk));
+        req.on("end", async () => {
+          try {
+            const { pollInterval } = JSON.parse(body || "{}");
+            const seconds = Number(pollInterval);
+            if (!seconds || seconds < 15 || seconds > 300) {
+              res.writeHead(400, { "Content-Type": "application/json" });
+              res.end(JSON.stringify({ error: "Poll frequency must be between 15 and 300 seconds." }));
+              return;
+            }
+            const { setPollInterval } = await import("../poller/index.js");
+            setPollInterval(seconds);
+
+            res.writeHead(200, { "Content-Type": "application/json" });
+            res.end(JSON.stringify({ success: true, pollInterval: seconds }));
+          } catch (err: any) {
+            res.writeHead(500, { "Content-Type": "application/json" });
+            res.end(JSON.stringify({ error: err.message || String(err) }));
+          }
+        });
+        return;
+      }
+
       // 2. API: Get Latest Live News
       if (url.pathname === "/api/news" && req.method === "GET") {
         const limit = Math.min(Number(url.searchParams.get("limit")) || 25, 50);
@@ -85,6 +111,63 @@ export function startWebServer(port: number = Number(process.env.PORT) || 5200) 
             res.end(JSON.stringify({ error: err.message || String(err) }));
           }
         });
+        return;
+      }
+
+      // 5. API: Semantic Vector Search
+      if (url.pathname === "/api/semantic-search" && req.method === "POST") {
+        let body = "";
+        req.on("data", (chunk) => (body += chunk));
+        req.on("end", async () => {
+          try {
+            const { query, limit = 10 } = JSON.parse(body || "{}");
+            if (!query) {
+              res.writeHead(400, { "Content-Type": "application/json" });
+              res.end(JSON.stringify({ error: "Missing query" }));
+              return;
+            }
+            const { getMinimaxEmbeddings } = await import("../services/embedding.js");
+            const [queryVec] = await getMinimaxEmbeddings([String(query)], "query");
+            const vectorStr = `[${queryVec.join(",")}]`;
+
+            const results = await db.execute(
+              `SELECT id, 
+                      date_hkt AS "dateHkt", 
+                      time_hkt AS "timeHkt", 
+                      importance, 
+                      is_alert AS "isAlert", 
+                      category, 
+                      direction, 
+                      tickers, 
+                      raw_content AS "rawContent",
+                      ROUND((1 - (embedding <=> '${vectorStr}'::vector))::numeric, 4) AS similarity_score
+               FROM flash_news
+               WHERE embedding IS NOT NULL
+               ORDER BY embedding <=> '${vectorStr}'::vector ASC
+               LIMIT ${Math.min(Number(limit) || 10, 50)};`
+            );
+
+            res.writeHead(200, { "Content-Type": "application/json" });
+            res.end(JSON.stringify(results.rows));
+          } catch (err: any) {
+            res.writeHead(500, { "Content-Type": "application/json" });
+            res.end(JSON.stringify({ error: err.message || String(err) }));
+          }
+        });
+        return;
+      }
+
+      // 6. API: Reindex Missing Embeddings
+      if (url.pathname === "/api/reindex" && req.method === "POST") {
+        try {
+          const { reindexMissingEmbeddings } = await import("../poller/index.js");
+          const stats = await reindexMissingEmbeddings(50);
+          res.writeHead(200, { "Content-Type": "application/json" });
+          res.end(JSON.stringify({ success: true, ...stats }));
+        } catch (err: any) {
+          res.writeHead(500, { "Content-Type": "application/json" });
+          res.end(JSON.stringify({ error: err.message || String(err) }));
+        }
         return;
       }
 

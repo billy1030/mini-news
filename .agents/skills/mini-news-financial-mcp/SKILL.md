@@ -26,6 +26,11 @@ The `mini-news` MCP server provides the following tools:
    - Quickly fetches breaking red-banner alerts (`importance >= 2` or `is_alert = true`).
 4. **`search_news_hybrid`**:
    - Searches news by keyword, ticker (e.g., `AAPL`, `NVDA`, `BTC`), and chronological order.
+5. **`search_news_semantic`**:
+   - Executes AI vector semantic search via MiniMax `embo-01` and pgvector HNSW cosine similarity.
+   - Ideal for conceptual, macroeconomic, or thematic inquiries without needing exact keyword matches.
+6. **`reindex_news_embeddings`**:
+   - Scans and generates MiniMax vector embeddings for news items that currently have NULL embeddings.
 
 ---
 

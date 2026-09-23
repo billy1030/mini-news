@@ -396,6 +396,122 @@
       overflow: auto;
       white-space: pre-wrap;
     }
+
+    /* Modal Overlay & Big Playground Dialog */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(15, 23, 42, 0.65);
+      backdrop-filter: blur(8px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      opacity: 0;
+      transition: opacity 0.25s ease;
+    }
+
+    .modal-overlay.open {
+      display: flex;
+      opacity: 1;
+    }
+
+    .modal-content {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 20px;
+      width: 90vw;
+      max-width: 1100px;
+      height: 85vh;
+      max-height: 850px;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4);
+      overflow: hidden;
+      animation: modalSlideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes modalSlideUp {
+      from { transform: translateY(20px) scale(0.97); }
+      to { transform: translateY(0) scale(1); }
+    }
+
+    .modal-header {
+      padding: 1.25rem 1.75rem;
+      border-bottom: 1px solid var(--card-border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--header-bg);
+    }
+
+    .modal-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .modal-close {
+      background: transparent;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: var(--text-muted);
+      line-height: 1;
+      padding: 0.25rem 0.5rem;
+      border-radius: 6px;
+      transition: all 0.2s;
+    }
+    .modal-close:hover {
+      background: var(--code-bg);
+      color: var(--text-main);
+    }
+
+    .modal-body {
+      padding: 1.5rem 1.75rem;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      overflow-y: auto;
+    }
+
+    .modal-editor {
+      width: 100%;
+      height: 180px;
+      background: var(--code-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      color: var(--text-main);
+      font-family: var(--font-mono);
+      font-size: 0.875rem;
+      padding: 1rem;
+      resize: vertical;
+      outline: none;
+    }
+    .modal-editor:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-glow);
+    }
+
+    .modal-result {
+      flex: 1;
+      min-height: 250px;
+      background: var(--code-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      padding: 1rem;
+      font-family: var(--font-mono);
+      font-size: 0.8125rem;
+      color: var(--text-main);
+      overflow: auto;
+      white-space: pre-wrap;
+    }
   </style>
 </head>
 <body>
@@ -408,6 +524,10 @@
       </div>
     </div>
     <div class="header-actions">
+      <button class="btn btn-primary" onclick="openPlaygroundModal()" style="gap: 0.4rem; background: linear-gradient(135deg, #2563eb, #4f46e5); box-shadow: 0 2px 10px var(--accent-glow);">
+        <span>⚡</span>
+        <span>Playground</span>
+      </button>
       <button class="btn btn-outline" id="btn-theme-toggle" onclick="toggleTheme()">🌙 Dark</button>
       <button class="btn btn-primary" id="btn-poll-now">⚡ Fetch Live Now</button>
       <button class="btn btn-outline btn-refresh" id="btn-refresh" onclick="loadAllData()">
@@ -439,8 +559,20 @@
         </div>
 
         <div class="setting-group">
-          <label class="setting-label">Poll Frequency (Seconds)</label>
-          <input type="number" class="setting-input" id="cfg-interval" value="60" readonly />
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+            <label class="setting-label" style="margin-bottom: 0;">Poll Frequency (15s - 300s)</label>
+            <span id="cfg-poll-status" style="font-size: 0.7rem; color: var(--accent);"></span>
+          </div>
+          <div style="display: flex; gap: 0.5rem;">
+            <select class="setting-input" id="cfg-interval" onchange="updatePollFrequency(this.value)" style="cursor: pointer;">
+              <option value="15">15 Seconds (Ultra-Fast)</option>
+              <option value="30">30 Seconds (Fast)</option>
+              <option value="60">60 Seconds (Default)</option>
+              <option value="120">120 Seconds (2 Minutes)</option>
+              <option value="180">180 Seconds (3 Minutes)</option>
+              <option value="300">300 Seconds (5 Minutes)</option>
+            </select>
+          </div>
         </div>
 
         <div class="setting-group">
@@ -449,14 +581,73 @@
         </div>
       </div>
 
-      <!-- SQL Playground Card -->
+      <!-- Vector Search & Reindexing Card -->
       <div class="card">
-        <div class="card-title">Safe SQL Playground</div>
-        <textarea class="sql-editor" id="sql-input">SELECT time_hkt, raw_content, direction FROM flash_news ORDER BY created_at DESC LIMIT 5;</textarea>
-        <button class="btn btn-primary" style="width: 100%; justify-content: center; margin-bottom: 0.75rem;" onclick="runSql()">Run Safe Query</button>
-        <div class="sql-result" id="sql-output">// Query results will appear here...</div>
+        <div class="card-title">
+          <span>🧠 Vector Search</span>
+          <span style="font-size: 0.7rem; color: var(--accent); font-weight: 500;">embo-01</span>
+        </div>
+        <div style="margin-bottom: 0.75rem; position: relative;">
+          <input type="text" class="setting-input" id="semantic-query-input" placeholder="e.g. 美聯儲降息及國債走勢, 原油中東危機..." onkeydown="if(event.key==='Enter') runSemanticSearch()" />
+        </div>
+        <div style="display: flex; gap: 0.4rem; margin-bottom: 0.75rem;">
+          <button class="btn btn-primary" style="flex: 1; justify-content: center; font-size: 0.8rem; padding: 0.45rem 0.5rem;" id="btn-semantic-search" onclick="runSemanticSearch()">Vector Search</button>
+          <button class="btn btn-outline" style="justify-content: center; font-size: 0.8rem; padding: 0.45rem 0.6rem;" id="btn-clear-search" onclick="clearSemanticSearch()" title="Clear search and show live feed">✕ Clear</button>
+          <button class="btn btn-outline" style="justify-content: center; font-size: 0.8rem; padding: 0.45rem 0.6rem;" id="btn-reindex" onclick="triggerReindex()" title="Reindex missing embeddings">⚡ Reindex</button>
+        </div>
+        <div id="semantic-status" style="font-size: 0.75rem; color: var(--text-muted);"></div>
+      </div>
+
+      <!-- SQL Playground Quick Card -->
+      <div class="card" style="cursor: pointer; transition: all 0.2s;" onclick="openPlaygroundModal()">
+        <div class="card-title" style="margin-bottom: 0.5rem;">
+          <span>⚡ Safe SQL Playground</span>
+          <span style="font-size: 0.75rem; color: var(--accent); font-weight: 600;">Open &rarr;</span>
+        </div>
+        <p style="font-size: 0.8125rem; color: var(--text-muted); line-height: 1.5;">
+          Click to open the fullscreen interactive SQL workspace with prebuilt templates, vector inspection, and table results.
+        </p>
       </div>
     </aside>
+
+    <!-- Fullscreen Playground Modal Dialog -->
+    <div class="modal-overlay" id="playground-modal" onclick="if(event.target===this) closePlaygroundModal()">
+      <div class="modal-content">
+        <div class="modal-header">
+          <div class="modal-title">
+            <span>⚡ Interactive Financial Database Playground</span>
+            <span style="font-size: 0.75rem; color: var(--accent); background: rgba(37,99,235,0.1); padding: 3px 8px; border-radius: 9999px;">READ-ONLY & VECTOR READY</span>
+          </div>
+          <button class="modal-close" onclick="closePlaygroundModal()" title="Close">&times;</button>
+        </div>
+        <div class="modal-body">
+          <div style="display: flex; gap: 0.5rem; align-items: center; justify-content: space-between;">
+            <div style="display: flex; gap: 0.5rem; align-items: center;">
+              <span style="font-size: 0.8rem; font-weight: 600; color: var(--text-muted);">Quick Templates:</span>
+              <button class="btn btn-outline" style="padding: 3px 8px; font-size: 0.75rem;" onclick="setTemplateSql('vector')">Vector Status</button>
+              <button class="btn btn-outline" style="padding: 3px 8px; font-size: 0.75rem;" onclick="setTemplateSql('sentiment')">Today's Sentiment</button>
+              <button class="btn btn-outline" style="padding: 3px 8px; font-size: 0.75rem;" onclick="setTemplateSql('alerts')">Breaking Alerts</button>
+              <button class="btn btn-outline" style="padding: 3px 8px; font-size: 0.75rem;" onclick="setTemplateSql('tickers')">Stock Tickers</button>
+            </div>
+            <button class="btn btn-primary" style="padding: 0.4rem 1.25rem; font-size: 0.85rem;" onclick="runModalSql()">▶ Execute Query</button>
+          </div>
+
+          <textarea class="modal-editor" id="modal-sql-input" placeholder="Type your SELECT or WITH query here...">SELECT id, time_hkt, direction, 
+       CASE WHEN embedding IS NOT NULL THEN 'Indexed (1536-dim)' ELSE 'Pending' END AS vector_status,
+       LEFT(raw_content, 70) AS summary
+FROM flash_news 
+ORDER BY created_at DESC 
+LIMIT 10;</textarea>
+
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.25rem;">
+            <span style="font-size: 0.8rem; font-weight: 600; color: var(--text-muted);">Query Output & Results:</span>
+            <span id="modal-sql-stats" style="font-size: 0.75rem; color: var(--accent); font-family: var(--font-mono);"></span>
+          </div>
+
+          <div class="modal-result" id="modal-sql-output">// Click "Execute Query" to see tabular JSON records...</div>
+        </div>
+      </div>
+    </div>
 
     <!-- Right Section: Real-time Live News Feed -->
     <section>
@@ -539,10 +730,41 @@
         document.getElementById('stat-total').innerText = data.totalRecords || '0';
         document.getElementById('stat-port').innerText = data.port || '5200';
         document.getElementById('cfg-db').value = data.dbUrl || '';
-        document.getElementById('cfg-interval').value = data.pollInterval || 60;
+        const intervalSelect = document.getElementById('cfg-interval');
+        if (intervalSelect && data.pollInterval) {
+          intervalSelect.value = String(data.pollInterval);
+        }
         document.getElementById('cfg-source').value = data.sourceUrl || '';
       } catch (err) {
         console.error('Failed to load status:', err);
+      }
+    }
+
+    async function updatePollFrequency(val) {
+      const statusSpan = document.getElementById('cfg-poll-status');
+      const seconds = Number(val);
+      if (statusSpan) statusSpan.innerText = 'Saving...';
+
+      try {
+        const res = await fetch('/api/config', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ pollInterval: seconds })
+        });
+        const result = await res.json();
+        if (result.success) {
+          if (statusSpan) {
+            statusSpan.innerText = `Saved (${seconds}s)`;
+            setTimeout(() => { statusSpan.innerText = ''; }, 3000);
+          }
+          // Also adapt dashboard auto-refresh interval
+          localStorage.setItem('mini_news_refresh_rate', String(seconds));
+          setupAutoRefresh();
+        } else {
+          if (statusSpan) statusSpan.innerText = '❌ Failed';
+        }
+      } catch (err) {
+        if (statusSpan) statusSpan.innerText = '❌ Error';
       }
     }
 
@@ -606,20 +828,26 @@
     function renderCard(item) {
       const isAlert = item.isAlert || item.importance >= 2;
       const dirClass = item.direction === 'UP' ? 'tag-up' : item.direction === 'DOWN' ? 'tag-down' : 'tag-flat';
-      const tickerBadges = (item.tickers && item.tickers.length > 0)
-        ? item.tickers.map(t => `<span class="tag-badge" style="background: rgba(37,99,235,0.1); color: var(--accent);">${t}</span>`).join(' ')
+      const content = item.rawContent || item.raw_content || item.content || '';
+      const time = item.timeHkt || item.time_hkt || item.time || '';
+      const date = item.dateHkt || item.date_hkt || '';
+      const tickers = item.tickers || [];
+      const tickerBadges = (tickers && tickers.length > 0)
+        ? tickers.map(t => `<span class="tag-badge" style="background: rgba(37,99,235,0.1); color: var(--accent);">${t}</span>`).join(' ')
         : '';
+
       return `
         <div class="news-card ${isAlert ? 'alert' : ''}">
           <div class="news-meta">
-            <span style="font-family: var(--font-mono); font-weight: 600; color: var(--accent);">${item.timeHkt || ''}</span>
-            <span>${item.dateHkt || ''}</span>
+            <span style="font-family: var(--font-mono); font-weight: 600; color: var(--accent);">${time}</span>
+            <span>${date}</span>
             ${item.direction ? `<span class="tag-badge ${dirClass}">${item.direction}</span>` : ''}
             ${isAlert ? `<span class="tag-badge tag-alert">ALERT 🔥</span>` : ''}
+            ${item.similarity_score ? `<span class="tag-badge" style="background: rgba(99, 102, 241, 0.2); color: var(--accent); font-weight: 700;">Sim: ${(item.similarity_score * 100).toFixed(1)}%</span>` : ''}
             ${tickerBadges}
             <span>ID: ${item.id}</span>
           </div>
-          <div class="news-body">${item.rawContent}</div>
+          <div class="news-body">${content}</div>
         </div>
       `;
     }
@@ -685,9 +913,92 @@
       }
     }
 
+    // Modal Dialog Controls
+    function openPlaygroundModal() {
+      const modal = document.getElementById('playground-modal');
+      if (modal) {
+        modal.classList.add('open');
+      }
+    }
+
+    function closePlaygroundModal() {
+      const modal = document.getElementById('playground-modal');
+      if (modal) {
+        modal.classList.remove('open');
+      }
+    }
+
+    // Keyboard shortcut Escape to close modal
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closePlaygroundModal();
+    });
+
+    const SQL_TEMPLATES = {
+      vector: `SELECT id, time_hkt, direction, 
+       CASE WHEN embedding IS NOT NULL THEN 'Indexed (1536-dim)' ELSE 'Pending' END AS vector_status,
+       LEFT(raw_content, 70) AS summary
+FROM flash_news 
+ORDER BY created_at DESC 
+LIMIT 10;`,
+      sentiment: `SELECT COALESCE(direction, 'FLAT') AS market_sentiment, 
+       COUNT(*) AS count,
+       ROUND(COUNT(*) * 100.0 / SUM(COUNT(*)) OVER (), 1) || '%' AS percentage
+FROM flash_news 
+WHERE date_hkt = CURRENT_DATE 
+GROUP BY direction;`,
+      alerts: `SELECT time_hkt, importance, direction, raw_content 
+FROM flash_news 
+WHERE is_alert = true OR importance >= 2 
+ORDER BY created_at DESC 
+LIMIT 10;`,
+      tickers: `SELECT time_hkt, tickers, direction, raw_content 
+FROM flash_news 
+WHERE jsonb_array_length(tickers) > 0 
+ORDER BY created_at DESC 
+LIMIT 5;`
+    };
+
+    function setTemplateSql(type) {
+      const editor = document.getElementById('modal-sql-input');
+      if (editor && SQL_TEMPLATES[type]) {
+        editor.value = SQL_TEMPLATES[type];
+        runModalSql();
+      }
+    }
+
+    async function runModalSql() {
+      const editor = document.getElementById('modal-sql-input');
+      const output = document.getElementById('modal-sql-output');
+      const stats = document.getElementById('modal-sql-stats');
+      const sql = editor.value.trim();
+
+      if (!sql) return;
+      output.innerText = 'Executing query...';
+      stats.innerText = '';
+
+      try {
+        const res = await fetch('/api/sql', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ sql })
+        });
+        const result = await res.json();
+        if (result.error) {
+          output.innerText = '❌ Error: ' + result.error;
+          stats.innerText = 'Failed';
+        } else {
+          output.innerText = JSON.stringify(result.rows, null, 2);
+          stats.innerText = `Returned ${result.count} row(s)`;
+        }
+      } catch (err) {
+        output.innerText = '❌ Request failed: ' + err.message;
+      }
+    }
+
     async function runSql() {
-      const sql = document.getElementById('sql-input').value;
+      const sql = document.getElementById('sql-input')?.value || '';
       const output = document.getElementById('sql-output');
+      if (!output) return;
       output.innerText = 'Executing safe query...';
       try {
         const res = await fetch('/api/sql', {
@@ -703,6 +1014,78 @@
         }
       } catch (err) {
         output.innerText = '❌ Request failed: ' + err.message;
+      }
+    }
+
+    async function runSemanticSearch() {
+      const input = document.getElementById('semantic-query-input');
+      const status = document.getElementById('semantic-status');
+      const btn = document.getElementById('btn-semantic-search');
+      const query = (input.value || '').trim();
+
+      if (!query) {
+        status.innerText = '⚠️ Please enter a search query';
+        return;
+      }
+
+      btn.disabled = true;
+      btn.innerText = 'Searching...';
+      status.innerText = '🧠 Calculating vector embedding via MiniMax...';
+
+      try {
+        const res = await fetch('/api/semantic-search', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ query, limit: 15 })
+        });
+        const rows = await res.json();
+        if (rows.error) {
+          status.innerText = '❌ ' + rows.error;
+          return;
+        }
+
+        status.innerText = `✅ Found ${rows.length} semantic matches (ordered by similarity)`;
+        // Render semantic results directly into the news feed
+        rawNewsItems = rows;
+        updateCounts(rawNewsItems);
+        renderNews();
+      } catch (err) {
+        status.innerText = '❌ Search failed: ' + err.message;
+      } finally {
+        btn.disabled = false;
+        btn.innerText = 'Vector Search';
+      }
+    }
+
+    async function clearSemanticSearch() {
+      const input = document.getElementById('semantic-query-input');
+      const status = document.getElementById('semantic-status');
+      if (input) input.value = '';
+      if (status) status.innerText = '';
+      // Reset filter and reload regular live stream
+      await loadNews();
+    }
+
+    async function triggerReindex() {
+      const btn = document.getElementById('btn-reindex');
+      const status = document.getElementById('semantic-status');
+      btn.disabled = true;
+      btn.innerText = '⏳';
+      status.innerText = '⚡ Computing embeddings for missing records...';
+
+      try {
+        const res = await fetch('/api/reindex', { method: 'POST' });
+        const result = await res.json();
+        if (result.error) {
+          status.innerText = '❌ ' + result.error;
+        } else {
+          status.innerText = `✅ Reindexed ${result.updated} records!`;
+        }
+      } catch (err) {
+        status.innerText = '❌ Reindex failed: ' + err.message;
+      } finally {
+        btn.disabled = false;
+        btn.innerText = '⚡ Reindex';
       }
     }
 
@@ -738,9 +1121,31 @@
       }
     }
 
+    let autoRefreshTimer = null;
+
+    function setupAutoRefresh() {
+      if (autoRefreshTimer) {
+        clearInterval(autoRefreshTimer);
+        autoRefreshTimer = null;
+      }
+      const savedRate = localStorage.getItem('mini_news_refresh_rate') || '60';
+      const seconds = Number(savedRate);
+      if (seconds > 0) {
+        autoRefreshTimer = setInterval(loadAllData, seconds * 1000);
+      }
+      const feedStatus = document.getElementById('feed-status');
+      if (feedStatus && feedStatus.innerText.includes('Auto-refresh')) {
+        feedStatus.innerText = `Auto-refresh every ${seconds}s`;
+      }
+    }
+
+    // Initial load
+    window.addEventListener('DOMContentLoaded', () => {
+      loadAllData();
+      setupAutoRefresh();
+    });
     loadAllData();
-    // Auto refresh feed every 30s
-    setInterval(loadAllData, 30000);
+    setupAutoRefresh();
   </script>
 </body>
 </html>

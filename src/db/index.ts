@@ -32,6 +32,10 @@ export async function initDatabase() {
     await client.query("CREATE EXTENSION IF NOT EXISTS vector;");
     // Ensure UTF8 client encoding
     await client.query("SET client_encoding = 'UTF8';");
+    // Ensure HNSW index on embedding column exists for fast cosine similarity search
+    await client.query(
+      "CREATE INDEX IF NOT EXISTS idx_flash_news_embedding_hnsw ON flash_news USING hnsw (embedding vector_cosine_ops);"
+    );
   } finally {
     client.release();
   }

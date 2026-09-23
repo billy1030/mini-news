@@ -10,6 +10,8 @@ import { NEWS_SCHEMA_DOC } from "./schemaDoc.js";
 import { db } from "../db/index.js";
 import { flashNews } from "../db/schema.js";
 import { desc, eq, or, gte, ilike, and, sql } from "drizzle-orm";
+import { getMinimaxEmbeddings } from "../services/embedding.js";
+import { reindexMissingEmbeddings } from "../poller/index.js";
 
 /**
  * Initialize and start the MCP Server
@@ -120,6 +122,39 @@ export async function startMcpServer() {
               limit: {
                 type: "number",
                 description: "Max results (default: 20)",
+              },
+            },
+          },
+        },
+        {
+          name: "search_news_semantic",
+          description:
+            "Perform AI semantic vector search (via MiniMax embo-01 and pgvector HNSW cosine similarity) over financial flash news. Retrieves conceptual matches even when keywords do not strictly match.",
+          inputSchema: {
+            type: "object",
+            properties: {
+              query: {
+                type: "string",
+                description: "Natural language financial question or concept (e.g., '中東地緣政治對原油價格影響', '美聯儲降息及國債走勢')",
+              },
+              limit: {
+                type: "number",
+                description: "Max results to return (default: 5, max: 50)",
+              },
+            },
+            required: ["query"],
+          },
+        },
+        {
+          name: "reindex_news_embeddings",
+          description:
+            "Scans the financial database and computes MiniMax vector embeddings for news items that currently have NULL embeddings.",
+          inputSchema: {
+            type: "object",
+            properties: {
+              batch_size: {
+                type: "number",
+                description: "Number of news items to process in this batch (default: 20, max: 100)",
               },
             },
           },
@@ -281,6 +316,59 @@ export async function startMcpServer() {
             {
               type: "text",
               text: JSON.stringify(rows, null, 2),
+            },
+          ],
+        };
+      }
+
+      if (name === "search_news_semantic") {
+        const queryText = String(args?.query || "").trim();
+        if (!queryText) {
+          throw new Error("Missing required argument 'query'");
+        }
+        const limit = Math.min(Math.max(Number(args?.limit) || 5, 1), 50);
+
+        // 1. Generate query embedding via MiniMax embo-01 (type: query)
+        const [queryVec] = await getMinimaxEmbeddings([queryText], "query");
+        const vectorStr = `[${queryVec.join(",")}]`;
+
+        // 2. Perform cosine distance vector search via pgvector HNSW
+        const results = await db.execute(sql`
+          SELECT 
+            id, 
+            date_hkt, 
+            time_hkt, 
+            importance,
+            is_alert,
+            category,
+            direction, 
+            tickers,
+            raw_content,
+            ROUND((1 - (embedding <=> ${vectorStr}::vector))::numeric, 4) AS similarity_score
+          FROM flash_news
+          WHERE embedding IS NOT NULL
+          ORDER BY embedding <=> ${vectorStr}::vector ASC
+          LIMIT ${limit};
+        `);
+
+        return {
+          content: [
+            {
+              type: "text",
+              text: JSON.stringify(results.rows, null, 2),
+            },
+          ],
+        };
+      }
+
+      if (name === "reindex_news_embeddings") {
+        const batchSize = Math.min(Math.max(Number(args?.batch_size) || 20, 1), 100);
+        const stats = await reindexMissingEmbeddings(batchSize);
+        return {
+          content: [
+            {
+              type: "text",
+              text: `Reindexing completed: scanned ${stats.processed} items without embeddings, successfully computed & updated ${stats.updated} vectors.`,
             },
           ],
         };

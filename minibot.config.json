@@ -9,6 +9,8 @@
       ],
       "env": {
         "DATABASE_URL": "postgresql://postgres:postgrespassword@localhost:5232/mini_news",
+        "MINIMAX_API_KEY": "sk-cp-tkzzMQP3ZOnVLdzdEdPoNNznMyVh-Y9guY-AfQW3qfQDve9sVyWXWj55IGIT3xXTd6C5svtGG6GT09a69TujB_umaVuNX2r4pgPkl8DBSVhclQuu3T305Cg",
+        "MINIMAX_EMBEDDING_URL": "https://api.minimaxi.com/v1/embeddings",
         "NODE_ENV": "production"
       }
     }
