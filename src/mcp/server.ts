@@ -288,12 +288,13 @@ export async function startMcpServer() {
 
       throw new Error(`Unknown tool: ${name}`);
     } catch (err: any) {
+      const detail = err.cause ? ` (Cause: ${err.cause.message || err.cause})` : "";
       return {
         isError: true,
         content: [
           {
             type: "text",
-            text: `Error executing ${name}: ${err.message || String(err)}`,
+            text: `Error executing ${name}: ${err.message || String(err)}${detail}`,
           },
         ],
       };
