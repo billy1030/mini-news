@@ -4,7 +4,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { db } from "../db/index.js";
 import { flashNews } from "../db/schema.js";
-import { pollOnce } from "../poller/index.js";
+import { pollOnce, setPollInterval } from "../poller/index.js";
 import { executeReadOnlySql } from "../mcp/sqlSafety.js";
 import { desc, count } from "drizzle-orm";
 
@@ -56,12 +56,12 @@ export function startWebServer(port: number = Number(process.env.PORT) || 5200) 
               res.end(JSON.stringify({ error: "Poll frequency must be between 15 and 300 seconds." }));
               return;
             }
-            const { setPollInterval } = await import("../poller/index.js");
             setPollInterval(seconds);
 
             res.writeHead(200, { "Content-Type": "application/json" });
             res.end(JSON.stringify({ success: true, pollInterval: seconds }));
           } catch (err: any) {
+            console.error("[Web Server] /api/config error:", err);
             res.writeHead(500, { "Content-Type": "application/json" });
             res.end(JSON.stringify({ error: err.message || String(err) }));
           }

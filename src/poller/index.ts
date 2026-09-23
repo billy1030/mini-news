@@ -8,11 +8,18 @@ import { isNull, desc } from "drizzle-orm";
 let pollIntervalMs =
   (Number(process.env.POLL_INTERVAL_SECONDS) || 60) * 1000;
 
+let pollTimeoutHandle: NodeJS.Timeout | null = null;
+let pollLoopFn: (() => Promise<void>) | null = null;
+
 export function setPollInterval(seconds: number): void {
   const safeSeconds = Math.max(15, Math.min(300, seconds));
   pollIntervalMs = safeSeconds * 1000;
   process.env.POLL_INTERVAL_SECONDS = String(safeSeconds);
   console.log(`[Poller] Poll interval updated to ${safeSeconds} seconds.`);
+  if (pollTimeoutHandle && isPolling && pollLoopFn) {
+    clearTimeout(pollTimeoutHandle);
+    pollTimeoutHandle = setTimeout(pollLoopFn, pollIntervalMs);
+  }
 }
 
 export function getPollInterval(): number {
@@ -109,24 +116,28 @@ export async function startPoller(): Promise<void> {
   console.log(`[Poller] Initializing database and starting poller (interval: ${pollIntervalMs / 1000}s)...`);
   await initDatabase();
 
-  const runLoop = async () => {
+  pollLoopFn = async () => {
     try {
       const stats = await pollOnce();
       console.log(`[Poller] Ingested ${stats.inserted} new items out of ${stats.fetched} fetched.`);
     } catch (err) {
       console.error("[Poller] Polling cycle error:", err);
     } finally {
-      if (isPolling) {
-        setTimeout(runLoop, pollIntervalMs);
+      if (isPolling && pollLoopFn) {
+        pollTimeoutHandle = setTimeout(pollLoopFn, pollIntervalMs);
       }
     }
   };
 
   // Run immediately on start
-  await runLoop();
+  await pollLoopFn();
 }
 
 export function stopPoller(): void {
   isPolling = false;
+  if (pollTimeoutHandle) {
+    clearTimeout(pollTimeoutHandle);
+    pollTimeoutHandle = null;
+  }
   console.log("[Poller] Poller stopped.");
 }
