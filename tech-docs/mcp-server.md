@@ -31,6 +31,19 @@ Mini-News exposes Model Context Protocol (MCP) tools for LLMs to safely query fi
   - `limit` (number, optional): Max results (default: 15, max: 50).
 - **Output**: JSON array of news records.
 
+### 5. `search_news_semantic`
+- **Description**: MiniMax `embo-01` vector semantic search over financial flash news using cosine distance similarity.
+- **Input**:
+  - `query` (string, required): Natural language search concept or question (e.g., "fed rate hike expectations", "oil pipeline supply disruption").
+  - `limit` (number, optional): Maximum results to return (default: 10, max: 50).
+- **Output**: JSON array of news items enriched with similarity scores (0.0 to 1.0) and market direction.
+
+### 6. `reindex_news_embeddings`
+- **Description**: Batch generates and persists MiniMax vector embeddings for any news records missing embeddings in the database.
+- **Input**:
+  - `batchSize` (number, optional): Number of items to process per batch (default: 50, max: 100).
+- **Output**: Count of processed and updated news records.
+
 ---
 
 ## SQL Safety & Security Guards (`src/mcp/sqlSafety.ts`)

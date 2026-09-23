@@ -29,18 +29,42 @@ Stores 7x24 real-time financial flash news ingested from upstream sources.
 | `raw_content` | `TEXT` | `text` | Full flash news text (UTF-8). |
 | `tickers` | `JSONB` | `jsonb` | Array of tickers: `["AAPL", "NVDA", "BTC"]`. |
 | `direction` | `VARCHAR(16)` | `varchar(16)` | Market sentiment: `'UP'`, `'DOWN'`, `'FLAT'`. |
-| `embedding` | `VECTOR(1536)` | `vector(1536)` | Optional pgvector embedding vector. |
+| `embedding` | `VECTOR(1536)` | `vector(1536)` | MiniMax `embo-01` 1536-dimensional semantic vector embedding. |
 
 ---
 
 ## Indices
 
 ```sql
+-- Standard Relational & Chronological Indices
 CREATE INDEX idx_flash_news_created_at ON flash_news USING btree (created_at);
 CREATE INDEX idx_flash_news_date_hkt ON flash_news USING btree (date_hkt);
 CREATE INDEX idx_flash_news_importance ON flash_news USING btree (importance);
 CREATE INDEX idx_flash_news_category ON flash_news USING btree (category);
 CREATE INDEX idx_flash_news_tickers ON flash_news USING gin (tickers);
+
+-- pgvector Hierarchical Navigable Small World (HNSW) Index
+CREATE INDEX IF NOT EXISTS idx_flash_news_embedding_hnsw 
+ON flash_news USING hnsw (embedding vector_cosine_ops);
+```
+
+---
+
+## Semantic Vector Query Pattern
+
+Mini-News uses the cosine distance operator (`<=>`) for semantic retrieval:
+
+```sql
+SELECT 
+  id,
+  time_hkt AS "timeHkt",
+  direction,
+  raw_content AS "rawContent",
+  ROUND((1 - (embedding <=> '[... 1536 floats ...]')::numeric), 4) AS similarity
+FROM flash_news
+WHERE embedding IS NOT NULL
+ORDER BY embedding <=> '[... 1536 floats ...]'
+LIMIT 10;
 ```
 
 ---

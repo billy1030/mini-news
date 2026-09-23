@@ -1,4 +1,4 @@
-# Mini-News Technical Documentation Architecture
+# Mini-News Technical Documentation
 
 Welcome to the **Mini-News** technical architecture documentation.
 
@@ -9,14 +9,14 @@ Mini-News is a production-grade 7x24 real-time financial flash news ingestion en
 ## 📚 Documentation Index
 
 1. [Architecture & System Design](file:///c:/ai/mini-news/tech-docs/architecture.md)
-   - High-level system topology, data flow, and component breakdown.
+   - High-level system topology, data flow, dynamic poller, and component breakdown.
 2. [Database & Schema Specification](file:///c:/ai/mini-news/tech-docs/database-schema.md)
-   - PostgreSQL 16 schema, Drizzle ORM models, indexes, and pgvector HNSW layout.
+   - PostgreSQL 16 schema, Drizzle ORM models, indexes, and pgvector HNSW layout with MiniMax 1536-dimensional embeddings.
 3. [Port Map & Network Configuration](file:///c:/ai/mini-news/tech-docs/port-mapping.md)
-   - Standard 52XX port allocations, Docker container bridges, and Zeabur production mapping.
+   - Standard 52XX port allocations (Web Dashboard: 5200, PostgreSQL: 5232), Docker container bridges, and Zeabur production mapping.
 4. [MCP Server & Dynamic SQL Specification](file:///c:/ai/mini-news/tech-docs/mcp-server.md)
-   - MCP tool contracts (`describe_news_schema`, `query_financial_news_sql`, etc.) and SQL safety filters.
+   - MCP tool contracts (`describe_news_schema`, `query_financial_news_sql`, `search_news_semantic`, `reindex_news_embeddings`, etc.) and SQL safety filters.
 5. [Ingestion & Deduplication Pipeline](file:///c:/ai/mini-news/tech-docs/ingestion-deduplication.md)
-   - Real-time polling mechanics, atomic deduplication, and edge case mitigation paths.
+   - Dynamic 15s–300s polling mechanics, atomic deduplication, and vector embedding pipeline.
 6. [Deployment Guide: Docker & Zeabur](file:///c:/ai/mini-news/tech-docs/deployment-zeabur.md)
    - Multi-stage Docker packaging, environment variables, and Zeabur one-click deployment.

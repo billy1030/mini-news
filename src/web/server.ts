@@ -71,7 +71,7 @@ export function startWebServer(port: number = Number(process.env.PORT) || 5200) 
 
       // 2. API: Get Latest Live News
       if (url.pathname === "/api/news" && req.method === "GET") {
-        const limit = Math.min(Number(url.searchParams.get("limit")) || 25, 50);
+        const limit = Math.min(Number(url.searchParams.get("limit")) || 100, 300);
         const news = await db
           .select()
           .from(flashNews)

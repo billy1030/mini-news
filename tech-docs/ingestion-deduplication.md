@@ -1,25 +1,14 @@
 # Ingestion & Deduplication Pipeline
 
-Mini-News ingests 7x24 real-time financial flash feeds from upstream providers (e.g. `mutemute.com/mutenews`). Because financial markets publish continuous streams where polling cycles overlap, deduplication is critical to prevent noisy duplicate alerts and bloated storage.
+Mini-News ingests 7x24 real-time financial flash feeds from upstream providers (e.g. `mutemute.com/mutenews`). Because financial markets publish continuous streams where polling cycles overlap, deduplication and high-throughput vector processing are critical.
 
 ---
 
-## 1. Current Deduplication Strategy: Primary Key Idempotent Upsert
+## 1. Dynamic Polling Frequency
 
-### Mechanism
-- **Source Identifier**: Every incoming flash news item has an upstream identifier (`id`, `uid`, or `createdAt`). The parser normalizes this to a unique string `id`.
-- **Atomic Database Handling**: We use PostgreSQL's atomic conflict resolution via Drizzle ORM:
-  ```typescript
-  await db
-    .insert(flashNews)
-    .values(item)
-    .onConflictDoNothing({ target: flashNews.id });
-  ```
-- **Guarantees**:
-  - Zero duplicates when the same news item appears across overlapping polling windows (e.g. every 60s).
-  - No database lock contention or thread race conditions.
-  - Transparent ingestion stats logged every cycle:
-    `[Poller] Ingested X new items out of Y fetched.`
+The ingestion engine supports dynamic polling intervals from **15 seconds** to **300 seconds** (default: 60s):
+- **Runtime Adjustments**: Can be tuned dynamically from the Dashboard UI (`POST /api/config`) or by calling `setPollInterval(seconds)`.
+- **Immediate Polling**: An on-demand trigger (`POST /api/fetch-live` or MCP tool) forces an immediate polling execution without resetting the scheduled interval.
 
 ---
 
@@ -28,8 +17,8 @@ Mini-News ingests 7x24 real-time financial flash feeds from upstream providers (
 ```
 [Upstream API (7x24 Live Feed)]
                │
-               ▼ (Every 60s via fetcher.ts)
-[Raw Payload: 25-50 Items]
+               ▼ (Configurable 15s-300s via fetcher.ts)
+[Raw Payload: 25-100 Items]
                │
                ▼ (parseRawNews in parser/index.ts)
 [Normalized Entities]
@@ -38,21 +27,38 @@ Mini-News ingests 7x24 real-time financial flash feeds from upstream providers (
   ├─ Financial Ticker Detection ($AAPL, NVDA, BTC)
   └─ Market Direction Classification (UP / DOWN / FLAT)
                │
+               ▼ (MiniMax embo-01 Vector Generation)
+[1536-Dimensional Float Array Embeddings]
+               │
                ▼ (Idempotent Batch Upsert in poller/index.ts)
 [PostgreSQL: flash_news table]
   ├─ Exists in table? -> SKIP (DO NOTHING)
-  └─ New ID?          -> INSERT & Index
+  └─ New ID?          -> INSERT, Index BTree & HNSW
 ```
 
 ---
 
-## 3. Edge Cases & Roadmap for Advanced Deduplication
+## 3. Deduplication Strategy: Primary Key Idempotent Upsert
 
-While ID-based deduplication guarantees zero duplicates for identical upstream IDs, financial streams present edge cases across different providers:
+### Mechanism
+- **Source Identifier**: Every incoming flash news item has an upstream identifier (`id`, `uid`, or `createdAt`). The parser normalizes this to a unique string `id`.
+- **Atomic Database Handling**: We use PostgreSQL's atomic conflict resolution via Drizzle ORM:
+  ```typescript
+  await db
+    .insert(flashNews)
+    .values(itemsWithEmbeddings)
+    .onConflictDoNothing({ target: flashNews.id });
+  ```
+- **Guarantees**:
+  - Zero duplicates when the same news item appears across overlapping polling windows.
+  - No database lock contention or thread race conditions.
+  - Transparent ingestion stats logged every cycle:
+    `[Poller] Ingested X new items out of Y fetched.`
 
-| Scenario | Current Handling | Advanced Mitigation Path |
-| :--- | :--- | :--- |
-| **Identical feed item re-broadcast** | ✅ **Filtered** (`ON CONFLICT DO NOTHING`) | N/A (Handled) |
-| **Breaking news amended/updated by editor** | ⚠️ **Retained original** (Subsequent updates skipped) | Switch to `ON CONFLICT (id) DO UPDATE SET raw_content = EXCLUDED.raw_content, updated_at = NOW()` |
-| **Cross-source duplicates (Different IDs, same text)** | ⚠️ **Both stored** (Treated as separate records) | **Content Fingerprinting**: Calculate normalized text MD5/SHA-256 hash (`content_hash` UNIQUE constraint) |
-| **Rephrased syndication (Slightly altered wording)** | ⚠️ **Both stored** | **Semantic Deduplication**: Use `pgvector` cosine similarity (`> 0.95` within a 15-minute sliding window) or `pg_trgm` fuzzy matching |
+---
+
+## 4. Vector Reindexing Pipeline
+
+For items inserted before vector indexing was enabled or in the event of upstream API rate-limiting during ingestion:
+- `reindexMissingEmbeddings(batchSize)` queries items `WHERE embedding IS NULL`.
+- Calls MiniMax `embo-01` with `type: "db"` and persists the generated vectors in batches.

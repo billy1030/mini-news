@@ -903,7 +903,7 @@ LIMIT 10;</textarea>
 
     async function loadNews() {
       try {
-        const res = await fetch('/api/news?limit=50');
+        const res = await fetch('/api/news?limit=300');
         const items = await res.json();
         rawNewsItems = items || [];
         updateCounts(rawNewsItems);
