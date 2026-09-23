@@ -15,6 +15,6 @@
 - [x] 2.5: Tool `get_latest_alerts` (breaking red-bar / importance >= 2 news).
 
 ## Phase 3: MiniBot Integration & Deployment
-- [ ] 3.1: Register server in `minibot.config.json` for multi-agent workflows.
-- [ ] 3.2: Create agent skill `financial-flash-sql` for automated SQL generation.
+- [x] 3.1: Register server in `minibot.config.json` for multi-agent workflows.
+- [x] 3.2: Create agent skill `mini-news-financial-mcp` for automated SQL generation.
 - [ ] 3.3: Production deployment verification on Zeabur.
