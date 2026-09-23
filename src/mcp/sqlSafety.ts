@@ -64,7 +64,7 @@ export function validateReadOnlySql(rawSql: string): { isValid: boolean; error?:
   const limitMatch = cleanSql.match(/\bLIMIT\s+(\d+)/i);
   let finalSql = cleanSql;
   if (!limitMatch) {
-    finalSql = `${cleanSql} LIMIT 50`;
+    finalSql = `${cleanSql} LIMIT 300`;
   } else {
     const requestedLimit = parseInt(limitMatch[1], 10);
     if (requestedLimit > 300) {

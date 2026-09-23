@@ -43,7 +43,7 @@ export async function startMcpServer() {
         {
           name: "query_financial_news_sql",
           description:
-            "Executes a validated read-only SQL query (SELECT / WITH only) against the financial flash news database. Max 50 rows returned.",
+            "Executes a validated read-only SQL query (SELECT / WITH only) against the financial flash news database. Max 300 rows returned.",
           inputSchema: {
             type: "object",
             properties: {
@@ -65,7 +65,7 @@ export async function startMcpServer() {
             properties: {
               limit: {
                 type: "number",
-                description: "Maximum number of alerts to fetch (default: 10, max: 50)",
+                description: "Maximum number of alerts to fetch (default: 10, max: 300)",
               },
             },
           },
@@ -87,7 +87,7 @@ export async function startMcpServer() {
               },
               limit: {
                 type: "number",
-                description: "Max results (default: 15, max: 50)",
+                description: "Max results (default: 15, max: 300)",
               },
             },
           },
