@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json.schemastore.org/mcp-server-config.json",
+  "mcpServers": {
+    "mini-news": {
+      "command": "node",
+      "args": [
+        "c:\\ai\\mini-news\\dist\\index.js",
+        "--mcp-only"
+      ],
+      "env": {
+        "DATABASE_URL": "postgresql://postgres:postgrespassword@localhost:5232/mini_news",
+        "NODE_ENV": "production"
+      }
+    }
+  }
+}
