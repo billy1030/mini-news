@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-HK">
+<html lang="zh-HK" data-theme="light">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,18 +8,44 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <style>
+    /* Default: Clean Financial Light Theme */
     :root {
+      --bg: #f8fafc;
+      --card-bg: rgba(255, 255, 255, 0.85);
+      --card-border: rgba(226, 232, 240, 0.8);
+      --header-bg: rgba(255, 255, 255, 0.8);
+      --accent: #2563eb;
+      --accent-glow: rgba(37, 99, 235, 0.2);
+      --danger: #dc2626;
+      --danger-bg: #fef2f2;
+      --success: #16a34a;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --input-bg: #ffffff;
+      --code-bg: #f1f5f9;
+      --font-sans: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.05), 0 1px 2px rgba(0,0,0,0.03);
+      --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.07), 0 2px 4px -2px rgba(0,0,0,0.05);
+    }
+
+    /* Dark Mode (Toggleable) */
+    [data-theme="dark"] {
       --bg: #090d16;
       --card-bg: rgba(18, 24, 38, 0.7);
       --card-border: rgba(255, 255, 255, 0.08);
+      --header-bg: rgba(9, 13, 22, 0.8);
       --accent: #3b82f6;
       --accent-glow: rgba(59, 130, 246, 0.35);
       --danger: #ef4444;
+      --danger-bg: rgba(239, 68, 68, 0.1);
       --success: #10b981;
       --text-main: #f1f5f9;
       --text-muted: #94a3b8;
-      --font-sans: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
-      --font-mono: 'JetBrains Mono', monospace;
+      --input-bg: rgba(0, 0, 0, 0.4);
+      --code-bg: #050811;
+      --shadow-sm: none;
+      --shadow-md: 0 4px 20px rgba(0,0,0,0.3);
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -27,25 +53,28 @@
     body {
       background-color: var(--bg);
       background-image: 
-        radial-gradient(at 0% 0%, rgba(59, 130, 246, 0.12) 0px, transparent 50%),
-        radial-gradient(at 100% 100%, rgba(16, 185, 129, 0.08) 0px, transparent 50%);
+        radial-gradient(at 0% 0%, rgba(37, 99, 235, 0.08) 0px, transparent 50%),
+        radial-gradient(at 100% 100%, rgba(22, 163, 74, 0.05) 0px, transparent 50%);
       color: var(--text-main);
       font-family: var(--font-sans);
       min-height: 100vh;
       display: flex;
       flex-direction: column;
+      transition: background-color 0.3s ease, color 0.3s ease;
     }
 
     header {
-      padding: 1.25rem 2rem;
+      padding: 1.1rem 2rem;
       display: flex;
       justify-content: space-between;
       align-items: center;
+      background: var(--header-bg);
       border-bottom: 1px solid var(--card-border);
-      backdrop-filter: blur(12px);
+      backdrop-filter: blur(16px);
       position: sticky;
       top: 0;
       z-index: 50;
+      box-shadow: var(--shadow-sm);
     }
 
     .brand {
@@ -57,7 +86,7 @@
     .logo-badge {
       width: 36px;
       height: 36px;
-      background: linear-gradient(135deg, #3b82f6, #6366f1);
+      background: linear-gradient(135deg, #2563eb, #4f46e5);
       border-radius: 10px;
       display: flex;
       align-items: center;
@@ -68,11 +97,11 @@
     }
 
     .brand h1 { font-size: 1.25rem; font-weight: 600; letter-spacing: -0.02em; }
-    .brand span { font-size: 0.75rem; color: var(--accent); background: rgba(59, 130, 246, 0.15); padding: 2px 8px; border-radius: 9999px; margin-left: 6px; }
+    .brand span { font-size: 0.75rem; color: var(--accent); background: rgba(37, 99, 235, 0.1); padding: 2px 8px; border-radius: 9999px; margin-left: 6px; font-weight: 500; }
 
     .header-actions {
       display: flex;
-      gap: 1rem;
+      gap: 0.75rem;
       align-items: center;
     }
 
@@ -92,16 +121,17 @@
     .btn-primary {
       background: var(--accent);
       color: #fff;
-      box-shadow: 0 0 12px var(--accent-glow);
+      box-shadow: 0 2px 8px var(--accent-glow);
     }
-    .btn-primary:hover { background: #2563eb; transform: translateY(-1px); }
+    .btn-primary:hover { background: #1d4ed8; transform: translateY(-1px); }
 
     .btn-outline {
-      background: rgba(255, 255, 255, 0.05);
+      background: var(--card-bg);
       border-color: var(--card-border);
       color: var(--text-main);
+      box-shadow: var(--shadow-sm);
     }
-    .btn-outline:hover { background: rgba(255, 255, 255, 0.1); }
+    .btn-outline:hover { background: var(--code-bg); }
 
     main {
       flex: 1;
@@ -125,6 +155,8 @@
       backdrop-filter: blur(16px);
       padding: 1.5rem;
       margin-bottom: 1.5rem;
+      box-shadow: var(--shadow-md);
+      transition: all 0.3s ease;
     }
 
     .card-title {
@@ -134,7 +166,7 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      color: #e2e8f0;
+      color: var(--text-main);
     }
 
     .stat-grid {
@@ -145,13 +177,13 @@
     }
 
     .stat-item {
-      background: rgba(255, 255, 255, 0.03);
+      background: var(--code-bg);
       padding: 1rem;
       border-radius: 10px;
-      border: 1px solid rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--card-border);
     }
     .stat-label { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; margin-bottom: 0.25rem; }
-    .stat-val { font-size: 1.25rem; font-weight: 700; color: #fff; font-family: var(--font-mono); }
+    .stat-val { font-size: 1.25rem; font-weight: 700; color: var(--text-main); font-family: var(--font-mono); }
 
     .setting-group {
       margin-bottom: 1.25rem;
@@ -165,13 +197,14 @@
     }
     .setting-input {
       width: 100%;
-      padding: 0.6rem 0.85rem;
-      background: rgba(0, 0, 0, 0.4);
+      padding: 0.65rem 0.85rem;
+      background: var(--input-bg);
       border: 1px solid var(--card-border);
       border-radius: 8px;
-      color: #fff;
+      color: var(--text-main);
       font-family: var(--font-mono);
       font-size: 0.8125rem;
+      box-shadow: var(--shadow-sm);
     }
 
     .news-list {
@@ -181,20 +214,23 @@
     }
 
     .news-card {
-      background: rgba(255, 255, 255, 0.02);
+      background: var(--card-bg);
       border: 1px solid var(--card-border);
       border-radius: 12px;
       padding: 1.25rem;
       transition: all 0.2s ease;
       position: relative;
+      box-shadow: var(--shadow-sm);
     }
     .news-card:hover {
-      border-color: rgba(59, 130, 246, 0.3);
-      background: rgba(255, 255, 255, 0.04);
+      border-color: var(--accent);
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-md);
     }
 
     .news-card.alert {
       border-left: 4px solid var(--danger);
+      background: var(--danger-bg);
     }
 
     .news-meta {
@@ -212,24 +248,24 @@
       font-weight: 600;
       font-size: 0.7rem;
     }
-    .tag-up { background: rgba(16, 185, 129, 0.15); color: var(--success); }
-    .tag-down { background: rgba(239, 68, 68, 0.15); color: var(--danger); }
-    .tag-flat { background: rgba(148, 163, 184, 0.15); color: var(--text-muted); }
-    .tag-alert { background: rgba(239, 68, 68, 0.2); color: #f87171; }
+    .tag-up { background: rgba(22, 163, 74, 0.15); color: var(--success); }
+    .tag-down { background: rgba(220, 38, 38, 0.15); color: var(--danger); }
+    .tag-flat { background: rgba(100, 116, 139, 0.15); color: var(--text-muted); }
+    .tag-alert { background: rgba(220, 38, 38, 0.2); color: var(--danger); }
 
     .news-body {
       font-size: 0.9375rem;
       line-height: 1.6;
-      color: #e2e8f0;
+      color: var(--text-main);
     }
 
     .sql-editor {
       width: 100%;
       height: 100px;
-      background: #050811;
+      background: var(--code-bg);
       border: 1px solid var(--card-border);
       border-radius: 8px;
-      color: #38bdf8;
+      color: var(--text-main);
       font-family: var(--font-mono);
       font-size: 0.8125rem;
       padding: 0.75rem;
@@ -238,12 +274,13 @@
     }
 
     .sql-result {
-      background: #050811;
+      background: var(--code-bg);
+      border: 1px solid var(--card-border);
       border-radius: 8px;
       padding: 0.75rem;
       font-family: var(--font-mono);
       font-size: 0.75rem;
-      color: #a5f3fc;
+      color: var(--text-main);
       max-height: 200px;
       overflow: auto;
       white-space: pre-wrap;
@@ -260,6 +297,7 @@
       </div>
     </div>
     <div class="header-actions">
+      <button class="btn btn-outline" id="btn-theme-toggle" onclick="toggleTheme()">🌙 Dark</button>
       <button class="btn btn-primary" id="btn-poll-now">⚡ Fetch Live Now</button>
       <button class="btn btn-outline" onclick="loadAllData()">🔄 Refresh</button>
     </div>
@@ -321,6 +359,30 @@
   </main>
 
   <script>
+    // Theme Toggle Functionality
+    function initTheme() {
+      const savedTheme = localStorage.getItem('mini_news_theme') || 'light';
+      document.documentElement.setAttribute('data-theme', savedTheme);
+      updateThemeButton(savedTheme);
+    }
+
+    function toggleTheme() {
+      const current = document.documentElement.getAttribute('data-theme') || 'light';
+      const next = current === 'light' ? 'dark' : 'light';
+      document.documentElement.setAttribute('data-theme', next);
+      localStorage.setItem('mini_news_theme', next);
+      updateThemeButton(next);
+    }
+
+    function updateThemeButton(theme) {
+      const btn = document.getElementById('btn-theme-toggle');
+      if (btn) {
+        btn.innerText = theme === 'light' ? '🌙 Dark' : '☀️ Light';
+      }
+    }
+
+    initTheme();
+
     async function loadStatus() {
       try {
         const res = await fetch('/api/status');
@@ -351,7 +413,7 @@
           return `
             <div class="news-card ${isAlert ? 'alert' : ''}">
               <div class="news-meta">
-                <span style="font-family: var(--font-mono); font-weight: 600; color: #38bdf8;">${item.timeHkt}</span>
+                <span style="font-family: var(--font-mono); font-weight: 600; color: var(--accent);">${item.timeHkt}</span>
                 <span>${item.dateHkt}</span>
                 ${item.direction ? `<span class="tag-badge ${dirClass}">${item.direction}</span>` : ''}
                 ${isAlert ? `<span class="tag-badge tag-alert">ALERT 🔥</span>` : ''}
