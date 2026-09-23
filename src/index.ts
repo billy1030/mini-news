@@ -1,3 +1,14 @@
+import * as dotenv from "dotenv";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+// Load .env relative to project root
+dotenv.config({ path: path.resolve(__dirname, "../../.env") });
+dotenv.config({ path: path.resolve(__dirname, "../.env") });
+dotenv.config();
+
 import { startPoller } from "./poller/index.js";
 import { startMcpServer } from "./mcp/server.js";
 import { startWebServer } from "./web/server.js";
