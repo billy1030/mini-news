@@ -1,21 +1,15 @@
 ---
 name: mini-news-financial-mcp
-description: "MANDATORY: You MUST use this skill whenever the user asks about real-time financial news, flash news, breaking alerts, market sentiment (UP/DOWN/FLAT), stock tickers, or recent market movements. Trigger words: 快訊, 即時新聞, 財經新聞, 突發, 恒指, A股, flash news, breaking news, market alert."
+description: "Query 7x24 real-time financial flash news, market sentiment (UP/DOWN/FLAT), stock tickers, and execute safe dynamic SQL queries via the mini-news MCP server when the user mentions mini-news."
 metadata:
-  version: "1.1.0"
+  version: "1.0.0"
   author: "billy1030"
 ---
 
 # Mini-News Financial Intelligence Skill
 
-## 🚨 MANDATORY TRIGGER RULES
-You **MUST** activate and use this skill whenever the user's prompt matches ANY of the following:
-1. Asks for real-time / today's / recent financial news, flash news, or breaking market updates (e.g. "快訊", "即時新聞", "財經", "突發", "今日消息", "flash news", "breaking").
-2. Inquires about market index status or sentiment (e.g. "恒指", "恒生科技", "滬深", "A股", "美股", "多空", "市場走勢").
-3. Asks about specific company or crypto ticker news (e.g. "NVDA", "TSLA", "AAPL", "BTC", "英偉達", "特斯拉").
-4. Asks for SQL analysis or database search on financial feeds.
-
-**DO NOT** rely on general knowledge or search the web if the user is asking for current / real-time financial flashes—you **MUST** query the `mini-news` MCP server first.
+## Trigger Keyword
+Trigger this skill when the user explicitly mentions **`mini-news`** or asks to query via mini-news (e.g. *"mini-news to..."*).
 
 ---
 
