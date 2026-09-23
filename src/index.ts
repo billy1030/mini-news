@@ -26,7 +26,7 @@ async function main() {
   }
 
   // 2. Start background ingestion poller
-  if (!isMcpOnly && !isWebOnly) {
+  if (!isMcpOnly) {
     startPoller().catch((err) => {
       console.error("[Main] Poller startup error:", err);
     });
@@ -35,6 +35,9 @@ async function main() {
   // 3. Start MCP Server on stdio transport (unless web only)
   if (!isWebOnly) {
     await startMcpServer();
+  } else {
+    // Keep process alive in web-only mode
+    setInterval(() => {}, 1000 * 60 * 60);
   }
 }
 
