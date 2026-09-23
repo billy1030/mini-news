@@ -759,9 +759,9 @@ LIMIT 10;</textarea>
           <div class="pagination-left">
             <span>Show</span>
             <select id="sel-page-size" onchange="changePageSize(this.value)" style="padding: 0.3rem 0.5rem; font-size: 0.8125rem; background: var(--input-bg); color: var(--text-main); border: 1px solid var(--card-border); border-radius: 6px; cursor: pointer;">
-              <option value="5">5</option>
+              <option value="5" selected>5</option>
               <option value="10">10</option>
-              <option value="25" selected>25</option>
+              <option value="25">25</option>
               <option value="50">50</option>
               <option value="100">100</option>
               <option value="all">All</option>
@@ -854,7 +854,7 @@ LIMIT 10;</textarea>
     let isGrouped = false;
     let currentSort = 'time-desc';
     let currentPage = 1;
-    let pageSize = 25; // default 25, can be 5, 10, 25, 50, 100, or 'all'
+    let pageSize = 5; // default 5, can be 5, 10, 25, 50, 100, or 'all'
 
     function setFilter(filter) {
       currentFilter = filter;
