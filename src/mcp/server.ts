@@ -92,6 +92,38 @@ export async function startMcpServer() {
             },
           },
         },
+        {
+          name: "get_latest_financial_flash",
+          description:
+            "Fetch real-time financial flash news (7x24 live stream) with timestamps, categories, and importance alerts (e.g. Hong Kong stocks, A-shares, US premarket, FX fixes, commodities).",
+          inputSchema: {
+            type: "object",
+            properties: {
+              limit: {
+                type: "number",
+                description: "Number of records to return (default 20, max 50)",
+              },
+            },
+          },
+        },
+        {
+          name: "search_flash_by_time_window",
+          description:
+            "Search financial flash news items within a specific time window or pagination cursor to analyze news surrounding market events.",
+          inputSchema: {
+            type: "object",
+            properties: {
+              keyword: {
+                type: "string",
+                description: "Keyword to filter news content",
+              },
+              limit: {
+                type: "number",
+                description: "Max results (default: 20)",
+              },
+            },
+          },
+        },
       ],
     };
   });
@@ -192,6 +224,63 @@ export async function startMcpServer() {
             {
               type: "text",
               text: JSON.stringify(results, null, 2),
+            },
+          ],
+        };
+      }
+
+      if (name === "get_latest_financial_flash") {
+        const limit = Math.min(Math.max(Number(args?.limit) || 20, 1), 50);
+        const rows = await db
+          .select({
+            id: flashNews.id,
+            timeHkt: flashNews.timeHkt,
+            dateHkt: flashNews.dateHkt,
+            importance: flashNews.importance,
+            category: flashNews.category,
+            rawContent: flashNews.rawContent,
+            direction: flashNews.direction,
+            tickers: flashNews.tickers,
+          })
+          .from(flashNews)
+          .orderBy(desc(flashNews.createdAt))
+          .limit(limit);
+
+        return {
+          content: [
+            {
+              type: "text",
+              text: JSON.stringify(rows, null, 2),
+            },
+          ],
+        };
+      }
+
+      if (name === "search_flash_by_time_window") {
+        const keyword = args?.keyword ? String(args.keyword) : undefined;
+        const limit = Math.min(Math.max(Number(args?.limit) || 20, 1), 50);
+        const query = db
+          .select({
+            id: flashNews.id,
+            timeHkt: flashNews.timeHkt,
+            dateHkt: flashNews.dateHkt,
+            importance: flashNews.importance,
+            category: flashNews.category,
+            rawContent: flashNews.rawContent,
+            direction: flashNews.direction,
+            tickers: flashNews.tickers,
+          })
+          .from(flashNews);
+
+        const rows = keyword
+          ? await query.where(ilike(flashNews.rawContent, `%${keyword}%`)).orderBy(desc(flashNews.createdAt)).limit(limit)
+          : await query.orderBy(desc(flashNews.createdAt)).limit(limit);
+
+        return {
+          content: [
+            {
+              type: "text",
+              text: JSON.stringify(rows, null, 2),
             },
           ],
         };
