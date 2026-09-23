@@ -17,7 +17,7 @@ import { desc, eq, or, gte, ilike, and, sql } from "drizzle-orm";
 export async function startMcpServer() {
   const server = new Server(
     {
-      name: "mini-news-mcp",
+      name: "mini-news-flash",
       version: "1.0.0",
     },
     {

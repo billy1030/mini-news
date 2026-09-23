@@ -1,6 +1,6 @@
 {
   "mcpServers": {
-    "mini-news": {
+    "mini-news-flash": {
       "command": "node",
       "args": [
         "C:\\ai\\mini-news\\dist\\index.js",
