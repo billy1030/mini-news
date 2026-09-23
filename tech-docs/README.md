@@ -16,5 +16,7 @@ Mini-News is a production-grade 7x24 real-time financial flash news ingestion en
    - Standard 52XX port allocations, Docker container bridges, and Zeabur production mapping.
 4. [MCP Server & Dynamic SQL Specification](file:///c:/ai/mini-news/tech-docs/mcp-server.md)
    - MCP tool contracts (`describe_news_schema`, `query_financial_news_sql`, etc.) and SQL safety filters.
-5. [Deployment Guide: Docker & Zeabur](file:///c:/ai/mini-news/tech-docs/deployment-zeabur.md)
+5. [Ingestion & Deduplication Pipeline](file:///c:/ai/mini-news/tech-docs/ingestion-deduplication.md)
+   - Real-time polling mechanics, atomic deduplication, and edge case mitigation paths.
+6. [Deployment Guide: Docker & Zeabur](file:///c:/ai/mini-news/tech-docs/deployment-zeabur.md)
    - Multi-stage Docker packaging, environment variables, and Zeabur one-click deployment.
