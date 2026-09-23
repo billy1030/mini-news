@@ -21,7 +21,7 @@ The `mini-news` MCP server provides the following tools:
    - Call this first if you need to inspect the database schema, column types, or sample SQL query patterns.
 2. **`query_financial_news_sql`**:
    - Executes dynamic read-only SQL queries (`SELECT` or `WITH` CTEs).
-   - Maximum 50 rows returned per query.
+   - Maximum 300 rows returned per query.
 3. **`get_latest_alerts`**:
    - Quickly fetches breaking red-banner alerts (`importance >= 2` or `is_alert = true`).
 4. **`search_news_hybrid`**:
