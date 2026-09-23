@@ -121,17 +121,23 @@
     .btn-primary {
       background: var(--accent);
       color: #fff;
-      box-shadow: 0 2px 8px var(--accent-glow);
+      border: 1px solid transparent;
+      box-shadow: var(--shadow-sm);
     }
-    .btn-primary:hover { background: #1d4ed8; transform: translateY(-1px); }
+    .btn-primary:hover { 
+      background: #1d4ed8; 
+    }
 
     .btn-outline {
       background: var(--card-bg);
-      border-color: var(--card-border);
+      border: 1px solid var(--card-border);
       color: var(--text-main);
       box-shadow: var(--shadow-sm);
     }
-    .btn-outline:hover { background: var(--code-bg); }
+    .btn-outline:hover { 
+      background: var(--code-bg); 
+      border-color: var(--card-border);
+    }
 
     .btn-refresh {
       min-width: 105px;
@@ -583,7 +589,7 @@
       </div>
     </div>
     <div class="header-actions">
-      <button class="btn btn-primary" onclick="openPlaygroundModal()" style="gap: 0.4rem; background: linear-gradient(135deg, #2563eb, #4f46e5); box-shadow: 0 2px 10px var(--accent-glow);">
+      <button class="btn btn-outline" onclick="openPlaygroundModal()">
         <span>⚡</span>
         <span>Playground</span>
       </button>
