@@ -280,6 +280,8 @@
     .tag-down { background: rgba(220, 38, 38, 0.15); color: var(--danger); }
     .tag-flat { background: rgba(100, 116, 139, 0.15); color: var(--text-muted); }
     .tag-alert { background: rgba(220, 38, 38, 0.2); color: var(--danger); }
+    .tag-match-high { background: rgba(22, 163, 74, 0.18); color: var(--success); border: 1px solid rgba(22, 163, 74, 0.35); }
+    .tag-match-relevant { background: rgba(37, 99, 235, 0.18); color: var(--accent); border: 1px solid rgba(37, 99, 235, 0.35); }
 
     .filter-bar {
       display: flex;
@@ -991,6 +993,16 @@ LIMIT 10;</textarea>
         ? tickers.map(t => `<span class="tag-badge" style="background: rgba(37,99,235,0.1); color: var(--accent);">${t}</span>`).join(' ')
         : '';
 
+      let simBadge = '';
+      if (item.similarity_score !== undefined && item.similarity_score !== null) {
+        const score = Number(item.similarity_score);
+        if (score >= 0.70) {
+          simBadge = `<span class="tag-badge tag-match-high">🔥 High Match ${(score * 100).toFixed(1)}%</span>`;
+        } else if (score >= 0.60) {
+          simBadge = `<span class="tag-badge tag-match-relevant">🎯 Relevant ${(score * 100).toFixed(1)}%</span>`;
+        }
+      }
+
       return `
         <div class="news-card ${isAlert ? 'alert' : ''}">
           <div class="news-meta">
@@ -998,7 +1010,7 @@ LIMIT 10;</textarea>
             <span>${date}</span>
             ${item.direction ? `<span class="tag-badge ${dirClass}">${item.direction}</span>` : ''}
             ${isAlert ? `<span class="tag-badge tag-alert">ALERT 🔥</span>` : ''}
-            ${item.similarity_score ? `<span class="tag-badge" style="background: rgba(99, 102, 241, 0.2); color: var(--accent); font-weight: 700;">Sim: ${(item.similarity_score * 100).toFixed(1)}%</span>` : ''}
+            ${simBadge}
             ${tickerBadges}
             <span>ID: ${item.id}</span>
           </div>
@@ -1208,9 +1220,18 @@ LIMIT 5;`
           return;
         }
 
-        status.innerText = `✅ Found ${rows.length} semantic matches (ordered by similarity)`;
-        // Render semantic results directly into the news feed
-        rawNewsItems = rows;
+        // Filter out low marginal entries (< 0.60), retaining only High Match (>=0.70) and Relevant (>=0.60)
+        const relevantRows = (rows || []).filter(r => Number(r.similarity_score || 0) >= 0.60);
+
+        if (relevantRows.length === 0) {
+          status.innerText = `⚠️ No high or relevant matches found (all results below 60% similarity).`;
+        } else {
+          status.innerText = `✅ Found ${relevantRows.length} matches (High Match & Relevant, ≥60%)`;
+        }
+
+        // Render filtered semantic results directly into the news feed
+        rawNewsItems = relevantRows;
+        currentPage = 1;
         updateCounts(rawNewsItems);
         renderNews();
       } catch (err) {
