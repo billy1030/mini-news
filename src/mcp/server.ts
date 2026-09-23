@@ -162,7 +162,7 @@ export async function startMcpServer() {
       }
 
       if (name === "get_latest_alerts") {
-        const limit = Math.min(Math.max(Number(args?.limit) || 10, 1), 50);
+        const limit = Math.min(Math.max(Number(args?.limit) || 10, 1), 300);
         const alerts = await db
           .select({
             id: flashNews.id,
@@ -192,7 +192,7 @@ export async function startMcpServer() {
       if (name === "search_news_hybrid") {
         const keyword = args?.keyword ? String(args.keyword) : undefined;
         const ticker = args?.ticker ? String(args.ticker).toUpperCase() : undefined;
-        const limit = Math.min(Math.max(Number(args?.limit) || 15, 1), 50);
+        const limit = Math.min(Math.max(Number(args?.limit) || 15, 1), 300);
 
         const conditions = [];
         if (keyword) {
@@ -230,7 +230,7 @@ export async function startMcpServer() {
       }
 
       if (name === "get_latest_financial_flash") {
-        const limit = Math.min(Math.max(Number(args?.limit) || 20, 1), 50);
+        const limit = Math.min(Math.max(Number(args?.limit) || 20, 1), 300);
         const rows = await db
           .select({
             id: flashNews.id,
@@ -258,7 +258,7 @@ export async function startMcpServer() {
 
       if (name === "search_flash_by_time_window") {
         const keyword = args?.keyword ? String(args.keyword) : undefined;
-        const limit = Math.min(Math.max(Number(args?.limit) || 20, 1), 50);
+        const limit = Math.min(Math.max(Number(args?.limit) || 20, 1), 300);
         const query = db
           .select({
             id: flashNews.id,
