@@ -133,6 +133,24 @@
     }
     .btn-outline:hover { background: var(--code-bg); }
 
+    .btn-refresh {
+      min-width: 105px;
+      justify-content: center;
+    }
+
+    .btn-refresh .icon {
+      display: inline-block;
+      transition: transform 0.3s ease;
+    }
+
+    .btn-refresh.loading .icon {
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      100% { transform: rotate(360deg); }
+    }
+
     main {
       flex: 1;
       padding: 2rem;
@@ -253,6 +271,99 @@
     .tag-flat { background: rgba(100, 116, 139, 0.15); color: var(--text-muted); }
     .tag-alert { background: rgba(220, 38, 38, 0.2); color: var(--danger); }
 
+    .filter-bar {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 0.75rem 1rem;
+      align-items: center;
+      margin-bottom: 1.25rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--card-border);
+    }
+
+    .filter-pills-group {
+      display: flex;
+      gap: 0.4rem;
+      align-items: center;
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      padding-bottom: 2px;
+    }
+
+    .filter-pills-group::-webkit-scrollbar {
+      display: none;
+    }
+
+    .filter-controls-group {
+      display: flex;
+      gap: 0.75rem;
+      align-items: center;
+      flex-shrink: 0;
+    }
+
+    .filter-pill {
+      background: var(--code-bg);
+      border: 1px solid var(--card-border);
+      color: var(--text-muted);
+      padding: 0.35rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 500;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: all 0.2s ease;
+      user-select: none;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .filter-pill:hover {
+      background: var(--card-bg);
+      color: var(--text-main);
+      border-color: var(--accent);
+    }
+
+    .filter-pill.active {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+      box-shadow: 0 2px 6px var(--accent-glow);
+    }
+
+    .filter-count {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      padding: 1px 6px;
+      border-radius: 9999px;
+      background: rgba(0, 0, 0, 0.08);
+    }
+    .filter-pill.active .filter-count {
+      background: rgba(255, 255, 255, 0.25);
+      color: #fff;
+    }
+
+    .group-header {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.8125rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin: 1.25rem 0 0.75rem;
+      padding: 0.5rem 0.75rem;
+      background: var(--code-bg);
+      border-radius: 8px;
+      border-left: 3px solid var(--accent);
+      color: var(--text-main);
+    }
+    .group-header.group-up { border-left-color: var(--success); }
+    .group-header.group-down { border-left-color: var(--danger); }
+    .group-header.group-flat { border-left-color: var(--text-muted); }
+
     .news-body {
       font-size: 0.9375rem;
       line-height: 1.6;
@@ -299,7 +410,10 @@
     <div class="header-actions">
       <button class="btn btn-outline" id="btn-theme-toggle" onclick="toggleTheme()">🌙 Dark</button>
       <button class="btn btn-primary" id="btn-poll-now">⚡ Fetch Live Now</button>
-      <button class="btn btn-outline" onclick="loadAllData()">🔄 Refresh</button>
+      <button class="btn btn-outline btn-refresh" id="btn-refresh" onclick="loadAllData()">
+        <span class="icon">🔄</span>
+        <span class="btn-text">Refresh</span>
+      </button>
     </div>
   </header>
 
@@ -351,6 +465,41 @@
           <span>7x24 Live Financial Stream (HKT)</span>
           <span style="font-size: 0.75rem; color: var(--text-muted);" id="feed-status">Auto-refreshed</span>
         </div>
+
+        <!-- Filter & Grouping Controls -->
+        <div class="filter-bar">
+          <div class="filter-pills-group">
+            <span style="font-size: 0.75rem; color: var(--text-muted); font-weight: 600; margin-right: 0.25rem; white-space: nowrap;">FILTER:</span>
+            <div class="filter-pill active" data-filter="ALL" onclick="setFilter('ALL')">
+              <span>All</span> <span class="filter-count" id="count-all">0</span>
+            </div>
+            <div class="filter-pill" data-filter="ALERT" onclick="setFilter('ALERT')">
+              <span>🔥 Alert</span> <span class="filter-count" id="count-alert">0</span>
+            </div>
+            <div class="filter-pill" data-filter="UP" onclick="setFilter('UP')">
+              <span>🟢 UP</span> <span class="filter-count" id="count-up">0</span>
+            </div>
+            <div class="filter-pill" data-filter="DOWN" onclick="setFilter('DOWN')">
+              <span>🔴 DOWN</span> <span class="filter-count" id="count-down">0</span>
+            </div>
+            <div class="filter-pill" data-filter="FLAT" onclick="setFilter('FLAT')">
+              <span>⚪ FLAT</span> <span class="filter-count" id="count-flat">0</span>
+            </div>
+          </div>
+
+          <div class="filter-controls-group">
+            <label style="font-size: 0.75rem; color: var(--text-muted); display: flex; align-items: center; gap: 0.35rem; cursor: pointer; white-space: nowrap;">
+              <input type="checkbox" id="chk-group-flag" onchange="toggleGrouping()" />
+              <span>Group by Flag</span>
+            </label>
+            <select id="sel-sort" onchange="changeSorting()" style="padding: 0.3rem 0.5rem; font-size: 0.75rem; background: var(--input-bg); color: var(--text-main); border: 1px solid var(--card-border); border-radius: 6px;">
+              <option value="time-desc">Newest First</option>
+              <option value="time-asc">Oldest First</option>
+              <option value="flag">Sort by Flag (UP > ALERT > DOWN > FLAT)</option>
+            </select>
+          </div>
+        </div>
+
         <div class="news-list" id="news-container">
           <div style="text-align: center; color: var(--text-muted); padding: 3rem;">Loading live news stream...</div>
         </div>
@@ -397,32 +546,140 @@
       }
     }
 
+    // News state & filter configuration
+    let rawNewsItems = [];
+    let currentFilter = 'ALL';
+    let isGrouped = false;
+    let currentSort = 'time-desc';
+
+    function setFilter(filter) {
+      currentFilter = filter;
+      document.querySelectorAll('.filter-pill').forEach(pill => {
+        pill.classList.toggle('active', pill.getAttribute('data-filter') === filter);
+      });
+      renderNews();
+    }
+
+    function toggleGrouping() {
+      isGrouped = document.getElementById('chk-group-flag').checked;
+      renderNews();
+    }
+
+    function changeSorting() {
+      currentSort = document.getElementById('sel-sort').value;
+      renderNews();
+    }
+
+    function updateCounts(items) {
+      let up = 0, down = 0, flat = 0, alert = 0;
+      items.forEach(item => {
+        if (item.isAlert || item.importance >= 2) alert++;
+        if (item.direction === 'UP') up++;
+        else if (item.direction === 'DOWN') down++;
+        else flat++;
+      });
+      document.getElementById('count-all').innerText = items.length;
+      document.getElementById('count-alert').innerText = alert;
+      document.getElementById('count-up').innerText = up;
+      document.getElementById('count-down').innerText = down;
+      document.getElementById('count-flat').innerText = flat;
+    }
+
+    function sortNews(items) {
+      const copy = [...items];
+      if (currentSort === 'time-asc') {
+        return copy.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+      }
+      if (currentSort === 'flag') {
+        const flagRank = (item) => {
+          if (item.isAlert || item.importance >= 2) return 1;
+          if (item.direction === 'UP') return 2;
+          if (item.direction === 'DOWN') return 3;
+          return 4; // FLAT
+        };
+        return copy.sort((a, b) => flagRank(a) - flagRank(b) || new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+      }
+      // default: time-desc
+      return copy.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+    }
+
+    function renderCard(item) {
+      const isAlert = item.isAlert || item.importance >= 2;
+      const dirClass = item.direction === 'UP' ? 'tag-up' : item.direction === 'DOWN' ? 'tag-down' : 'tag-flat';
+      const tickerBadges = (item.tickers && item.tickers.length > 0)
+        ? item.tickers.map(t => `<span class="tag-badge" style="background: rgba(37,99,235,0.1); color: var(--accent);">${t}</span>`).join(' ')
+        : '';
+      return `
+        <div class="news-card ${isAlert ? 'alert' : ''}">
+          <div class="news-meta">
+            <span style="font-family: var(--font-mono); font-weight: 600; color: var(--accent);">${item.timeHkt || ''}</span>
+            <span>${item.dateHkt || ''}</span>
+            ${item.direction ? `<span class="tag-badge ${dirClass}">${item.direction}</span>` : ''}
+            ${isAlert ? `<span class="tag-badge tag-alert">ALERT 🔥</span>` : ''}
+            ${tickerBadges}
+            <span>ID: ${item.id}</span>
+          </div>
+          <div class="news-body">${item.rawContent}</div>
+        </div>
+      `;
+    }
+
+    function renderNews() {
+      const container = document.getElementById('news-container');
+      if (!rawNewsItems || rawNewsItems.length === 0) {
+        container.innerHTML = '<div style="text-align: center; color: var(--text-muted); padding: 2rem;">No news items found. Click "Fetch Live Now" above.</div>';
+        return;
+      }
+
+      // Filter items
+      let filtered = rawNewsItems.filter(item => {
+        const isAlert = item.isAlert || item.importance >= 2;
+        if (currentFilter === 'ALL') return true;
+        if (currentFilter === 'ALERT') return isAlert;
+        if (currentFilter === 'UP') return item.direction === 'UP';
+        if (currentFilter === 'DOWN') return item.direction === 'DOWN';
+        if (currentFilter === 'FLAT') return item.direction === 'FLAT' || !item.direction;
+        return true;
+      });
+
+      if (filtered.length === 0) {
+        container.innerHTML = `<div style="text-align: center; color: var(--text-muted); padding: 3rem;">No news matching "${currentFilter}" filter.</div>`;
+        return;
+      }
+
+      // If Group by Flag is selected
+      if (isGrouped) {
+        const groups = [
+          { name: '🔥 High Priority / Alert News', key: 'ALERT', class: 'group-down', items: filtered.filter(i => i.isAlert || i.importance >= 2) },
+          { name: '🟢 Bullish (UP) Sentiment', key: 'UP', class: 'group-up', items: filtered.filter(i => i.direction === 'UP' && !(i.isAlert || i.importance >= 2)) },
+          { name: '🔴 Bearish (DOWN) Sentiment', key: 'DOWN', class: 'group-down', items: filtered.filter(i => i.direction === 'DOWN' && !(i.isAlert || i.importance >= 2)) },
+          { name: '⚪ Neutral / General (FLAT)', key: 'FLAT', class: 'group-flat', items: filtered.filter(i => (i.direction === 'FLAT' || !i.direction) && !(i.isAlert || i.importance >= 2)) }
+        ];
+
+        let html = '';
+        groups.forEach(g => {
+          if (g.items.length > 0) {
+            const sortedItems = sortNews(g.items);
+            html += `<div class="group-header ${g.class}">${g.name} (${g.items.length})</div>`;
+            html += sortedItems.map(renderCard).join('');
+          }
+        });
+        container.innerHTML = html;
+        return;
+      }
+
+      // Plain sorted list
+      const sorted = sortNews(filtered);
+      container.innerHTML = sorted.map(renderCard).join('');
+    }
+
     async function loadNews() {
       try {
-        const res = await fetch('/api/news?limit=30');
+        const res = await fetch('/api/news?limit=50');
         const items = await res.json();
-        const container = document.getElementById('news-container');
-        if (!items || items.length === 0) {
-          container.innerHTML = '<div style="text-align: center; color: var(--text-muted); padding: 2rem;">No news items found. Click "Fetch Live Now" above.</div>';
-          return;
-        }
-
-        container.innerHTML = items.map(item => {
-          const isAlert = item.isAlert || item.importance >= 2;
-          const dirClass = item.direction === 'UP' ? 'tag-up' : item.direction === 'DOWN' ? 'tag-down' : 'tag-flat';
-          return `
-            <div class="news-card ${isAlert ? 'alert' : ''}">
-              <div class="news-meta">
-                <span style="font-family: var(--font-mono); font-weight: 600; color: var(--accent);">${item.timeHkt}</span>
-                <span>${item.dateHkt}</span>
-                ${item.direction ? `<span class="tag-badge ${dirClass}">${item.direction}</span>` : ''}
-                ${isAlert ? `<span class="tag-badge tag-alert">ALERT 🔥</span>` : ''}
-                <span>ID: ${item.id}</span>
-              </div>
-              <div class="news-body">${item.rawContent}</div>
-            </div>
-          `;
-        }).join('');
+        rawNewsItems = items || [];
+        updateCounts(rawNewsItems);
+        renderNews();
       } catch (err) {
         console.error('Failed to load news:', err);
       }
@@ -463,7 +720,22 @@
     });
 
     async function loadAllData() {
-      await Promise.all([loadStatus(), loadNews()]);
+      const btnRefresh = document.getElementById('btn-refresh');
+      const feedStatus = document.getElementById('feed-status');
+      if (btnRefresh) {
+        btnRefresh.classList.add('loading');
+      }
+      try {
+        await Promise.all([loadStatus(), loadNews()]);
+        if (feedStatus) {
+          const now = new Date().toLocaleTimeString();
+          feedStatus.innerText = `Updated at ${now}`;
+        }
+      } finally {
+        if (btnRefresh) {
+          btnRefresh.classList.remove('loading');
+        }
+      }
     }
 
     loadAllData();
