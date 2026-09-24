@@ -737,35 +737,57 @@ LIMIT 10;</textarea>
 
         <!-- Filter & Grouping Controls -->
         <div class="filter-bar">
-          <div class="filter-pills-group">
-            <span style="font-size: 0.75rem; color: var(--text-muted); font-weight: 600; margin-right: 0.25rem; white-space: nowrap;">FILTER:</span>
-            <div class="filter-pill active" data-filter="ALL" onclick="setFilter('ALL')">
-              <span>All</span> <span class="filter-count" id="count-all">0</span>
+          <div style="display: flex; flex-direction: column; gap: 0.6rem; width: 100%;">
+            <!-- Row 1: Time Range Filter -->
+            <div class="filter-pills-group">
+              <span style="font-size: 0.75rem; color: var(--text-muted); font-weight: 600; margin-right: 0.25rem; white-space: nowrap;">PERIOD:</span>
+              <div class="filter-pill active" data-time-filter="TODAY" onclick="setTimeFilter('TODAY')">
+                <span>📅 Today only</span> <span class="filter-count" id="count-time-today">0</span>
+              </div>
+              <div class="filter-pill" data-time-filter="WEEK" onclick="setTimeFilter('WEEK')">
+                <span>🗓️ This week</span> <span class="filter-count" id="count-time-week">0</span>
+              </div>
+              <div class="filter-pill" data-time-filter="MONTH" onclick="setTimeFilter('MONTH')">
+                <span>📆 This Month</span> <span class="filter-count" id="count-time-month">0</span>
+              </div>
+              <div class="filter-pill" data-time-filter="ALL" onclick="setTimeFilter('ALL')">
+                <span>🌐 No filter</span> <span class="filter-count" id="count-time-all">0</span>
+              </div>
             </div>
-            <div class="filter-pill" data-filter="ALERT" onclick="setFilter('ALERT')">
-              <span>🔥 Alert</span> <span class="filter-count" id="count-alert">0</span>
-            </div>
-            <div class="filter-pill" data-filter="UP" onclick="setFilter('UP')">
-              <span>🟢 UP</span> <span class="filter-count" id="count-up">0</span>
-            </div>
-            <div class="filter-pill" data-filter="DOWN" onclick="setFilter('DOWN')">
-              <span>🔴 DOWN</span> <span class="filter-count" id="count-down">0</span>
-            </div>
-            <div class="filter-pill" data-filter="FLAT" onclick="setFilter('FLAT')">
-              <span>⚪ FLAT</span> <span class="filter-count" id="count-flat">0</span>
-            </div>
-          </div>
 
-          <div class="filter-controls-group">
-            <label style="font-size: 0.75rem; color: var(--text-muted); display: flex; align-items: center; gap: 0.35rem; cursor: pointer; white-space: nowrap;">
-              <input type="checkbox" id="chk-group-flag" onchange="toggleGrouping()" />
-              <span>Group by Flag</span>
-            </label>
-            <select id="sel-sort" onchange="changeSorting()" style="padding: 0.3rem 0.5rem; font-size: 0.75rem; background: var(--input-bg); color: var(--text-main); border: 1px solid var(--card-border); border-radius: 6px;">
-              <option value="time-desc">Newest First</option>
-              <option value="time-asc">Oldest First</option>
-              <option value="flag">Sort by Flag (UP > ALERT > DOWN > FLAT)</option>
-            </select>
+            <!-- Row 2: Sentiment / Alert & Sorting Controls -->
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
+              <div class="filter-pills-group">
+                <span style="font-size: 0.75rem; color: var(--text-muted); font-weight: 600; margin-right: 0.25rem; white-space: nowrap;">SENTIMENT:</span>
+                <div class="filter-pill active" data-filter="ALL" onclick="setFilter('ALL')">
+                  <span>All</span> <span class="filter-count" id="count-all">0</span>
+                </div>
+                <div class="filter-pill" data-filter="ALERT" onclick="setFilter('ALERT')">
+                  <span>🔥 Alert</span> <span class="filter-count" id="count-alert">0</span>
+                </div>
+                <div class="filter-pill" data-filter="UP" onclick="setFilter('UP')">
+                  <span>🟢 UP</span> <span class="filter-count" id="count-up">0</span>
+                </div>
+                <div class="filter-pill" data-filter="DOWN" onclick="setFilter('DOWN')">
+                  <span>🔴 DOWN</span> <span class="filter-count" id="count-down">0</span>
+                </div>
+                <div class="filter-pill" data-filter="FLAT" onclick="setFilter('FLAT')">
+                  <span>⚪ FLAT</span> <span class="filter-count" id="count-flat">0</span>
+                </div>
+              </div>
+
+              <div class="filter-controls-group">
+                <label style="font-size: 0.75rem; color: var(--text-muted); display: flex; align-items: center; gap: 0.35rem; cursor: pointer; white-space: nowrap;">
+                  <input type="checkbox" id="chk-group-flag" onchange="toggleGrouping()" />
+                  <span>Group by Flag</span>
+                </label>
+                <select id="sel-sort" onchange="changeSorting()" style="padding: 0.3rem 0.5rem; font-size: 0.75rem; background: var(--input-bg); color: var(--text-main); border: 1px solid var(--card-border); border-radius: 6px;">
+                  <option value="time-desc">Newest First</option>
+                  <option value="time-asc">Oldest First</option>
+                  <option value="flag">Sort by Flag (UP > ALERT > DOWN > FLAT)</option>
+                </select>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -874,15 +896,25 @@ LIMIT 10;</textarea>
     // News state, filter & pagination configuration
     let rawNewsItems = [];
     let currentFilter = 'ALL';
+    let currentTimeFilter = 'TODAY'; // Default to Today only
     let isGrouped = false;
     let currentSort = 'time-desc';
     let currentPage = 1;
     let pageSize = 5; // default 5, can be 5, 10, 25, 50, 100, or 'all'
 
+    function setTimeFilter(filter) {
+      currentTimeFilter = filter;
+      currentPage = 1;
+      document.querySelectorAll('[data-time-filter]').forEach(pill => {
+        pill.classList.toggle('active', pill.getAttribute('data-time-filter') === filter);
+      });
+      renderNews();
+    }
+
     function setFilter(filter) {
       currentFilter = filter;
       currentPage = 1; // Reset to page 1 on filter change
-      document.querySelectorAll('.filter-pill').forEach(pill => {
+      document.querySelectorAll('[data-filter]').forEach(pill => {
         pill.classList.toggle('active', pill.getAttribute('data-filter') === filter);
       });
       renderNews();
@@ -949,15 +981,63 @@ LIMIT 10;</textarea>
       if (btnNext) btnNext.disabled = currentPage >= totalPages;
     }
 
+    // Helper to test if item matches selected time period
+    function matchesTimePeriod(item, period) {
+      if (!period || period === 'ALL') return true;
+      const now = new Date();
+      // Use date_hkt if available (format: YYYY-MM-DD), fallback to item.createdAt
+      const itemDateStr = item.dateHkt || item.date_hkt;
+      const itemDate = itemDateStr ? new Date(itemDateStr + 'T00:00:00+08:00') : new Date(item.createdAt);
+
+      if (period === 'TODAY') {
+        const todayHkt = new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Hong_Kong' });
+        return itemDateStr ? itemDateStr === todayHkt : itemDate.toDateString() === now.toDateString();
+      }
+
+      if (period === 'WEEK') {
+        // News within past 7 days (or current calendar week)
+        const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+        return itemDate >= sevenDaysAgo;
+      }
+
+      if (period === 'MONTH') {
+        // News within past 30 days
+        const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+        return itemDate >= thirtyDaysAgo;
+      }
+
+      return true;
+    }
+
     function updateCounts(items) {
       let up = 0, down = 0, flat = 0, alert = 0;
+      let timeToday = 0, timeWeek = 0, timeMonth = 0;
+
       items.forEach(item => {
-        if (item.isAlert || item.importance >= 2) alert++;
-        if (item.direction === 'UP') up++;
-        else if (item.direction === 'DOWN') down++;
-        else flat++;
+        // Sentiment counts (within current time period for consistency)
+        if (matchesTimePeriod(item, currentTimeFilter)) {
+          if (item.isAlert || item.importance >= 2) alert++;
+          if (item.direction === 'UP') up++;
+          else if (item.direction === 'DOWN') down++;
+          else flat++;
+        }
+
+        // Time period counts
+        if (matchesTimePeriod(item, 'TODAY')) timeToday++;
+        if (matchesTimePeriod(item, 'WEEK')) timeWeek++;
+        if (matchesTimePeriod(item, 'MONTH')) timeMonth++;
       });
-      document.getElementById('count-all').innerText = items.length;
+
+      const countTodayElem = document.getElementById('count-time-today');
+      if (countTodayElem) countTodayElem.innerText = timeToday;
+      const countWeekElem = document.getElementById('count-time-week');
+      if (countWeekElem) countWeekElem.innerText = timeWeek;
+      const countMonthElem = document.getElementById('count-time-month');
+      if (countMonthElem) countMonthElem.innerText = timeMonth;
+      const countAllElem = document.getElementById('count-time-all');
+      if (countAllElem) countAllElem.innerText = items.length;
+
+      document.getElementById('count-all').innerText = items.filter(i => matchesTimePeriod(i, currentTimeFilter)).length;
       document.getElementById('count-alert').innerText = alert;
       document.getElementById('count-up').innerText = up;
       document.getElementById('count-down').innerText = down;
@@ -1027,8 +1107,12 @@ LIMIT 10;</textarea>
         return;
       }
 
-      // Filter items
+      // Filter items by both Time Period and Sentiment
       let filtered = rawNewsItems.filter(item => {
+        // 1. Time period filter
+        if (!matchesTimePeriod(item, currentTimeFilter)) return false;
+
+        // 2. Sentiment / Alert filter
         const isAlert = item.isAlert || item.importance >= 2;
         if (currentFilter === 'ALL') return true;
         if (currentFilter === 'ALERT') return isAlert;
@@ -1038,8 +1122,12 @@ LIMIT 10;</textarea>
         return true;
       });
 
+      // Update sentiment count badges according to current time filter
+      updateCounts(rawNewsItems);
+
       if (filtered.length === 0) {
-        container.innerHTML = `<div style="text-align: center; color: var(--text-muted); padding: 3rem;">No news matching "${currentFilter}" filter.</div>`;
+        const timeName = currentTimeFilter === 'TODAY' ? 'Today' : currentTimeFilter === 'WEEK' ? 'This week' : currentTimeFilter === 'MONTH' ? 'This Month' : 'All';
+        container.innerHTML = `<div style="text-align: center; color: var(--text-muted); padding: 3rem;">No news matching period "${timeName}" with sentiment "${currentFilter}".</div>`;
         updatePaginationUi(0);
         return;
       }

@@ -1,4 +1,4 @@
-# MCP Server & Dynamic SQL Specification
+﻿# MCP Server & Dynamic SQL Specification
 
 Mini-News exposes Model Context Protocol (MCP) tools for LLMs to safely query financial news.
 
@@ -54,3 +54,31 @@ To protect the PostgreSQL database from unintended mutations or malicious inject
 2. **Keyword Blocklist**: Queries containing `INSERT`, `UPDATE`, `DELETE`, `DROP`, `ALTER`, `TRUNCATE`, `CREATE`, `GRANT`, `REVOKE`, `EXECUTE`, or `PG_SLEEP` are immediately rejected.
 3. **Multi-Statement Defense**: Semicolons separating multiple statements are disallowed.
 4. **Enforced Limit**: Any query without a `LIMIT` clause automatically has `LIMIT 50` appended. If a user/agent specifies a limit `> 50`, it is automatically clamped to `50`.
+
+
+---
+
+## Integration with MiniBot & Client Triggers
+
+### Manual vs Automatic Startup
+By default, `mini-news` should **NOT** be automatically launched when starting MiniBot.
+
+- **MiniBot Config Location**: `c:/ai/loop-engg/minibot.config.json`
+- **Configuration Directive**:
+```json
+"mcpServers": {
+  "mini-news": {
+    "type": "stdio",
+    "command": "node",
+    "args": [
+      "c:/ai/mini-news/dist/index.js",
+      "--mcp-only"
+    ],
+    "strictSSL": false,
+    "enabled": false
+  }
+}
+```
+- **Behavior Note**:
+  - Setting `"enabled": false` ensures MiniBot will not spawn a background Node process for mini-news or connect to PostgreSQL port 5232 during MiniBot startup.
+  - To enable mini-news tools in MiniBot, toggle `enabled: true` manually in `minibot.config.json` or via MiniBot's UI Settings when needed.
