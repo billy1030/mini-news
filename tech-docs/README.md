@@ -24,3 +24,5 @@ Mini-News is a production-grade 7x24 real-time financial flash news ingestion en
    - Architectural comparison table, multi-user/multi-session SSE transport, continuous micro-batching, and reliability roadmap.
 8. [Redis & In-Memory Caching Architecture](file:///c:/ai/mini-news/tech-docs/redis-caching.md)
    - Multi-user hot caching (alerts & semantic queries), real-time Pub/Sub broadcasting, distributed leader election lock, and rate limiting.
+9. [MCP Audit Logging & Observability](file:///c:/ai/mini-news/tech-docs/audit-logging.md)
+   - 15-minute rolling window, cross-process stdio/web sync, data source tracking (`CACHE`/`DB`/`VECTOR`/`SCHEMA`), per-tool color palettes, and cache hit rate metrics.

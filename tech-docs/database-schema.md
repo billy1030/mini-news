@@ -50,6 +50,31 @@ ON flash_news USING hnsw (embedding vector_cosine_ops);
 
 ---
 
+## Table: `mcp_audit_logs`
+
+Stores rolling MCP tool call interactions across all processes (`stdio`, `sse`, `web`) to support cross-process audit visibility.
+
+| Column Name | PostgreSQL Type | Drizzle Type | Description |
+| :--- | :--- | :--- | :--- |
+| `id` | `VARCHAR(64)` | `varchar(64)` | **Primary Key**. 8-character unique hex identifier. |
+| `created_at` | `TIMESTAMPTZ` | `timestamp({ withTimezone: true })` | UTC creation timestamp, default `NOW()`. |
+| `tool` | `VARCHAR(128)` | `varchar(128)` | Name of the executed tool. |
+| `args` | `JSONB` | `jsonb` | Invocation input arguments. |
+| `duration_ms` | `INTEGER` | `integer` | Execution time in milliseconds. |
+| `is_error` | `BOOLEAN` | `boolean` | Flag indicating execution failure (`true`/`false`). |
+| `error_detail` | `TEXT` | `text` | Error details and message if failed. |
+| `result_summary` | `TEXT` | `text` | Truncated result output (up to 1,000 chars). |
+| `source` | `VARCHAR(32)` | `varchar(32)` | Invocator source: `'stdio'`, `'sse'`, or `'web'`. |
+| `data_source` | `VARCHAR(32)` | `varchar(32)` | Data source: `'CACHE'`, `'DB'`, `'VECTOR'`, `'SCHEMA'`. |
+
+```sql
+CREATE INDEX idx_mcp_audit_created_at ON mcp_audit_logs USING btree (created_at);
+CREATE INDEX idx_mcp_audit_tool ON mcp_audit_logs USING btree (tool);
+CREATE INDEX idx_mcp_audit_source ON mcp_audit_logs USING btree (source);
+```
+
+---
+
 ## Semantic Vector Query Pattern
 
 Mini-News uses the cosine distance operator (`<=>`) for semantic retrieval:
