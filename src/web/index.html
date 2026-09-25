@@ -106,41 +106,61 @@
     }
 
     .btn {
-      padding: 0.5rem 1rem;
-      border-radius: 8px;
+      padding: 0.45rem 0.95rem;
+      border-radius: 10px;
       font-weight: 500;
-      font-size: 0.875rem;
+      font-size: 0.8125rem;
       cursor: pointer;
-      border: 1px solid transparent;
-      transition: all 0.2s ease;
+      border: 1px solid rgba(226, 232, 240, 0.8);
+      background: #f1f5f9;
+      color: #475569;
+      transition: all 0.15s ease-in-out;
       display: inline-flex;
       align-items: center;
-      gap: 0.5rem;
+      gap: 0.45rem;
+      outline: none;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+    }
+    .btn:hover {
+      background: #e2e8f0;
+      color: #1e293b;
+      border-color: #cbd5e1;
+      transform: translateY(-1px);
+    }
+    .btn:active {
+      transform: translateY(0);
+      background: #cbd5e1;
+    }
+
+    [data-theme="dark"] .btn {
+      background: rgba(30, 41, 59, 0.85);
+      border-color: rgba(51, 65, 85, 0.8);
+      color: #94a3b8;
+      box-shadow: none;
+    }
+    [data-theme="dark"] .btn:hover {
+      background: rgba(51, 65, 85, 0.95);
+      border-color: rgba(71, 85, 105, 1);
+      color: #f8fafc;
     }
 
     .btn-primary {
       background: var(--accent);
       color: #fff;
       border: 1px solid transparent;
-      box-shadow: var(--shadow-sm);
+      box-shadow: 0 2px 6px var(--accent-glow);
     }
     .btn-primary:hover { 
       background: #1d4ed8; 
+      color: #fff;
     }
 
     .btn-outline {
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
-      color: var(--text-main);
-      box-shadow: var(--shadow-sm);
-    }
-    .btn-outline:hover { 
-      background: var(--code-bg); 
-      border-color: var(--card-border);
+      /* Uses base .btn SaaS pill styling */
     }
 
     .btn-refresh {
-      min-width: 105px;
+      min-width: 95px;
       justify-content: center;
     }
 
@@ -494,10 +514,10 @@
       background: var(--card-bg);
       border: 1px solid var(--card-border);
       border-radius: 20px;
-      width: 90vw;
-      max-width: 1100px;
-      height: 85vh;
-      max-height: 850px;
+      width: 95vw;
+      max-width: 1400px;
+      height: 90vh;
+      max-height: 920px;
       display: flex;
       flex-direction: column;
       box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4);
@@ -542,6 +562,49 @@
       background: var(--code-bg);
       color: var(--text-main);
     }
+
+    /* Soft Rounded Pill Icon Button (SaaS/Dashboard Style) */
+    .btn-pill-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      border-radius: 9px;
+      border: 1px solid rgba(226, 232, 240, 0.8);
+      background: #f1f5f9;
+      color: #64748b;
+      cursor: pointer;
+      transition: all 0.15s ease-in-out;
+      outline: none;
+      padding: 0;
+    }
+    .btn-pill-icon:hover {
+      background: #e2e8f0;
+      color: #1e293b;
+      border-color: #cbd5e1;
+      transform: translateY(-1px);
+    }
+    .btn-pill-icon:active {
+      transform: translateY(0);
+      background: #cbd5e1;
+    }
+    [data-theme="dark"] .btn-pill-icon {
+      background: rgba(30, 41, 59, 0.85);
+      border-color: rgba(51, 65, 85, 0.8);
+      color: #94a3b8;
+    }
+    [data-theme="dark"] .btn-pill-icon:hover {
+      background: rgba(51, 65, 85, 0.95);
+      border-color: rgba(71, 85, 105, 1);
+      color: #f8fafc;
+    }
+    .btn-pill-icon.success {
+      background: rgba(16, 185, 129, 0.15) !important;
+      border-color: rgba(16, 185, 129, 0.4) !important;
+      color: #10b981 !important;
+    }
+
 
     .modal-body {
       padding: 1.5rem 1.75rem;
@@ -595,14 +658,44 @@
       </div>
     </div>
     <div class="header-actions">
+      <button class="btn btn-outline" onclick="openAuditModal()" style="border-color: rgba(234, 179, 8, 0.4); color: #d97706;">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+          <polyline points="14 2 14 8 20 8"></polyline>
+          <line x1="16" y1="13" x2="8" y2="13"></line>
+          <line x1="16" y1="17" x2="8" y2="17"></line>
+          <polyline points="10 9 9 9 8 9"></polyline>
+        </svg>
+        <span>15m Audit Log</span>
+      </button>
       <button class="btn btn-outline" onclick="openPlaygroundModal()">
-        <span>⚡</span>
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+        </svg>
         <span>Playground</span>
       </button>
-      <button class="btn btn-outline" id="btn-theme-toggle" onclick="toggleTheme()">🌙 Dark</button>
-      <button class="btn btn-outline" id="btn-poll-now">⚡ Fetch Live Now</button>
+      <button class="btn btn-outline" id="btn-theme-toggle" onclick="toggleTheme()">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+        </svg>
+        <span id="theme-btn-text">Dark</span>
+      </button>
+      <button class="btn btn-outline" id="btn-poll-now">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+          <polyline points="7 10 12 15 17 10"></polyline>
+          <line x1="12" y1="15" x2="12" y2="3"></line>
+        </svg>
+        <span>Fetch Live Now</span>
+      </button>
       <button class="btn btn-outline btn-refresh" id="btn-refresh" onclick="loadAllData()">
-        <span class="icon">🔄</span>
+        <span class="icon">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="23 4 23 10 17 10"></polyline>
+            <polyline points="1 20 1 14 7 14"></polyline>
+            <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+          </svg>
+        </span>
         <span class="btn-text">Refresh</span>
       </button>
     </div>
@@ -628,6 +721,21 @@
           <div class="stat-item">
             <div class="stat-label">Port</div>
             <div class="stat-val" id="stat-port">5200</div>
+          </div>
+        </div>
+
+        <div class="stat-grid-3" style="margin-top: 0.5rem; margin-bottom: 0.75rem;">
+          <div class="stat-item">
+            <div class="stat-label">MCP Sessions</div>
+            <div class="stat-val" id="stat-mcp-sessions" style="color: var(--success);">0</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-label">Cache Hit Rate</div>
+            <div class="stat-val" id="stat-cache-hitrate" style="color: #10b981;">0%</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-label">L1 Cache Keys</div>
+            <div class="stat-val" id="stat-cache-keys" style="color: #eab308;">0</div>
           </div>
         </div>
 
@@ -819,6 +927,45 @@ LIMIT 10;</textarea>
     </section>
   </main>
 
+  <!-- Fullscreen Audit Log Modal Dialog -->
+  <div class="modal-overlay" id="audit-modal" onclick="if(event.target===this) closeAuditModal()">
+    <div class="modal-content" style="width: 95vw; max-width: 1400px; height: 90vh; max-height: 920px;">
+      <div class="modal-header">
+        <div class="modal-title">
+          <span>📋 MCP 15-Minute In-Memory Audit Log</span>
+          <span style="font-size: 0.75rem; color: #eab308; background: rgba(234,179,8,0.1); padding: 3px 8px; border-radius: 9999px;">ROLLING TTL (15m)</span>
+        </div>
+        <div style="display: flex; gap: 0.5rem; align-items: center;">
+          <span style="font-size: 0.7rem; color: var(--text-muted); font-family: var(--font-mono);" id="audit-last-updated"></span>
+          <button class="btn btn-outline" style="font-size: 0.75rem; padding: 4px 12px; display: inline-flex; align-items: center; gap: 6px; border-radius: 9px; background: var(--card-bg);" id="btn-copy-all-audit" onclick="copyAllAuditLogs()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+            </svg>
+            <span>Copy All</span>
+          </button>
+          <button class="btn btn-outline" style="font-size: 0.75rem; padding: 4px 12px; border-radius: 9px;" onclick="fetchAuditLogs()">🔄 Refresh</button>
+          <button class="modal-close" onclick="closeAuditModal()" title="Close (Esc)">&times;</button>
+        </div>
+      </div>
+      <div class="modal-body" style="padding: 1.25rem 2rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; flex-wrap: wrap; gap: 0.4rem;">
+          <span style="font-size: 0.8rem; color: var(--text-muted);" id="audit-stats-summary">Loading audit logs...</span>
+        </div>
+        <div style="display: flex; gap: 0.75rem; margin-bottom: 0.75rem; flex-wrap: wrap; align-items: center; padding: 0.6rem 1rem; background: var(--code-bg); border-radius: 8px; border: 1px solid var(--card-border);">
+          <span style="font-size: 0.7rem; color: var(--text-muted); font-weight: 600;">Transport:</span>
+          <span style="background: #8b5cf622; color: #8b5cf6; font-size: 0.7rem; font-weight: 700; padding: 3px 9px; border-radius: 4px;">■ SSE · Remote multi-user</span>
+          <span style="background: #2563eb22; color: #2563eb; font-size: 0.7rem; font-weight: 700; padding: 3px 9px; border-radius: 4px;">■ STDIO · Local IDE</span>
+          <span style="background: #0891b222; color: #0891b2; font-size: 0.7rem; font-weight: 700; padding: 3px 9px; border-radius: 4px;">■ WEB · Dashboard</span>
+          <span style="margin-left: auto; font-size: 0.7rem; color: var(--text-muted);">Border: <span style="color: var(--success); font-weight: 600;">● OK</span> &nbsp;<span style="color: #eab308; font-weight: 600;">● Slow (&gt;1s)</span> &nbsp;<span style="color: var(--danger); font-weight: 600;">● Error</span></span>
+        </div>
+        <div id="audit-logs-container" style="overflow-y: auto; flex: 1; min-height: 400px; display: flex; flex-direction: column; gap: 0.65rem;">
+          <!-- Rendered audit logs appear here -->
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script>
     // Theme Toggle Functionality
     function initTheme() {
@@ -838,7 +985,27 @@ LIMIT 10;</textarea>
     function updateThemeButton(theme) {
       const btn = document.getElementById('btn-theme-toggle');
       if (btn) {
-        btn.innerText = theme === 'light' ? '🌙 Dark' : '☀️ Light';
+        if (theme === 'light') {
+          btn.innerHTML = `
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+            </svg>
+            <span>Dark</span>`;
+        } else {
+          btn.innerHTML = `
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="5"></circle>
+              <line x1="12" y1="1" x2="12" y2="3"></line>
+              <line x1="12" y1="21" x2="12" y2="23"></line>
+              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+              <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+              <line x1="1" y1="12" x2="3" y2="12"></line>
+              <line x1="21" y1="12" x2="23" y2="12"></line>
+              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+              <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+            </svg>
+            <span>Light</span>`;
+        }
       }
     }
 
@@ -860,6 +1027,22 @@ LIMIT 10;</textarea>
           intervalSelect.value = String(data.pollInterval);
         }
         document.getElementById('cfg-source').value = data.sourceUrl || '';
+
+        // Fetch MCP Multi-Session & Micro-batcher Metrics
+        try {
+          const mcpRes = await fetch('/api/mcp/metrics');
+          if (mcpRes.ok) {
+            const mcpData = await mcpRes.json();
+            const sessionElem = document.getElementById('stat-mcp-sessions');
+            if (sessionElem) sessionElem.innerText = mcpData.sessions?.activeSessions ?? 0;
+            const queueElem = document.getElementById('stat-batcher-queue');
+            if (queueElem) queueElem.innerText = mcpData.batcher?.queueLength ?? 0;
+            const hitRateElem = document.getElementById('stat-cache-hitrate');
+            if (hitRateElem) hitRateElem.innerText = mcpData.cache?.hitRate ?? '0%';
+            const cacheElem = document.getElementById('stat-cache-keys');
+            if (cacheElem) cacheElem.innerText = mcpData.cache?.size ?? 0;
+          }
+        } catch (_) {}
       } catch (err) {
         console.error('Failed to load status:', err);
       }
@@ -1192,9 +1375,12 @@ LIMIT 10;</textarea>
       }
     }
 
-    // Keyboard shortcut Escape to close modal
+    // Keyboard shortcut Escape to close any open modal
     window.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') closePlaygroundModal();
+      if (e.key === 'Escape') {
+        closePlaygroundModal();
+        closeAuditModal();
+      }
     });
 
     const SQL_TEMPLATES = {
@@ -1415,6 +1601,220 @@ LIMIT 5;`
       if (feedStatus && feedStatus.innerText.includes('Auto-refresh')) {
         feedStatus.innerText = `Auto-refresh every ${seconds}s`;
       }
+    }
+
+    // --- MCP 5-Minute In-Memory Audit Modal ---
+    let auditAutoRefreshTimer = null;
+
+    function openAuditModal() {
+      const modal = document.getElementById('audit-modal');
+      if (modal) {
+        modal.classList.add('open');
+        fetchAuditLogs();
+        // Auto-refresh audit logs every 5 seconds while modal is open
+        if (auditAutoRefreshTimer) clearInterval(auditAutoRefreshTimer);
+        auditAutoRefreshTimer = setInterval(fetchAuditLogs, 5000);
+      }
+    }
+
+    function closeAuditModal() {
+      const modal = document.getElementById('audit-modal');
+      if (modal) {
+        modal.classList.remove('open');
+      }
+      if (auditAutoRefreshTimer) {
+        clearInterval(auditAutoRefreshTimer);
+        auditAutoRefreshTimer = null;
+      }
+    }
+
+    async function fetchAuditLogs() {
+      const container = document.getElementById('audit-logs-container');
+      const summaryElem = document.getElementById('audit-stats-summary');
+      const lastUpdatedElem = document.getElementById('audit-last-updated');
+      if (!container) return;
+
+      try {
+        const res = await fetch('/api/mcp/audit-logs?limit=100');
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = await res.json();
+        const logs = data.logs || [];
+        const stats = data.stats || {};
+
+        if (summaryElem) {
+          const hitRateStr = stats.hitRate || '0.0%';
+          const hitsCount = stats.hits ?? 0;
+          const missesCount = stats.misses ?? 0;
+          summaryElem.innerHTML = `<strong>${logs.length}</strong> calls in 15 min &nbsp;|&nbsp; Cache Hit Rate: <strong style="color: #10b981;">${hitRateStr}</strong> (${hitsCount} hits / ${missesCount} misses) &nbsp;|&nbsp; Cache keys: <strong>${stats.size ?? '--'}</strong>`;
+        }
+        if (lastUpdatedElem) {
+          lastUpdatedElem.innerText = `Updated: ${new Date().toLocaleTimeString()}`;
+        }
+
+        if (logs.length === 0) {
+          container.innerHTML = `
+            <div style="text-align: center; color: var(--text-muted); padding: 3rem; display: flex; flex-direction: column; align-items: center; gap: 1rem;">
+              <div style="font-size: 2.5rem;">📭</div>
+              <div style="font-size: 0.95rem;">No MCP tool calls recorded in the last 15 minutes.</div>
+              <div style="font-size: 0.8rem; max-width: 400px;">Use an MCP client (Claude, Cursor, etc.) connected via SSE at <code style="background: var(--code-bg); padding: 2px 6px; border-radius: 4px;">/sse</code> to start seeing activity here.</div>
+            </div>`;
+          return;
+        }
+
+        // Group source badges
+        const sourceBadge = (src) => {
+          const colors = { sse: '#8b5cf6', stdio: '#2563eb', web: '#0891b2' };
+          const c = colors[src] || '#64748b';
+          return `<span style="background: ${c}22; color: ${c}; font-size: 0.65rem; font-weight: 700; padding: 1px 5px; border-radius: 4px; text-transform: uppercase;">${src || 'mcp'}</span>`;
+        };
+
+        // Distinct colors and icons per MCP tool
+        const TOOL_COLOR_MAP = {
+          'get_latest_financial_flash': { color: '#0284c7', bg: 'rgba(2, 132, 199, 0.12)', border: 'rgba(2, 132, 199, 0.35)', icon: '⚡' },
+          'get_latest_alerts':          { color: '#f59e0b', bg: 'rgba(245, 158, 11, 0.15)', border: 'rgba(245, 158, 11, 0.35)', icon: '🚨' },
+          'query_financial_news_sql':   { color: '#8b5cf6', bg: 'rgba(139, 92, 246, 0.15)', border: 'rgba(139, 92, 246, 0.35)', icon: '🔍' },
+          'search_news_semantic':       { color: '#ec4899', bg: 'rgba(236, 72, 153, 0.15)', border: 'rgba(236, 72, 153, 0.35)', icon: '🧠' },
+          'semantic_search_news':       { color: '#ec4899', bg: 'rgba(236, 72, 153, 0.15)', border: 'rgba(236, 72, 153, 0.35)', icon: '🧠' },
+          'search_news_hybrid':         { color: '#10b981', bg: 'rgba(16, 185, 129, 0.15)', border: 'rgba(16, 185, 129, 0.35)', icon: '🏷️' },
+          'search_flash_by_time_window':{ color: '#14b8a6', bg: 'rgba(20, 184, 166, 0.15)', border: 'rgba(20, 184, 166, 0.35)', icon: '⏱️' },
+          'describe_news_schema':       { color: '#64748b', bg: 'rgba(100, 116, 139, 0.15)', border: 'rgba(100, 116, 139, 0.35)', icon: '📄' },
+          'reindex_news_embeddings':    { color: '#e11d48', bg: 'rgba(225, 29, 72, 0.15)', border: 'rgba(225, 29, 72, 0.35)', icon: '🔄' },
+        };
+
+        const getToolStyle = (toolName) => {
+          if (TOOL_COLOR_MAP[toolName]) return TOOL_COLOR_MAP[toolName];
+          // Deterministic fallback color hash for any newly registered tools
+          let hash = 0;
+          for (let i = 0; i < toolName.length; i++) {
+            hash = toolName.charCodeAt(i) + ((hash << 5) - hash);
+          }
+          const hue = Math.abs(hash) % 360;
+          return {
+            color: `hsl(${hue}, 80%, 45%)`,
+            bg: `hsla(${hue}, 80%, 50%, 0.12)`,
+            border: `hsla(${hue}, 80%, 50%, 0.35)`,
+            icon: '🔧'
+          };
+        };
+
+        // Data source badge (CACHE vs DB vs VECTOR vs SCHEMA)
+        const dataSourceBadge = (ds) => {
+          const type = (ds || 'DB').toUpperCase();
+          if (type === 'CACHE') {
+            return `<span style="background: rgba(16,185,129,0.15); color: #10b981; border: 1px solid rgba(16,185,129,0.3); font-size: 0.65rem; font-weight: 700; padding: 1px 6px; border-radius: 4px; display: inline-flex; align-items: center; gap: 3px;">⚡ CACHE</span>`;
+          }
+          if (type === 'VECTOR') {
+            return `<span style="background: rgba(236,72,153,0.15); color: #ec4899; border: 1px solid rgba(236,72,153,0.3); font-size: 0.65rem; font-weight: 700; padding: 1px 6px; border-radius: 4px; display: inline-flex; align-items: center; gap: 3px;">🧠 VECTOR</span>`;
+          }
+          if (type === 'SCHEMA') {
+            return `<span style="background: rgba(100,116,139,0.15); color: #64748b; border: 1px solid rgba(100,116,139,0.3); font-size: 0.65rem; font-weight: 700; padding: 1px 6px; border-radius: 4px; display: inline-flex; align-items: center; gap: 3px;">📄 SCHEMA</span>`;
+          }
+          return `<span style="background: rgba(99,102,241,0.15); color: #6366f1; border: 1px solid rgba(99,102,241,0.3); font-size: 0.65rem; font-weight: 700; padding: 1px 6px; border-radius: 4px; display: inline-flex; align-items: center; gap: 3px;">💾 DB</span>`;
+        };
+
+        // Store current logs in memory for Copy All
+        window.__currentAuditLogs = logs;
+
+        container.innerHTML = logs.map((log, idx) => {
+          const isErr = log.isError;
+          const toolStyle = getToolStyle(log.tool);
+          const borderColor = isErr ? 'var(--danger)' : toolStyle.color;
+          const statusBadge = isErr 
+            ? `<span style="background: rgba(239,68,68,0.15); color: var(--danger); font-size: 0.7rem; font-weight: 700; padding: 2px 7px; border-radius: 4px;">✗ ERROR</span>`
+            : `<span style="background: rgba(16,185,129,0.15); color: var(--success); font-size: 0.7rem; font-weight: 700; padding: 2px 7px; border-radius: 4px;">✓ ${log.durationMs}ms</span>`;
+
+          const timeStr = new Date(log.timestamp).toLocaleTimeString('en-HK', { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' });
+          const argsStr = log.args ? JSON.stringify(log.args, null, 2) : '{}';
+          const resultStr = log.errorDetail || log.resultSummary || '(no output)';
+          const isLongArgs = argsStr.length > 120;
+          const argsId = `args-${idx}`;
+
+          return `
+            <div style="background: var(--card-bg); border: 1px solid var(--card-border); border-left: 3px solid ${borderColor}; border-radius: 10px; padding: 0.85rem; transition: all 0.2s;" id="audit-entry-${idx}">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; flex-wrap: wrap; gap: 0.4rem;">
+                <div style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
+                  <span style="font-size: 0.73rem; color: var(--text-muted); font-family: var(--font-mono); font-weight: 600; background: var(--code-bg); padding: 2px 7px; border-radius: 6px; border: 1px solid var(--card-border); white-space: nowrap;">
+                    🕐 ${timeStr} HKT
+                  </span>
+                  <span style="font-size: 0.7rem; font-family: var(--font-mono); font-weight: 700; color: var(--text-main); background: var(--code-bg); border: 1px solid var(--card-border); padding: 2px 7px; border-radius: 4px;">#${log.id}</span>
+                  <span style="font-family: var(--font-mono); font-size: 0.8rem; font-weight: 700; color: ${toolStyle.color}; background: ${toolStyle.bg}; border: 1px solid ${toolStyle.border}; padding: 2px 8px; border-radius: 6px; display: inline-flex; align-items: center; gap: 4px;">
+                    <span>${toolStyle.icon}</span>
+                    <span>${log.tool}</span>
+                  </span>
+                  ${statusBadge}
+                  ${dataSourceBadge(log.dataSource)}
+                  ${sourceBadge(log.source)}
+                </div>
+                <div style="display: flex; gap: 0.5rem; align-items: center;">
+                  <button class="btn-pill-icon" title="Copy this log entry" onclick="copySingleAuditLog(${idx}, this)">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                      <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+              <details style="cursor: pointer;">
+                <summary style="font-family: var(--font-mono); font-size: 0.73rem; color: var(--text-muted); margin-bottom: 0.35rem; list-style: none; display: flex; align-items: center; gap: 0.35rem;">
+                  <span style="font-size: 0.7rem;">▶</span>
+                  <strong style="color: var(--text-main);">Args</strong>
+                  <span style="color: var(--text-muted);">${isLongArgs ? argsStr.slice(0, 80) + '…' : argsStr}</span>
+                </summary>
+                <pre style="font-family: var(--font-mono); font-size: 0.72rem; color: var(--text-main); background: var(--code-bg); padding: 0.5rem; border-radius: 6px; margin-top: 0.35rem; overflow-x: auto; white-space: pre-wrap; word-break: break-word;">${argsStr.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</pre>
+              </details>
+              <div style="font-family: var(--font-mono); font-size: 0.75rem; color: ${isErr ? 'var(--danger)' : 'var(--text-muted)'}; white-space: pre-wrap; word-break: break-word; background: var(--code-bg); padding: 0.65rem 0.85rem; border-radius: 6px; margin-top: 0.4rem; max-height: 200px; overflow-y: auto;">${String(resultStr).replace(/</g, '&lt;').replace(/>/g, '&gt;').slice(0, 1000)}${resultStr.length > 1000 ? '\n… (truncated)' : ''}</div>
+            </div>
+          `;
+        }).join('');
+
+      } catch (err) {
+        if (summaryElem) summaryElem.innerHTML = '<span style="color: var(--danger);">⚠ Failed to load audit logs — is the server running?</span>';
+      }
+    }
+
+    const SVG_COPY_ICON = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>`;
+    const SVG_CHECK_ICON = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>`;
+
+    function copySingleAuditLog(idx, btn) {
+      if (!window.__currentAuditLogs || !window.__currentAuditLogs[idx]) return;
+      const log = window.__currentAuditLogs[idx];
+      const formatted = JSON.stringify(log, null, 2);
+
+      navigator.clipboard.writeText(formatted).then(() => {
+        btn.innerHTML = SVG_CHECK_ICON;
+        btn.classList.add('success');
+        setTimeout(() => {
+          btn.innerHTML = SVG_COPY_ICON;
+          btn.classList.remove('success');
+        }, 1500);
+      }).catch(err => {
+        alert('Could not copy to clipboard: ' + err.message);
+      });
+    }
+
+    function copyAllAuditLogs() {
+      const btn = document.getElementById('btn-copy-all-audit');
+      if (!window.__currentAuditLogs || window.__currentAuditLogs.length === 0) {
+        alert('No audit logs available to copy.');
+        return;
+      }
+      const formatted = JSON.stringify(window.__currentAuditLogs, null, 2);
+
+      navigator.clipboard.writeText(formatted).then(() => {
+        if (btn) {
+          const originalText = btn.innerHTML;
+          btn.innerHTML = `✓ Copied (${window.__currentAuditLogs.length})`;
+          btn.style.color = 'var(--success)';
+          btn.style.borderColor = 'var(--success)';
+          setTimeout(() => {
+            btn.innerHTML = originalText;
+            btn.style.color = '';
+            btn.style.borderColor = '';
+          }, 2000);
+        }
+      }).catch(err => {
+        alert('Could not copy to clipboard: ' + err.message);
+      });
     }
 
     // Initial load

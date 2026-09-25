@@ -20,3 +20,7 @@ Mini-News is a production-grade 7x24 real-time financial flash news ingestion en
    - Dynamic 15s–300s polling mechanics, atomic deduplication, and vector embedding pipeline.
 6. [Deployment Guide: Docker & Zeabur](file:///c:/ai/mini-news/tech-docs/deployment-zeabur.md)
    - Multi-stage Docker packaging, environment variables, and Zeabur one-click deployment.
+7. [MCP Current vs Next Release Comparison (v1.0 vs v2.0)](file:///c:/ai/mini-news/tech-docs/mcp-v1-vs-v2-comparison.md)
+   - Architectural comparison table, multi-user/multi-session SSE transport, continuous micro-batching, and reliability roadmap.
+8. [Redis & In-Memory Caching Architecture](file:///c:/ai/mini-news/tech-docs/redis-caching.md)
+   - Multi-user hot caching (alerts & semantic queries), real-time Pub/Sub broadcasting, distributed leader election lock, and rate limiting.

@@ -1,5 +1,4 @@
-import { sql } from "drizzle-orm";
-import { db } from "../db/index.js";
+import { pool } from "../db/index.js";
 
 /**
  * Validates that a SQL string is strictly a safe read-only SELECT query.
@@ -76,14 +75,25 @@ export function validateReadOnlySql(rawSql: string): { isValid: boolean; error?:
 }
 
 /**
- * Executes a verified read-only SQL query against the database
+ * Executes a verified read-only SQL query against the database with strict statement timeout.
  */
-export async function executeReadOnlySql(rawSql: string): Promise<Record<string, unknown>[]> {
+export async function executeReadOnlySql(rawSql: string, timeoutMs: number = 3000): Promise<Record<string, unknown>[]> {
   const validation = validateReadOnlySql(rawSql);
   if (!validation.isValid) {
     throw new Error(validation.error);
   }
 
-  const result = await db.execute(sql.raw(validation.sanitizedSql));
-  return (result.rows || []) as Record<string, unknown>[];
+  const client = await pool.connect();
+  try {
+    // Set statement timeout on this dedicated client connection
+    await client.query(`SET statement_timeout = ${Math.min(Math.max(timeoutMs, 500), 10000)};`);
+    const result = await client.query(validation.sanitizedSql);
+    return (result.rows || []) as Record<string, unknown>[];
+  } finally {
+    // Reset statement timeout before releasing back to pool
+    await client.query("RESET statement_timeout;").catch(() => {});
+    client.release();
+  }
 }
+
+

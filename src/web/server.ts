@@ -7,6 +7,9 @@ import { flashNews } from "../db/schema.js";
 import { pollOnce, setPollInterval } from "../poller/index.js";
 import { executeReadOnlySql } from "../mcp/sqlSafety.js";
 import { desc, count, eq } from "drizzle-orm";
+import { mcpSessionManager } from "../mcp/sessionManager.js";
+import { embeddingBatcher } from "../services/embeddingBatcher.js";
+import { cacheService } from "../services/cache.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -27,6 +30,50 @@ export function startWebServer(port: number = Number(process.env.PORT) || 5200) 
     }
 
     try {
+      // 0. Remote MCP SSE Endpoints (Multi-User & Multi-Session)
+      if (url.pathname === "/sse" && req.method === "GET") {
+        await mcpSessionManager.handleSseConnection(req, res);
+        return;
+      }
+
+      if (url.pathname === "/message" && req.method === "POST") {
+        const sessionId = url.searchParams.get("sessionId");
+        if (!sessionId) {
+          res.writeHead(400, { "Content-Type": "application/json" });
+          res.end(JSON.stringify({ error: "Missing sessionId query parameter" }));
+          return;
+        }
+        await mcpSessionManager.handleIncomingMessage(req, res, sessionId);
+        return;
+      }
+
+      if (url.pathname === "/api/mcp/metrics" && req.method === "GET") {
+        res.writeHead(200, { "Content-Type": "application/json" });
+        res.end(JSON.stringify({
+          sessions: mcpSessionManager.getMetrics(),
+          batcher: embeddingBatcher.getStatus(),
+          cache: cacheService.getStats(),
+        }));
+        return;
+      }
+
+      // 0.1 API: 15-minute Rolling MCP Request/Response Audit Logs
+      if (url.pathname === "/api/mcp/audit-logs" && req.method === "GET") {
+        const limit = Math.min(Number(url.searchParams.get("limit")) || 50, 100);
+        const logs = await cacheService.getAuditLogsAsync(limit);
+        const stats = cacheService.getStats();
+        stats.auditLogsCount15m = logs.length;
+        stats.auditLogsCount5m = logs.length;
+
+        res.writeHead(200, { "Content-Type": "application/json" });
+        res.end(JSON.stringify({
+          logs,
+          count: logs.length,
+          stats,
+        }));
+        return;
+      }
+
       // 1. API: Get System Status & Config
       if (url.pathname === "/api/status" && req.method === "GET") {
         const todayHkt = new Date().toLocaleDateString("en-CA", { timeZone: "Asia/Hong_Kong" });
@@ -78,11 +125,21 @@ export function startWebServer(port: number = Number(process.env.PORT) || 5200) 
       // 2. API: Get Latest Live News
       if (url.pathname === "/api/news" && req.method === "GET") {
         const limit = Math.min(Number(url.searchParams.get("limit")) || 100, 300);
+        const cacheKey = `flash:latest:${limit}`;
+        const cached = cacheService.get<any[]>(cacheKey);
+        if (cached) {
+          res.writeHead(200, { "Content-Type": "application/json" });
+          res.end(JSON.stringify(cached));
+          return;
+        }
+
         const news = await db
           .select()
           .from(flashNews)
           .orderBy(desc(flashNews.createdAt))
           .limit(limit);
+
+        cacheService.set(cacheKey, news, 5); // 5s hot cache
 
         res.writeHead(200, { "Content-Type": "application/json" });
         res.end(JSON.stringify(news));
@@ -100,19 +157,46 @@ export function startWebServer(port: number = Number(process.env.PORT) || 5200) 
       // 4. API: Run Safe SQL Query Playground
       if (url.pathname === "/api/sql" && req.method === "POST") {
         let body = "";
+        const startTime = performance.now();
         req.on("data", (chunk) => (body += chunk));
         req.on("end", async () => {
+          let sqlQuery = "";
           try {
-            const { sql } = JSON.parse(body || "{}");
-            if (!sql) {
+            const parsed = JSON.parse(body || "{}");
+            sqlQuery = parsed.sql;
+            if (!sqlQuery) {
               res.writeHead(400, { "Content-Type": "application/json" });
               res.end(JSON.stringify({ error: "Missing SQL query" }));
               return;
             }
-            const rows = await executeReadOnlySql(sql);
+            const rows = await executeReadOnlySql(sqlQuery);
+            const durationMs = Math.round(performance.now() - startTime);
+
+            cacheService.logMcpInteraction({
+              tool: "query_financial_news_sql",
+              args: { sql: sqlQuery },
+              durationMs,
+              isError: false,
+              resultSummary: `Executed query, returned ${rows.length} row(s)`,
+              source: "web",
+              dataSource: "DB",
+            });
+
             res.writeHead(200, { "Content-Type": "application/json" });
             res.end(JSON.stringify({ rows, count: rows.length }));
           } catch (err: any) {
+            const durationMs = Math.round(performance.now() - startTime);
+            cacheService.logMcpInteraction({
+              tool: "query_financial_news_sql",
+              args: { sql: sqlQuery },
+              durationMs,
+              isError: true,
+              errorDetail: err.message || String(err),
+              resultSummary: `SQL failed: ${err.message || String(err)}`,
+              source: "web",
+              dataSource: "DB",
+            });
+
             res.writeHead(400, { "Content-Type": "application/json" });
             res.end(JSON.stringify({ error: err.message || String(err) }));
           }
@@ -123,17 +207,19 @@ export function startWebServer(port: number = Number(process.env.PORT) || 5200) 
       // 5. API: Semantic Vector Search
       if (url.pathname === "/api/semantic-search" && req.method === "POST") {
         let body = "";
+        const startTime = performance.now();
         req.on("data", (chunk) => (body += chunk));
         req.on("end", async () => {
+          let searchInput = "";
           try {
             const { query, limit = 10 } = JSON.parse(body || "{}");
+            searchInput = query;
             if (!query) {
               res.writeHead(400, { "Content-Type": "application/json" });
               res.end(JSON.stringify({ error: "Missing query" }));
               return;
             }
-            const { getMinimaxEmbeddings } = await import("../services/embedding.js");
-            const [queryVec] = await getMinimaxEmbeddings([String(query)], "query");
+            const queryVec = await embeddingBatcher.embed(String(query), "query");
             const vectorStr = `[${queryVec.join(",")}]`;
 
             const results = await db.execute(
@@ -153,9 +239,32 @@ export function startWebServer(port: number = Number(process.env.PORT) || 5200) 
                LIMIT ${Math.min(Number(limit) || 10, 50)};`
             );
 
+            const durationMs = Math.round(performance.now() - startTime);
+            cacheService.logMcpInteraction({
+              tool: "semantic_search_news",
+              args: { query, limit },
+              durationMs,
+              isError: false,
+              resultSummary: `Found ${results.rows.length} vector matches`,
+              source: "web",
+              dataSource: "VECTOR",
+            });
+
             res.writeHead(200, { "Content-Type": "application/json" });
             res.end(JSON.stringify(results.rows));
           } catch (err: any) {
+            const durationMs = Math.round(performance.now() - startTime);
+            cacheService.logMcpInteraction({
+              tool: "semantic_search_news",
+              args: { query: searchInput },
+              durationMs,
+              isError: true,
+              errorDetail: err.message || String(err),
+              resultSummary: `Semantic search failed: ${err.message || String(err)}`,
+              source: "web",
+              dataSource: "VECTOR",
+            });
+
             res.writeHead(500, { "Content-Type": "application/json" });
             res.end(JSON.stringify({ error: err.message || String(err) }));
           }

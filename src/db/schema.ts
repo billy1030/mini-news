@@ -67,3 +67,35 @@ export const flashNews = pgTable(
 
 export type FlashNews = typeof flashNews.$inferSelect;
 export type NewFlashNews = typeof flashNews.$inferInsert;
+
+/**
+ * mcp_audit_logs table:
+ * Stores rolling MCP tool call interactions across all processes (stdio, sse, web).
+ * Automatically pruned to keep only recent activity.
+ */
+export const mcpAuditLogs = pgTable(
+  "mcp_audit_logs",
+  {
+    id: varchar("id", { length: 64 }).primaryKey(),
+    createdAt: timestamp("created_at", { withTimezone: true, mode: "date" })
+      .notNull()
+      .defaultNow(),
+    tool: varchar("tool", { length: 128 }).notNull(),
+    args: jsonb("args").$type<Record<string, unknown>>(),
+    durationMs: integer("duration_ms").notNull().default(0),
+    isError: boolean("is_error").notNull().default(false),
+    errorDetail: text("error_detail"),
+    resultSummary: text("result_summary"),
+    source: varchar("source", { length: 32 }).notNull().default("stdio"),
+    dataSource: varchar("data_source", { length: 32 }).notNull().default("DB"),
+  },
+  (table) => [
+    index("idx_mcp_audit_created_at").on(table.createdAt),
+    index("idx_mcp_audit_tool").on(table.tool),
+    index("idx_mcp_audit_source").on(table.source),
+  ]
+);
+
+export type McpAuditLog = typeof mcpAuditLogs.$inferSelect;
+export type NewMcpAuditLog = typeof mcpAuditLogs.$inferInsert;
+

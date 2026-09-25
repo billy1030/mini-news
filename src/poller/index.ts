@@ -3,6 +3,7 @@ import { flashNews } from "../db/schema.js";
 import { parseRawNews } from "../parser/index.js";
 import { fetchLiveNews } from "./fetcher.js";
 import { getMinimaxEmbeddings } from "../services/embedding.js";
+import { cacheService } from "../services/cache.js";
 import { isNull, desc } from "drizzle-orm";
 
 let pollIntervalMs =
@@ -66,7 +67,17 @@ export async function pollOnce(): Promise<{ fetched: number; inserted: number }>
     
     if (result.rowCount && result.rowCount > 0) {
       insertedCount++;
+      // If breaking alert or high importance, broadcast to connected MCP SSE sessions
+      if (item.isAlert || (item.importance !== undefined && item.importance >= 2)) {
+        cacheService.publishNews("alert", item as any);
+      }
     }
+  }
+
+  // If new records were added, invalidate hot query cache
+  if (insertedCount > 0) {
+    cacheService.invalidatePrefix("alerts:latest:");
+    cacheService.invalidatePrefix("flash:latest:");
   }
 
   return { fetched: rawItems.length, inserted: insertedCount };

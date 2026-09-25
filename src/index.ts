@@ -12,12 +12,22 @@ dotenv.config();
 import { startPoller } from "./poller/index.js";
 import { startMcpServer } from "./mcp/server.js";
 import { startWebServer } from "./web/server.js";
+import { initDatabase } from "./db/index.js";
 
 async function main() {
-  console.log("=== Mini-News Service Starting ===");
-
   const isMcpOnly = process.argv.includes("--mcp-only");
   const isWebOnly = process.argv.includes("--web-only");
+
+  if (!isMcpOnly) {
+    console.log("=== Mini-News Service Starting ===");
+  }
+
+  // Ensure DB schema & tables (e.g. mcp_audit_logs, pgvector) are ready
+  if (isMcpOnly) {
+    await initDatabase().catch((err) => {
+      console.error("[MCP Stdio] Database init error:", err.message);
+    });
+  }
 
   // 1. Start Web Dashboard on port 5200 (unless strictly MCP only)
   if (!isMcpOnly) {

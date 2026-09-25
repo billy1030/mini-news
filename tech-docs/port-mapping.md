@@ -10,6 +10,7 @@ To prevent collisions with commonly used local development ports (such as `3000`
 | :--- | :--- | :--- | :--- | :--- |
 | **Web Dashboard / GUI** | `5200` | **`5200`** | HTTP / WS | Web control panel, configuration UI, live monitor |
 | **PostgreSQL Database** | `5432` | **`5232`** | TCP (PostgreSQL) | Local Docker Postgres container (`pgvector:pg16`) |
+| **Redis Cache (Optional)** | `6379` | **`5279`** | TCP (Redis) | L2 hot cache, Pub/Sub, distributed lock (`redis:7-alpine`) |
 
 ---
 

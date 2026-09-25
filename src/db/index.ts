@@ -36,7 +36,27 @@ export async function initDatabase() {
     await client.query(
       "CREATE INDEX IF NOT EXISTS idx_flash_news_embedding_hnsw ON flash_news USING hnsw (embedding vector_cosine_ops);"
     );
+    // Ensure mcp_audit_logs table exists for cross-process audit trails
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS mcp_audit_logs (
+        id VARCHAR(64) PRIMARY KEY,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        tool VARCHAR(128) NOT NULL,
+        args JSONB,
+        duration_ms INTEGER NOT NULL DEFAULT 0,
+        is_error BOOLEAN NOT NULL DEFAULT FALSE,
+        error_detail TEXT,
+        result_summary TEXT,
+        source VARCHAR(32) NOT NULL DEFAULT 'stdio',
+        data_source VARCHAR(32) NOT NULL DEFAULT 'DB'
+      );
+      ALTER TABLE mcp_audit_logs ADD COLUMN IF NOT EXISTS data_source VARCHAR(32) DEFAULT 'DB';
+      CREATE INDEX IF NOT EXISTS idx_mcp_audit_created_at ON mcp_audit_logs (created_at);
+      CREATE INDEX IF NOT EXISTS idx_mcp_audit_tool ON mcp_audit_logs (tool);
+      CREATE INDEX IF NOT EXISTS idx_mcp_audit_source ON mcp_audit_logs (source);
+    `);
   } finally {
     client.release();
   }
 }
+
