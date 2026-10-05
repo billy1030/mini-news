@@ -2200,12 +2200,12 @@ LIMIT 10;`
                 </div>
               </div>
               <details style="cursor: pointer;">
-                <summary style="font-family: var(--font-mono); font-size: 0.73rem; color: var(--text-muted); margin-bottom: 0.35rem; list-style: none; display: flex; align-items: center; gap: 0.35rem;">
+                <summary style="font-family: var(--font-hei); font-size: 0.78rem; color: var(--text-muted); margin-bottom: 0.35rem; list-style: none; display: flex; align-items: center; gap: 0.35rem;">
                   <span style="font-size: 0.7rem;">▶</span>
-                  <strong style="color: var(--text-main);">Args</strong>
-                  <span style="color: var(--text-muted);">${isLongArgs ? argsStr.slice(0, 80) + '…' : argsStr}</span>
+                  <strong style="color: var(--text-main); font-family: var(--font-sans);">Args</strong>
+                  <span style="color: var(--text-muted); font-family: var(--font-hei);">${isLongArgs ? argsStr.slice(0, 80) + '…' : argsStr}</span>
                 </summary>
-                <pre style="font-family: var(--font-mono); font-size: 0.72rem; color: var(--text-main); background: var(--code-bg); padding: 0.5rem; border-radius: 6px; margin-top: 0.35rem; overflow-x: auto; white-space: pre-wrap; word-break: break-word;">${argsStr.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</pre>
+                <pre style="font-family: var(--font-hei); font-size: 0.78rem; line-height: 1.5; color: var(--text-main); background: var(--code-bg); padding: 0.65rem 0.85rem; border-radius: 6px; margin-top: 0.35rem; overflow-x: auto; white-space: pre-wrap; word-break: break-word;">${argsStr.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</pre>
               </details>
               <div style="font-family: var(--font-mono); font-size: 0.75rem; color: ${isErr ? 'var(--danger)' : 'var(--text-muted)'}; white-space: pre-wrap; word-break: break-word; background: var(--code-bg); padding: 0.65rem 0.85rem; border-radius: 6px; margin-top: 0.4rem; max-height: 200px; overflow-y: auto;">${String(resultStr).replace(/</g, '&lt;').replace(/>/g, '&gt;').slice(0, 1000)}${resultStr.length > 1000 ? '\n… (truncated)' : ''}</div>
             </div>
