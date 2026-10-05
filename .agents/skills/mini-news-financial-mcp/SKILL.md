@@ -29,29 +29,35 @@ The `mini-news` MCP server provides the following tools:
 5. **`search_news_semantic`**:
    - Executes AI vector semantic search via MiniMax `embo-01` and pgvector HNSW cosine similarity.
    - Ideal for conceptual, macroeconomic, or thematic inquiries without needing exact keyword matches.
+   - Optional `minSimilarity`: Confidence threshold (e.g. `0.60` for Relevant, `0.70` for High Match).
 6. **`reindex_news_embeddings`**:
    - Scans and generates MiniMax vector embeddings for news items that currently have NULL embeddings.
+   - Optional `days`: Reindex only items from the last X days (default: 30 days, 0 for all time).
 
 ---
 
 ## 2. Best Practices for Answering User Inquiries
 
-### A. General Market Status / Latest Breaking News
-- Call `get_latest_alerts({ limit: 10 })` to get the most urgent market news flashes.
-- Focus on the `time_hkt`, `direction`, and key market impacts.
+### A. Conceptual & Thematic Inquiries (e.g. "What is happening in the Middle East oil market?")
+- Call `search_news_semantic`:
+  ```json
+  { "query": "中東局勢與原油石油市場走勢", "limit": 5, "minSimilarity": 0.50 }
+  ```
+- Uses HNSW vector cosine similarity to retrieve thematic matches with high confidence.
 
 ### B. Company or Ticker Inquiries (e.g. "What happened to NVDA/TSLA?")
-- You can use `search_news_hybrid`:
-  ```json
-  { "ticker": "NVDA", "limit": 10 }
-  ```
-- Or execute a targeted SQL query via `query_financial_news_sql`:
+- Execute a targeted SQL query via `query_financial_news_sql` (accelerated by JSONB GIN index):
   ```sql
   SELECT time_hkt, date_hkt, raw_content, direction 
   FROM flash_news 
   WHERE tickers @> '["NVDA"]'::jsonb 
   ORDER BY created_at DESC LIMIT 10;
   ```
+- Or call `search_news_hybrid`: `{ "ticker": "NVDA", "limit": 10 }`
+
+### C. General Market Status / Latest Breaking News
+- Call `get_latest_alerts({ limit: 10 })` to get the most urgent market news flashes.
+- Focus on the `time_hkt`, `direction`, and key market impacts.
 
 ### C. Market Sentiment & Trend Inquiries (e.g. "Is the market bullish or bearish today?")
 - Run an aggregation query:
