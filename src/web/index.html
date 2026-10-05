@@ -1164,6 +1164,46 @@ LIMIT 10;</textarea>
         <div id="audit-logs-container" style="overflow-y: auto; flex: 1; min-height: 400px; display: flex; flex-direction: column; gap: 0.65rem;">
           <!-- Rendered audit logs appear here -->
         </div>
+
+        <!-- Audit Log Legend Footer -->
+        <div style="margin-top: 0.85rem; padding: 0.65rem 1rem; background: var(--code-bg); border: 1px solid var(--card-border); border-radius: 8px; display: flex; flex-direction: column; gap: 0.45rem; font-size: 0.72rem; color: var(--text-muted);">
+          <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem;">
+            <!-- Data Source Badges -->
+            <div style="display: flex; align-items: center; gap: 0.4rem; flex-wrap: wrap;">
+              <span style="font-weight: 700; color: var(--text-main); text-transform: uppercase;">Data Source:</span>
+              <span style="background: rgba(99,102,241,0.15); color: #6366f1; border: 1px solid rgba(99,102,241,0.3); font-weight: 700; padding: 1px 6px; border-radius: 4px;">💾 DB</span>
+              <span>PostgreSQL Relational Storage</span>
+              <span style="color: var(--card-border);">|</span>
+              <span style="background: rgba(16,185,129,0.15); color: #10b981; border: 1px solid rgba(16,185,129,0.3); font-weight: 700; padding: 1px 6px; border-radius: 4px;">⚡ CACHE</span>
+              <span>In-Memory Hot Cache</span>
+              <span style="color: var(--card-border);">|</span>
+              <span style="background: rgba(236,72,153,0.15); color: #ec4899; border: 1px solid rgba(236,72,153,0.3); font-weight: 700; padding: 1px 6px; border-radius: 4px;">🧠 VECTOR</span>
+              <span>MiniMax & HNSW Cosine Search</span>
+              <span style="color: var(--card-border);">|</span>
+              <span style="background: rgba(100,116,139,0.15); color: #64748b; border: 1px solid rgba(100,116,139,0.3); font-weight: 700; padding: 1px 6px; border-radius: 4px;">📄 SCHEMA</span>
+              <span>DDL Documentation</span>
+            </div>
+          </div>
+          <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem; padding-top: 0.35rem; border-top: 1px dashed var(--card-border);">
+            <!-- Transport Protocols & Index Accelerations -->
+            <div style="display: flex; align-items: center; gap: 0.4rem; flex-wrap: wrap;">
+              <span style="font-weight: 700; color: var(--text-main); text-transform: uppercase;">Transports:</span>
+              <span style="background: rgba(37,99,235,0.15); color: #2563eb; font-weight: 700; padding: 1px 5px; border-radius: 4px;">STDIO</span>
+              <span>Local IDE / MiniBot CLI</span>
+              <span style="background: rgba(139,92,246,0.15); color: #8b5cf6; font-weight: 700; padding: 1px 5px; border-radius: 4px;">SSE</span>
+              <span>Remote Stream / Multi-Client</span>
+              <span style="background: rgba(8,145,178,0.15); color: #0891b2; font-weight: 700; padding: 1px 5px; border-radius: 4px;">WEB</span>
+              <span>Dashboard Control Panel</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 0.4rem; flex-wrap: wrap;">
+              <span style="font-weight: 700; color: var(--text-main); text-transform: uppercase;">SQL Indexes:</span>
+              <span style="background: rgba(14,165,233,0.15); color: #0284c7; border: 1px solid rgba(14,165,233,0.3); font-weight: 700; padding: 1px 5px; border-radius: 4px;">⚡ TRGM</span>
+              <span>pg_trgm GIN (ILIKE)</span>
+              <span style="background: rgba(168,85,247,0.15); color: #9333ea; border: 1px solid rgba(168,85,247,0.3); font-weight: 700; padding: 1px 5px; border-radius: 4px;">🏷️ JSONB</span>
+              <span>GIN Tickers (@>)</span>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
