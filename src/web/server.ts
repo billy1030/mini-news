@@ -124,7 +124,7 @@ export function startWebServer(port: number = Number(process.env.PORT) || 5200) 
 
       // 2. API: Get Latest Live News
       if (url.pathname === "/api/news" && req.method === "GET") {
-        const limit = Math.min(Number(url.searchParams.get("limit")) || 100, 300);
+        const limit = Math.min(Number(url.searchParams.get("limit")) || 100, 1000);
         const cacheKey = `flash:latest:${limit}`;
         const cached = cacheService.get<any[]>(cacheKey);
         if (cached) {
@@ -212,15 +212,33 @@ export function startWebServer(port: number = Number(process.env.PORT) || 5200) 
         req.on("end", async () => {
           let searchInput = "";
           try {
-            const { query, limit = 10 } = JSON.parse(body || "{}");
+            const { query, limit = 10, minSimilarity = 0 } = JSON.parse(body || "{}");
             searchInput = query;
-            if (!query) {
+            const trimmedQuery = String(query || "").trim();
+
+            // Guard against noise or short sub-character inputs (< 2 chars)
+            if (!trimmedQuery || trimmedQuery.length < 2) {
               res.writeHead(400, { "Content-Type": "application/json" });
-              res.end(JSON.stringify({ error: "Missing query" }));
+              res.end(JSON.stringify({ error: "Search query must be at least 2 characters long." }));
               return;
             }
-            const queryVec = await embeddingBatcher.embed(String(query), "query");
+
+            // Semantic expansion for short stock tickers (e.g. 02513.HK, NVDA, AAPL)
+            let expandedQuery = trimmedQuery;
+            const tickerPattern = /^([0-9]{4,5}|[A-Z]{1,5})(\.(HK|US|SS|SZ))?$/i;
+            if (tickerPattern.test(trimmedQuery)) {
+              expandedQuery = `股票代碼 ${trimmedQuery.toUpperCase()} 相關財經快訊與最新市場動向`;
+            }
+
+            const minSimNum = typeof minSimilarity === "number" && !isNaN(minSimilarity)
+              ? Math.max(0, Math.min(1, minSimilarity))
+              : 0;
+
+            const queryVec = await embeddingBatcher.embed(expandedQuery, "query");
             const vectorStr = `[${queryVec.join(",")}]`;
+
+            // Tune HNSW query-time recall candidate list (ef_search = 100)
+            await db.execute("SET LOCAL hnsw.ef_search = 100;");
 
             const results = await db.execute(
               `SELECT id, 
@@ -235,17 +253,18 @@ export function startWebServer(port: number = Number(process.env.PORT) || 5200) 
                       ROUND((1 - (embedding <=> '${vectorStr}'::vector))::numeric, 4) AS similarity_score
                FROM flash_news
                WHERE embedding IS NOT NULL
+                 AND (1 - (embedding <=> '${vectorStr}'::vector)) >= ${minSimNum}
                ORDER BY embedding <=> '${vectorStr}'::vector ASC
-               LIMIT ${Math.min(Number(limit) || 10, 50)};`
+               LIMIT ${Math.min(Number(limit) || 25, 200)};`
             );
 
             const durationMs = Math.round(performance.now() - startTime);
             cacheService.logMcpInteraction({
               tool: "semantic_search_news",
-              args: { query, limit },
+              args: { query: trimmedQuery, expandedQuery, limit, minSimilarity: minSimNum },
               durationMs,
               isError: false,
-              resultSummary: `Found ${results.rows.length} vector matches`,
+              resultSummary: `Found ${results.rows.length} vector matches (minSimilarity >= ${minSimNum})`,
               source: "web",
               dataSource: "VECTOR",
             });
@@ -272,17 +291,30 @@ export function startWebServer(port: number = Number(process.env.PORT) || 5200) 
         return;
       }
 
-      // 6. API: Reindex Missing Embeddings
+      // 6. API: Reindex Embeddings
       if (url.pathname === "/api/reindex" && req.method === "POST") {
-        try {
-          const { reindexMissingEmbeddings } = await import("../poller/index.js");
-          const stats = await reindexMissingEmbeddings(50);
-          res.writeHead(200, { "Content-Type": "application/json" });
-          res.end(JSON.stringify({ success: true, ...stats }));
-        } catch (err: any) {
-          res.writeHead(500, { "Content-Type": "application/json" });
-          res.end(JSON.stringify({ error: err.message || String(err) }));
-        }
+        let body = "";
+        req.on("data", (chunk) => (body += chunk));
+        req.on("end", async () => {
+          try {
+            const { forceAll = false, limit = 50, minChar = 3, days = 30 } = JSON.parse(body || "{}");
+            const minCharNum = typeof minChar === "number" && !isNaN(minChar) ? Math.max(3, minChar) : 3;
+            const targetLimit = Math.min(Number(limit) || 50, 1000);
+            const daysNum = typeof days === "number" && !isNaN(days) ? Math.max(0, days) : 30;
+            const { reindexMissingEmbeddings } = await import("../poller/index.js");
+            const stats = await reindexMissingEmbeddings(
+              targetLimit,
+              Boolean(forceAll),
+              minCharNum,
+              daysNum
+            );
+            res.writeHead(200, { "Content-Type": "application/json" });
+            res.end(JSON.stringify({ success: true, ...stats }));
+          } catch (err: any) {
+            res.writeHead(500, { "Content-Type": "application/json" });
+            res.end(JSON.stringify({ error: err.message || String(err) }));
+          }
+        });
         return;
       }
 

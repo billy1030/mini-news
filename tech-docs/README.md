@@ -26,3 +26,5 @@ Mini-News is a production-grade 7x24 real-time financial flash news ingestion en
    - Multi-user hot caching (alerts & semantic queries), real-time Pub/Sub broadcasting, distributed leader election lock, and rate limiting.
 9. [MCP Audit Logging & Observability](file:///c:/ai/mini-news/tech-docs/audit-logging.md)
    - 15-minute rolling window, cross-process stdio/web sync, data source tracking (`CACHE`/`DB`/`VECTOR`/`SCHEMA`), per-tool color palettes, and cache hit rate metrics.
+10. [Vector Database & Indexing Architecture](file:///c:/ai/mini-news/tech-docs/vector-indexing.md)
+   - pgvector HNSW hyperparameter tuning (`m=32`, `ef_construction=128`, `ef_search=100`), contextual metadata enrichment, ticker query expansion, and confidence thresholding.

@@ -150,6 +150,11 @@ export function createConfiguredMcpServer(defaultSource: "stdio" | "sse" | "web"
                 type: "number",
                 description: "Max results to return (default: 5, max: 50)",
               },
+              minSimilarity: {
+                type: "number",
+                description:
+                  "Optional minimum similarity / confidence threshold (0.0 to 1.0, e.g. 0.60 for Relevant, 0.70 for High Match). Defaults to 0 (no threshold).",
+              },
             },
             required: ["query"],
           },
@@ -164,6 +169,10 @@ export function createConfiguredMcpServer(defaultSource: "stdio" | "sse" | "web"
               batch_size: {
                 type: "number",
                 description: "Number of news items to process in this batch (default: 20, max: 100)",
+              },
+              days: {
+                type: "number",
+                description: "Filter news to the last X days (default: 30, use 0 for all time)",
               },
             },
           },
@@ -416,12 +425,25 @@ export function createConfiguredMcpServer(defaultSource: "stdio" | "sse" | "web"
           throw new Error("Missing required argument 'query'");
         }
         const limit = Math.min(Math.max(Number(args?.limit) || 5, 1), 50);
+        const minSimilarity = typeof args?.minSimilarity === "number" && !isNaN(args.minSimilarity)
+          ? Math.max(0, Math.min(1, args.minSimilarity))
+          : 0;
+
+        // Semantic expansion for short stock tickers
+        let expandedQuery = queryText;
+        const tickerPattern = /^([0-9]{4,5}|[A-Z]{1,5})(\.(HK|US|SS|SZ))?$/i;
+        if (tickerPattern.test(queryText)) {
+          expandedQuery = `股票代碼 ${queryText.toUpperCase()} 相關財經快訊與最新市場動向`;
+        }
 
         // Dispatches through continuous micro-batcher queue
-        const queryVec = await embeddingBatcher.embed(queryText, "query");
+        const queryVec = await embeddingBatcher.embed(expandedQuery, "query");
         const vectorStr = `[${queryVec.join(",")}]`;
 
-        // Perform cosine distance vector search via pgvector HNSW
+        // Tune HNSW query-time recall candidate list
+        await db.execute(sql`SET LOCAL hnsw.ef_search = 100;`);
+
+        // Perform cosine distance vector search via pgvector HNSW with confidence threshold
         const results = await db.execute(sql`
           SELECT 
             id, 
@@ -436,6 +458,7 @@ export function createConfiguredMcpServer(defaultSource: "stdio" | "sse" | "web"
             ROUND((1 - (embedding <=> ${vectorStr}::vector))::numeric, 4) AS similarity_score
           FROM flash_news
           WHERE embedding IS NOT NULL
+            AND (1 - (embedding <=> ${vectorStr}::vector)) >= ${minSimilarity}
           ORDER BY embedding <=> ${vectorStr}::vector ASC
           LIMIT ${limit};
         `);
@@ -453,12 +476,13 @@ export function createConfiguredMcpServer(defaultSource: "stdio" | "sse" | "web"
       if (name === "reindex_news_embeddings") {
         detectedDataSource = "DB";
         const batchSize = Math.min(Math.max(Number(args?.batch_size) || 20, 1), 100);
-        const stats = await reindexMissingEmbeddings(batchSize);
+        const days = typeof args?.days === "number" && !isNaN(args.days) ? Math.max(0, args.days) : 30;
+        const stats = await reindexMissingEmbeddings(batchSize, false, 3, days);
         return {
           content: [
             {
               type: "text",
-              text: `Reindexing completed: scanned ${stats.processed} items without embeddings, successfully computed & updated ${stats.updated} vectors.`,
+              text: `Reindexing completed (last ${days > 0 ? days + ' days' : 'all time'}): scanned ${stats.processed} items without embeddings, successfully computed & updated ${stats.updated} vectors.`,
             },
           ],
         };

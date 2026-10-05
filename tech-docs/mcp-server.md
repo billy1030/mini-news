@@ -1,4 +1,4 @@
-﻿# MCP Server & Dynamic SQL Specification
+# MCP Server & Dynamic SQL Specification
 
 Mini-News exposes Model Context Protocol (MCP) tools for LLMs to safely query financial news.
 
@@ -32,17 +32,19 @@ Mini-News exposes Model Context Protocol (MCP) tools for LLMs to safely query fi
 - **Output**: JSON array of news records.
 
 ### 5. `search_news_semantic`
-- **Description**: MiniMax `embo-01` vector semantic search over financial flash news using cosine distance similarity.
+- **Description**: MiniMax `embo-01` vector semantic search over financial flash news using cosine distance similarity with HNSW recall tuning (`ef_search = 100`) and ticker query expansion.
 - **Input**:
-  - `query` (string, required): Natural language search concept or question (e.g., "fed rate hike expectations", "oil pipeline supply disruption").
+  - `query` (string, required): Natural language search concept, ticker, or question (e.g., "02513.HK", "fed rate hike expectations", "GLM"). Minimum 2 characters.
   - `limit` (number, optional): Maximum results to return (default: 10, max: 50).
-- **Output**: JSON array of news items enriched with similarity scores (0.0 to 1.0) and market direction.
+  - `minSimilarity` (number, optional): Minimum similarity / confidence threshold (`0.0` to `1.0`, e.g. `0.50` for 50%, `0.60` for Relevant, `0.70` for High Match). Defaults to `0`.
+- **Output**: JSON array of news items enriched with `similarity_score` (0.0 to 1.0), tickers, and market direction.
 
 ### 6. `reindex_news_embeddings`
-- **Description**: Batch generates and persists MiniMax vector embeddings for any news records missing embeddings in the database.
+- **Description**: Batch generates and persists MiniMax vector embeddings with contextual metadata enrichment (Tickers, Direction, Category) and noise filtering (min 3 characters).
 - **Input**:
-  - `batchSize` (number, optional): Number of items to process per batch (default: 50, max: 100).
-- **Output**: Count of processed and updated news records.
+  - `batch_size` (number, optional): Number of items to process per batch (default: 20, max: 100).
+  - `days` (number, optional): Time-window filter in days (default: 30 days). Only news within the last X days will be processed. Use `0` for all time.
+- **Output**: Summary string detailing scanned, computed, and updated vector embeddings within the specified window.
 
 ---
 

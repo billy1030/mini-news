@@ -43,9 +43,10 @@ CREATE INDEX idx_flash_news_importance ON flash_news USING btree (importance);
 CREATE INDEX idx_flash_news_category ON flash_news USING btree (category);
 CREATE INDEX idx_flash_news_tickers ON flash_news USING gin (tickers);
 
--- pgvector Hierarchical Navigable Small World (HNSW) Index
+-- pgvector Hierarchical Navigable Small World (HNSW) Index (m=32, ef_construction=128)
 CREATE INDEX IF NOT EXISTS idx_flash_news_embedding_hnsw 
-ON flash_news USING hnsw (embedding vector_cosine_ops);
+ON flash_news USING hnsw (embedding vector_cosine_ops)
+WITH (m = 32, ef_construction = 128);
 ```
 
 ---

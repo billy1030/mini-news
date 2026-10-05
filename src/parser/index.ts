@@ -23,9 +23,13 @@ export interface RawNewsItem {
 }
 
 /**
- * Common financial ticker and keyword detection regex
+ * Common financial ticker and keyword detection regex:
+ * Supports:
+ * - $TICKER (e.g. $AAPL)
+ * - Alpha or Numeric tickers with market suffix (e.g. 02513.HK, 9988.HK, AAPL.US, 600519.SS)
+ * - Leading crypto/tech symbols
  */
-const TICKER_REGEX = /\$([A-Z]{1,6})\b|\b([A-Z]{2,5})\.(US|HK|SS|SZ)\b|\b(BTC|ETH|SOL|NVDA|AAPL|TSLA|MSFT|GOOGL|AMZN|META)\b/gi;
+const TICKER_REGEX = /\$([A-Z]{1,6})\b|\b([0-9]{4,5}|[A-Z]{1,5})\.(US|HK|SS|SZ)\b|\b(BTC|ETH|SOL|NVDA|AAPL|TSLA|MSFT|GOOGL|AMZN|META)\b/gi;
 
 /**
  * Directional sentiment detection keywords
@@ -40,7 +44,8 @@ export function extractTickers(text: string): string[] {
   const matches = new Set<string>();
   let match: RegExpExecArray | null;
   while ((match = TICKER_REGEX.exec(text)) !== null) {
-    const ticker = match[1] || match[2] || match[4];
+    // If format is TICKER.EXCHANGE, preserve the full symbol or base
+    const ticker = match[0].startsWith("$") ? match[1] : match[0];
     if (ticker) {
       matches.add(ticker.toUpperCase());
     }

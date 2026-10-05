@@ -25,6 +25,7 @@
       --code-bg: #f1f5f9;
       --font-sans: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
       --font-mono: 'JetBrains Mono', monospace;
+      --font-hei: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微軟雅黑", "Noto Sans SC", sans-serif;
       --shadow-sm: 0 1px 3px rgba(0,0,0,0.05), 0 1px 2px rgba(0,0,0,0.03);
       --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.07), 0 2px 4px -2px rgba(0,0,0,0.05);
     }
@@ -302,6 +303,8 @@
     .tag-alert { background: rgba(220, 38, 38, 0.2); color: var(--danger); }
     .tag-match-high { background: rgba(22, 163, 74, 0.18); color: var(--success); border: 1px solid rgba(22, 163, 74, 0.35); }
     .tag-match-relevant { background: rgba(37, 99, 235, 0.18); color: var(--accent); border: 1px solid rgba(37, 99, 235, 0.35); }
+    .tag-match-moderate { background: rgba(234, 179, 8, 0.18); color: #d97706; border: 1px solid rgba(234, 179, 8, 0.35); }
+    .tag-match-low { background: rgba(148, 163, 184, 0.18); color: var(--text-muted); border: 1px solid rgba(148, 163, 184, 0.35); }
 
     .filter-bar {
       display: flex;
@@ -514,10 +517,10 @@
       background: var(--card-bg);
       border: 1px solid var(--card-border);
       border-radius: 20px;
-      width: 95vw;
-      max-width: 1400px;
-      height: 90vh;
-      max-height: 920px;
+      width: 92vw;
+      max-width: 95vw;
+      height: 92vh;
+      max-height: 96vh;
       display: flex;
       flex-direction: column;
       box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4);
@@ -646,6 +649,91 @@
       overflow: auto;
       white-space: pre-wrap;
     }
+
+    /* Studio Tab & Data Grid Styles */
+    .studio-tab-btn {
+      padding: 0.45rem 1rem;
+      border-radius: 8px;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: 1px solid var(--card-border);
+      background: var(--card-bg);
+      color: var(--text-muted);
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .studio-tab-btn:hover {
+      color: var(--text-main);
+      border-color: var(--accent);
+    }
+    .studio-tab-btn.active {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+      box-shadow: 0 2px 6px var(--accent-glow);
+    }
+
+    .studio-grid-wrap {
+      flex: 1;
+      overflow: auto;
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      background: var(--card-bg);
+      position: relative;
+    }
+
+    .studio-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.8125rem;
+      text-align: left;
+    }
+
+    .studio-table th {
+      position: sticky;
+      top: 0;
+      background: var(--code-bg);
+      color: var(--text-muted);
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 0.75rem 1rem;
+      border-bottom: 2px solid var(--card-border);
+      z-index: 2;
+      white-space: nowrap;
+    }
+
+    .studio-table td {
+      padding: 0.65rem 1rem;
+      border-bottom: 1px solid var(--card-border);
+      color: var(--text-main);
+      vertical-align: middle;
+      white-space: nowrap;
+    }
+
+    .studio-table tbody tr:hover {
+      background: rgba(37, 99, 235, 0.05);
+    }
+
+    .studio-search-input {
+      padding: 0.4rem 0.75rem;
+      border-radius: 8px;
+      border: 1px solid var(--card-border);
+      background: var(--input-bg);
+      color: var(--text-main);
+      font-size: 0.8125rem;
+      outline: none;
+      width: 260px;
+      transition: all 0.2s;
+    }
+    .studio-search-input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-glow);
+    }
   </style>
 </head>
 <body>
@@ -667,6 +755,14 @@
           <polyline points="10 9 9 9 8 9"></polyline>
         </svg>
         <span>15m Audit Log</span>
+      </button>
+      <button class="btn btn-outline" onclick="openStudioModal()" style="border-color: rgba(99, 102, 241, 0.4); color: var(--accent);">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+          <line x1="3" y1="9" x2="21" y2="9"></line>
+          <line x1="9" y1="21" x2="9" y2="9"></line>
+        </svg>
+        <span>Data Studio</span>
       </button>
       <button class="btn btn-outline" onclick="openPlaygroundModal()">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -773,15 +869,58 @@
           <span>🧠 Vector Search</span>
           <span style="font-size: 0.7rem; color: var(--accent); font-weight: 500;">embo-01</span>
         </div>
-        <div style="margin-bottom: 0.75rem; position: relative;">
-          <input type="text" class="setting-input" id="semantic-query-input" placeholder="e.g. 美聯儲降息及國債走勢, 原油中東危機..." onkeydown="if(event.key==='Enter') runSemanticSearch()" />
+        <div style="margin-bottom: 0.65rem; position: relative;">
+          <input type="text" class="setting-input" id="semantic-query-input" placeholder="e.g. 美聯儲降息及國債走勢, 原油中東危機, 02513.HK..." onkeydown="if(event.key==='Enter') runSemanticSearch()" />
+        </div>
+        <!-- Confidence / Similarity Threshold Selector -->
+        <div style="margin-bottom: 0.75rem; background: var(--code-bg); padding: 0.5rem 0.65rem; border-radius: 8px; border: 1px solid var(--card-border);">
+          <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.75rem; margin-bottom: 0.35rem;">
+            <span style="color: var(--text-muted); font-weight: 500;">Confidence Threshold:</span>
+            <span id="semantic-threshold-display" style="font-family: var(--font-mono); font-weight: 700; color: var(--accent);">50%</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+            <input type="range" id="semantic-threshold-slider" min="20" max="90" step="5" value="50" style="flex: 1; accent-color: var(--accent); cursor: pointer;" oninput="updateConfidenceThreshold(this.value)" />
+            <input type="number" id="semantic-threshold-number" min="0" max="100" step="1" value="50" style="width: 52px; padding: 2px 4px; font-size: 0.75rem; font-family: var(--font-mono); text-align: center; background: var(--input-bg); border: 1px solid var(--card-border); border-radius: 4px; color: var(--text-main);" oninput="updateConfidenceThresholdFromNumber(this.value)" />
+            <span style="font-size: 0.75rem; color: var(--text-muted);">%</span>
+          </div>
+
+          <!-- Min Characters to Index Control -->
+          <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.75rem; padding-top: 0.4rem; border-top: 1px dashed var(--card-border);">
+            <span style="color: var(--text-muted); font-weight: 500;" title="Exclude short fragments/noise below 3 chars from vector index">Min Chars to Index:</span>
+            <div style="display: flex; align-items: center; gap: 0.3rem;">
+              <input type="number" id="semantic-min-char-input" min="3" max="50" step="1" value="3" style="width: 52px; padding: 2px 4px; font-size: 0.75rem; font-family: var(--font-mono); text-align: center; background: var(--input-bg); border: 1px solid var(--card-border); border-radius: 4px; color: var(--text-main);" />
+              <span style="font-size: 0.75rem; color: var(--text-muted);">chars</span>
+            </div>
+          </div>
+
+          <!-- Time Window (Last X Days) for Reindex -->
+          <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.75rem; padding-top: 0.4rem; margin-top: 0.4rem; border-top: 1px dashed var(--card-border);">
+            <span style="color: var(--text-muted); font-weight: 500;" title="Reindex news within the last X days. Set to 0 for all time.">Reindex History:</span>
+            <div style="display: flex; align-items: center; gap: 0.3rem;">
+              <input type="number" id="semantic-days-input" min="0" max="3650" step="1" value="30" style="width: 52px; padding: 2px 4px; font-size: 0.75rem; font-family: var(--font-mono); text-align: center; background: var(--input-bg); border: 1px solid var(--card-border); border-radius: 4px; color: var(--text-main);" title="0 = All Time, default 30 days" />
+              <span style="font-size: 0.75rem; color: var(--text-muted);">days</span>
+            </div>
+          </div>
         </div>
         <div style="display: flex; gap: 0.4rem; margin-bottom: 0.75rem;">
           <button class="btn btn-outline" style="flex: 1; justify-content: center; font-size: 0.8rem; padding: 0.45rem 0.5rem;" id="btn-semantic-search" onclick="runSemanticSearch()">Vector Search</button>
           <button class="btn btn-outline" style="justify-content: center; font-size: 0.8rem; padding: 0.45rem 0.6rem;" id="btn-clear-search" onclick="clearSemanticSearch()" title="Clear search and show live feed">✕ Clear</button>
-          <button class="btn btn-outline" style="justify-content: center; font-size: 0.8rem; padding: 0.45rem 0.6rem;" id="btn-reindex" onclick="triggerReindex()" title="Reindex missing embeddings">⚡ Reindex</button>
+          <button class="btn btn-outline" style="justify-content: center; font-size: 0.8rem; padding: 0.45rem 0.6rem;" id="btn-reindex" onclick="triggerReindex()" title="Reindex embeddings with current min chars">⚡ Reindex</button>
         </div>
         <div id="semantic-status" style="font-size: 0.75rem; color: var(--text-muted);"></div>
+      </div>
+
+      <!-- Data Studio Quick Card -->
+      <div class="card" style="cursor: pointer; transition: all 0.2s; border-color: rgba(99, 102, 241, 0.35); background: linear-gradient(180deg, rgba(99, 102, 241, 0.05) 0%, transparent 100%);" onclick="openStudioModal()">
+        <div class="card-title" style="margin-bottom: 0.5rem;">
+          <span style="display: flex; align-items: center; gap: 0.4rem;">
+            <span>📊 Mini-News Data Studio</span>
+          </span>
+          <span style="font-size: 0.75rem; color: var(--accent); font-weight: 600;">Open &rarr;</span>
+        </div>
+        <p style="font-size: 0.8125rem; color: var(--text-muted); line-height: 1.5;">
+          Prisma-like visual data explorer on Port 5200. Inspect tables, vector index statuses, tickers, and raw records in an interactive grid.
+        </p>
       </div>
 
       <!-- SQL Playground Quick Card -->
@@ -795,6 +934,57 @@
         </p>
       </div>
     </aside>
+
+    <!-- Mini-News Studio Modal Dialog (Port 5200 Embedded Visual Explorer) -->
+    <div class="modal-overlay" id="studio-modal" onclick="if(event.target===this) closeStudioModal()">
+      <div class="modal-content">
+        <div class="modal-header">
+          <div class="modal-title">
+            <span>📊 Mini-News Data Studio</span>
+            <span style="font-size: 0.75rem; color: var(--accent); background: rgba(99, 102, 241, 0.12); padding: 3px 8px; border-radius: 9999px;">PORT 5200 EMBEDDED</span>
+          </div>
+          <button class="modal-close" onclick="closeStudioModal()" title="Close">&times;</button>
+        </div>
+        <div class="modal-body" style="padding: 1.25rem 1.5rem;">
+          <!-- Studio Top Toolbar -->
+          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem;">
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+              <span style="font-size: 0.75rem; color: var(--text-muted); font-weight: 600;">TABLE:</span>
+              <button class="studio-tab-btn active" id="tab-studio-news" onclick="switchStudioTable('flash_news')">
+                <span>📰 flash_news</span>
+                <span id="studio-badge-news" style="font-family: var(--font-mono); font-size: 0.7rem; opacity: 0.85;">(898)</span>
+              </button>
+              <button class="studio-tab-btn" id="tab-studio-logs" onclick="switchStudioTable('mcp_audit_logs')">
+                <span>📋 mcp_audit_logs</span>
+                <span id="studio-badge-logs" style="font-family: var(--font-mono); font-size: 0.7rem; opacity: 0.85;">(...)</span>
+              </button>
+            </div>
+
+            <!-- Grid Controls: Filter, Limit & Refresh -->
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+              <input type="text" class="studio-search-input" id="studio-filter-input" placeholder="🔍 Filter rows (id, ticker, text)..." oninput="filterStudioGrid()" />
+              <div style="display: flex; align-items: center; gap: 0.35rem; background: var(--code-bg); padding: 3px 8px; border-radius: 6px; border: 1px solid var(--card-border);">
+                <span style="font-size: 0.75rem; color: var(--text-muted); font-weight: 500;">Limit:</span>
+                <input type="number" id="studio-limit-input" min="1" max="1000000" step="100" value="1000" style="width: 82px; padding: 2px 6px; font-size: 0.75rem; font-family: var(--font-mono); text-align: center; background: var(--input-bg); border: 1px solid var(--card-border); border-radius: 4px; color: var(--text-main);" onchange="loadStudioData()" onkeydown="if(event.key==='Enter') loadStudioData()" title="Up to 1,000,000 rows" />
+                <span style="font-size: 0.75rem; color: var(--text-muted);">rows</span>
+              </div>
+              <button class="btn btn-outline" style="padding: 0.4rem 0.75rem; font-size: 0.8125rem;" onclick="loadStudioData()">🔄 Refresh</button>
+            </div>
+          </div>
+
+          <!-- Studio Status & Record Count Bar -->
+          <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.75rem; color: var(--text-muted);">
+            <span id="studio-status-text">Loading table data...</span>
+            <span id="studio-stats-text" style="font-family: var(--font-mono); color: var(--accent); font-weight: 600;"></span>
+          </div>
+
+          <!-- Studio Spreadsheet Table Container -->
+          <div class="studio-grid-wrap" id="studio-table-container">
+            <div style="text-align: center; color: var(--text-muted); padding: 3rem;">Loading records...</div>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <!-- Fullscreen Playground Modal Dialog -->
     <div class="modal-overlay" id="playground-modal" onclick="if(event.target===this) closePlaygroundModal()">
@@ -1263,6 +1453,10 @@ LIMIT 10;</textarea>
           simBadge = `<span class="tag-badge tag-match-high">🔥 High Match ${(score * 100).toFixed(1)}%</span>`;
         } else if (score >= 0.60) {
           simBadge = `<span class="tag-badge tag-match-relevant">🎯 Relevant ${(score * 100).toFixed(1)}%</span>`;
+        } else if (score >= 0.45) {
+          simBadge = `<span class="tag-badge tag-match-moderate">⚡ Moderate ${(score * 100).toFixed(1)}%</span>`;
+        } else {
+          simBadge = `<span class="tag-badge tag-match-low">💡 Match ${(score * 100).toFixed(1)}%</span>`;
         }
       }
 
@@ -1350,7 +1544,7 @@ LIMIT 10;</textarea>
 
     async function loadNews() {
       try {
-        const res = await fetch('/api/news?limit=300');
+        const res = await fetch('/api/news?limit=1000');
         const items = await res.json();
         rawNewsItems = items || [];
         updateCounts(rawNewsItems);
@@ -1358,6 +1552,174 @@ LIMIT 10;</textarea>
       } catch (err) {
         console.error('Failed to load news:', err);
       }
+    }
+
+    // ==========================================
+    // Mini-News Data Studio (Port 5200 Visual Explorer)
+    // ==========================================
+    let currentStudioTable = 'flash_news';
+    let studioRawRows = [];
+
+    function openStudioModal() {
+      const modal = document.getElementById('studio-modal');
+      if (modal) {
+        modal.classList.add('open');
+        loadStudioData();
+      }
+    }
+
+    function closeStudioModal() {
+      const modal = document.getElementById('studio-modal');
+      if (modal) {
+        modal.classList.remove('open');
+      }
+    }
+
+    function switchStudioTable(table) {
+      currentStudioTable = table;
+      document.getElementById('tab-studio-news').classList.toggle('active', table === 'flash_news');
+      document.getElementById('tab-studio-logs').classList.toggle('active', table === 'mcp_audit_logs');
+      loadStudioData();
+    }
+
+    async function loadStudioData() {
+      const container = document.getElementById('studio-table-container');
+      const statusText = document.getElementById('studio-status-text');
+      const statsText = document.getElementById('studio-stats-text');
+      const limitInput = document.getElementById('studio-limit-input');
+      const limit = Math.min(Math.max(Number(limitInput ? limitInput.value : 1000) || 50, 1), 1000000);
+
+      container.innerHTML = '<div style="text-align: center; color: var(--text-muted); padding: 3rem;">⚡ Loading table data...</div>';
+      statusText.innerText = `Fetching ${currentStudioTable}...`;
+      statsText.innerText = '';
+
+      let sql = '';
+      if (currentStudioTable === 'flash_news') {
+        sql = `SELECT id, date_hkt, time_hkt, direction, 
+                      CASE WHEN embedding IS NOT NULL THEN 'Indexed (1536-dim)' ELSE 'Pending' END AS vector_status,
+                      tickers, raw_content, importance, is_alert
+               FROM flash_news 
+               ORDER BY created_at DESC 
+               LIMIT ${limit};`;
+      } else {
+        sql = `SELECT id, created_at, tool, duration_ms, data_source, is_error, LEFT(result_summary, 120) as summary, args
+               FROM mcp_audit_logs 
+               ORDER BY created_at DESC 
+               LIMIT ${limit};`;
+      }
+
+      try {
+        const res = await fetch('/api/sql', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ sql })
+        });
+        const result = await res.json();
+        if (result.error) {
+          container.innerHTML = `<div style="color: var(--danger); padding: 2rem;">❌ Error: ${result.error}</div>`;
+          statusText.innerText = 'Failed to load records.';
+          return;
+        }
+
+        studioRawRows = result.rows || [];
+        statusText.innerText = `Table: ${currentStudioTable}`;
+        statsText.innerText = `${studioRawRows.length} rows loaded`;
+        
+        if (currentStudioTable === 'flash_news') {
+          document.getElementById('studio-badge-news').innerText = `(${rawNewsItems.length || studioRawRows.length})`;
+        } else {
+          document.getElementById('studio-badge-logs').innerText = `(${studioRawRows.length})`;
+        }
+
+        renderStudioTable(studioRawRows);
+      } catch (err) {
+        container.innerHTML = `<div style="color: var(--danger); padding: 2rem;">❌ Failed: ${err.message}</div>`;
+      }
+    }
+
+    function renderStudioTable(rows) {
+      const container = document.getElementById('studio-table-container');
+      if (!rows || rows.length === 0) {
+        container.innerHTML = '<div style="text-align: center; color: var(--text-muted); padding: 3rem;">No records found.</div>';
+        return;
+      }
+
+      const columns = Object.keys(rows[0]);
+      let html = '<table class="studio-table"><thead><tr>';
+      columns.forEach(col => {
+        html += `<th>${col}</th>`;
+      });
+      html += '</tr></thead><tbody>';
+
+      rows.forEach(row => {
+        html += '<tr>';
+        columns.forEach(col => {
+          let val = row[col];
+          let formatted = '';
+
+          if (col === 'vector_status') {
+            const isIndexed = String(val).includes('Indexed');
+            formatted = `<span style="padding: 2px 7px; border-radius: 4px; font-weight: 700; font-size: 0.7rem; background: ${isIndexed ? 'rgba(16,185,129,0.15)' : 'rgba(234,179,8,0.15)'}; color: ${isIndexed ? 'var(--success)' : '#d97706'}; border: 1px solid ${isIndexed ? 'rgba(16,185,129,0.3)' : 'rgba(234,179,8,0.3)'};">${val}</span>`;
+          } else if (col === 'direction') {
+            const color = val === 'UP' ? 'var(--success)' : val === 'DOWN' ? 'var(--danger)' : 'var(--text-muted)';
+            const bg = val === 'UP' ? 'rgba(22,163,74,0.15)' : val === 'DOWN' ? 'rgba(220,38,38,0.15)' : 'rgba(100,116,139,0.15)';
+            formatted = `<span style="padding: 2px 8px; border-radius: 4px; font-weight: 600; font-size: 0.7rem; background: ${bg}; color: ${color};">${val || 'FLAT'}</span>`;
+          } else if (col === 'tickers' && Array.isArray(val)) {
+            formatted = val.length > 0 
+              ? val.map(t => `<span style="background: rgba(37,99,235,0.1); color: var(--accent); padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; font-weight: 600;">${t}</span>`).join(' ')
+              : '<span style="color: var(--text-muted);">-</span>';
+          } else if (col === 'raw_content' || col === 'summary') {
+            const txt = String(val || '');
+            formatted = `<span style="display: block; max-width: 480px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${txt.replace(/"/g, '&quot;')}">${txt}</span>`;
+          } else if (col === 'is_alert' || col === 'is_error') {
+            formatted = val 
+              ? `<span style="color: var(--danger); font-weight: 700;">TRUE 🔥</span>`
+              : `<span style="color: var(--text-muted);">false</span>`;
+          } else if (col === 'args' && val && typeof val === 'object') {
+            const keys = Object.keys(val);
+            if (keys.length === 0) {
+              formatted = '<span style="color: var(--text-muted);">-</span>';
+            } else {
+              // Same font and readable text flow as raw_content, without monospaced code blocks
+              const entries = keys.map(k => {
+                let v = val[k];
+                if (typeof v === 'string' && v.length > 50) v = v.slice(0, 50) + '...';
+                else if (typeof v === 'object' && v !== null) v = JSON.stringify(v);
+                return `<span style="margin-right: 8px;"><span style="color: var(--accent); font-weight: 600;">${k}:</span> ${v}</span>`;
+              }).join(' ');
+              formatted = `<span style="display: block; max-width: 480px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${JSON.stringify(val).replace(/"/g, '&quot;')}">${entries}</span>`;
+            }
+          } else if (typeof val === 'object' && val !== null) {
+            const txt = JSON.stringify(val);
+            formatted = `<span style="display: block; max-width: 480px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${txt.replace(/"/g, '&quot;')}">${txt}</span>`;
+          } else {
+            formatted = String(val ?? '');
+          }
+
+          html += `<td>${formatted}</td>`;
+        });
+        html += '</tr>';
+      });
+
+      html += '</tbody></table>';
+      container.innerHTML = html;
+    }
+
+    function filterStudioGrid() {
+      const query = (document.getElementById('studio-filter-input')?.value || '').toLowerCase().trim();
+      if (!query) {
+        renderStudioTable(studioRawRows);
+        return;
+      }
+      const filtered = studioRawRows.filter(row => {
+        return Object.values(row).some(val => {
+          if (val === null || val === undefined) return false;
+          if (typeof val === 'object') return JSON.stringify(val).toLowerCase().includes(query);
+          return String(val).toLowerCase().includes(query);
+        });
+      });
+      document.getElementById('studio-stats-text').innerText = `Matched ${filtered.length} of ${studioRawRows.length} rows`;
+      renderStudioTable(filtered);
     }
 
     // Modal Dialog Controls
@@ -1378,6 +1740,7 @@ LIMIT 10;</textarea>
     // Keyboard shortcut Escape to close any open modal
     window.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') {
+        closeStudioModal();
         closePlaygroundModal();
         closeAuditModal();
       }
@@ -1467,14 +1830,36 @@ LIMIT 5;`
       }
     }
 
+    let currentConfidenceThreshold = 0.50;
+
+    function updateConfidenceThreshold(val) {
+      const num = Math.min(Math.max(Number(val) || 0, 0), 100);
+      currentConfidenceThreshold = num / 100;
+      const display = document.getElementById('semantic-threshold-display');
+      const numberInput = document.getElementById('semantic-threshold-number');
+      const slider = document.getElementById('semantic-threshold-slider');
+      if (display) display.innerText = `${num}%`;
+      if (numberInput && numberInput.value != num) numberInput.value = num;
+      if (slider && slider.value != num) slider.value = num;
+    }
+
+    function updateConfidenceThresholdFromNumber(val) {
+      const num = Math.min(Math.max(Number(val) || 0, 0), 100);
+      currentConfidenceThreshold = num / 100;
+      const display = document.getElementById('semantic-threshold-display');
+      const slider = document.getElementById('semantic-threshold-slider');
+      if (display) display.innerText = `${num}%`;
+      if (slider) slider.value = num;
+    }
+
     async function runSemanticSearch() {
       const input = document.getElementById('semantic-query-input');
       const status = document.getElementById('semantic-status');
       const btn = document.getElementById('btn-semantic-search');
       const query = (input.value || '').trim();
 
-      if (!query) {
-        status.innerText = '⚠️ Please enter a search query';
+      if (!query || query.length < 2) {
+        status.innerText = '⚠️ Please enter at least 2 characters (e.g. 降息, NVDA, 02513.HK)';
         return;
       }
 
@@ -1483,10 +1868,15 @@ LIMIT 5;`
       status.innerText = '🧠 Calculating vector embedding via MiniMax...';
 
       try {
+        const thresholdPercent = Math.round(currentConfidenceThreshold * 100);
         const res = await fetch('/api/semantic-search', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ query, limit: 15 })
+          body: JSON.stringify({ 
+            query, 
+            limit: 100, 
+            minSimilarity: currentConfidenceThreshold 
+          })
         });
         const rows = await res.json();
         if (rows.error) {
@@ -1494,13 +1884,12 @@ LIMIT 5;`
           return;
         }
 
-        // Filter out low marginal entries (< 0.60), retaining only High Match (>=0.70) and Relevant (>=0.60)
-        const relevantRows = (rows || []).filter(r => Number(r.similarity_score || 0) >= 0.60);
+        const relevantRows = (rows || []).filter(r => Number(r.similarity_score || 0) >= currentConfidenceThreshold);
 
         if (relevantRows.length === 0) {
-          status.innerText = `⚠️ No high or relevant matches found (all results below 60% similarity).`;
+          status.innerText = `⚠️ No matches found above ${thresholdPercent}% similarity threshold.`;
         } else {
-          status.innerText = `✅ Found ${relevantRows.length} matches (High Match & Relevant, ≥60%)`;
+          status.innerText = `✅ Found ${relevantRows.length} matches (≥${thresholdPercent}% similarity)`;
         }
 
         // Render filtered semantic results directly into the news feed
@@ -1533,17 +1922,27 @@ LIMIT 5;`
     async function triggerReindex() {
       const btn = document.getElementById('btn-reindex');
       const status = document.getElementById('semantic-status');
+      const minCharInput = document.getElementById('semantic-min-char-input');
+      const minChar = Math.max(1, Number(minCharInput ? minCharInput.value : 3) || 3);
+      const daysInput = document.getElementById('semantic-days-input');
+      const days = daysInput ? Math.max(0, Number(daysInput.value)) : 30;
+
       btn.disabled = true;
       btn.innerText = '⏳';
-      status.innerText = '⚡ Computing embeddings for missing records...';
+      const daysLabel = days > 0 ? `last ${days} days` : 'all time';
+      status.innerText = `⚡ Reindexing (${daysLabel}, min ${minChar} chars)...`;
 
       try {
-        const res = await fetch('/api/reindex', { method: 'POST' });
+        const res = await fetch('/api/reindex', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ forceAll: true, limit: 1000, minChar, days })
+        });
         const result = await res.json();
         if (result.error) {
           status.innerText = '❌ ' + result.error;
         } else {
-          status.innerText = `✅ Reindexed ${result.updated} records!`;
+          status.innerText = `✅ Reindexed ${result.updated} records (${daysLabel}, min ${minChar} chars)!`;
         }
       } catch (err) {
         status.innerText = '❌ Reindex failed: ' + err.message;

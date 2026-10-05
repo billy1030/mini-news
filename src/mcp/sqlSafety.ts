@@ -59,15 +59,15 @@ export function validateReadOnlySql(rawSql: string): { isValid: boolean; error?:
     }
   }
 
-  // Enforce max LIMIT 300 to prevent unbounded memory/token consumption
+  // Enforce max LIMIT 1,000,000 to prevent unbounded memory overflow
   const limitMatch = cleanSql.match(/\bLIMIT\s+(\d+)/i);
   let finalSql = cleanSql;
   if (!limitMatch) {
-    finalSql = `${cleanSql} LIMIT 300`;
+    finalSql = `${cleanSql} LIMIT 1000000`;
   } else {
     const requestedLimit = parseInt(limitMatch[1], 10);
-    if (requestedLimit > 300) {
-      finalSql = cleanSql.replace(/\bLIMIT\s+\d+/i, "LIMIT 300");
+    if (requestedLimit > 1000000) {
+      finalSql = cleanSql.replace(/\bLIMIT\s+\d+/i, "LIMIT 1000000");
     }
   }
 
