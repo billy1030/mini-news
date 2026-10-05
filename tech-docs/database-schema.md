@@ -95,5 +95,57 @@ LIMIT 10;
 
 ---
 
+## Specialized Indexing Strategies (Beyond Vector HNSW)
+
+While the pgvector HNSW index accelerates vector similarity search, Mini-News leverages and supports multiple complementary PostgreSQL index types to optimize text search, JSON lookups, and chronological sorting:
+
+### 1. `pg_trgm` GIN Index (Accelerates SQL `LIKE '%keyword%'` / `ILIKE`)
+* **Problem**: Standard B-Tree indexes only assist prefix matching (`LIKE 'word%'`). Wildcard substring queries (`LIKE '%降息%'` or `ILIKE '%NVDA%'`) force slow sequential table scans.
+* **Pattern**:
+  ```sql
+  CREATE EXTENSION IF NOT EXISTS pg_trgm;
+
+  CREATE INDEX IF NOT EXISTS idx_flash_news_trgm_content 
+  ON flash_news USING gin (raw_content gin_trgm_ops);
+  ```
+* **Performance Gain**: Converts full-text wildcard scans into sub-millisecond GIN trigram index lookups.
+
+### 2. JSONB GIN Index (Accelerates `tickers` Array Filtering)
+* **Problem**: Tickers are stored in a JSONB array (e.g. `["02513.HK", "NVDA"]`). Sequential scanning is required without specialized JSON indexing.
+* **Pattern**:
+  ```sql
+  CREATE INDEX IF NOT EXISTS idx_flash_news_tickers_gin 
+  ON flash_news USING gin (tickers);
+  ```
+* **Usage**:
+  ```sql
+  -- Instant lookup for any news tagging a specific stock or asset:
+  SELECT * FROM flash_news WHERE tickers @> '["02513.HK"]'::jsonb;
+  ```
+
+### 3. Partial Index (Breaking Alerts & Urgent Flashes)
+* **Problem**: Only ~5%–10% of items are breaking alerts (`is_alert = true` or `importance >= 2`). Indexing the remaining 90% of regular news is unnecessary overhead.
+* **Pattern**:
+  ```sql
+  CREATE INDEX IF NOT EXISTS idx_flash_news_alerts_only 
+  ON flash_news (created_at DESC) 
+  WHERE is_alert = true OR importance >= 2;
+  ```
+* **Performance Gain**: Produces a tiny, high-density index kept entirely in buffer cache, accelerating `get_latest_alerts` tool calls.
+
+### 4. Composite B-Tree Indexes (Zero-Sort Feed Filtering)
+* **Problem**: Dashboard views filter by sentiment direction or alert status and order by newest first (`ORDER BY created_at DESC`), requiring query-time heap sorting.
+* **Pattern**:
+  ```sql
+  CREATE INDEX IF NOT EXISTS idx_flash_news_direction_time 
+  ON flash_news (direction, created_at DESC);
+
+  CREATE INDEX IF NOT EXISTS idx_flash_news_alert_time 
+  ON flash_news (is_alert, created_at DESC);
+  ```
+* **Performance Gain**: Eliminates query-time sorting overhead by retrieving rows pre-ordered directly from the index tree.
+
+---
+
 ## Drizzle Schema Definition File
 Located at: [`src/db/schema.ts`](file:///c:/ai/mini-news/src/db/schema.ts)
