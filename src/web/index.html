@@ -973,8 +973,18 @@
           </div>
 
           <!-- Studio Status & Record Count Bar -->
-          <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.75rem; color: var(--text-muted);">
-            <span id="studio-status-text">Loading table data...</span>
+          <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.75rem; color: var(--text-muted); flex-wrap: wrap; gap: 0.5rem;">
+            <div style="display: flex; align-items: center; gap: 0.4rem; flex-wrap: wrap;">
+              <span id="studio-status-text">Loading table data...</span>
+              <!-- Active Database Indexes Indicator Badges -->
+              <div style="display: inline-flex; align-items: center; gap: 0.35rem; margin-left: 0.5rem; padding-left: 0.6rem; border-left: 1px solid var(--card-border);">
+                <span style="font-size: 0.68rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">INDEXES:</span>
+                <span class="index-badge" title="HNSW Vector Index (cosine ops, m=32, ef=128) - powers semantic search" style="background: rgba(236,72,153,0.12); color: #ec4899; border: 1px solid rgba(236,72,153,0.3); font-size: 0.68rem; font-weight: 600; padding: 1px 6px; border-radius: 4px; cursor: help;">🧠 HNSW Vector</span>
+                <span class="index-badge" title="pg_trgm GIN Index - powers sub-millisecond LIKE/ILIKE and substring queries" style="background: rgba(14,165,233,0.12); color: #0284c7; border: 1px solid rgba(14,165,233,0.3); font-size: 0.68rem; font-weight: 600; padding: 1px 6px; border-radius: 4px; cursor: help;">⚡ pg_trgm GIN</span>
+                <span class="index-badge" title="JSONB GIN Index on tickers - powers O(1) containment queries (@>)" style="background: rgba(168,85,247,0.12); color: #9333ea; border: 1px solid rgba(168,85,247,0.3); font-size: 0.68rem; font-weight: 600; padding: 1px 6px; border-radius: 4px; cursor: help;">🏷️ JSONB GIN</span>
+                <span class="index-badge" title="Composite B-Tree Index (direction + created_at) - eliminates heap sorting" style="background: rgba(16,185,129,0.12); color: #059669; border: 1px solid rgba(16,185,129,0.3); font-size: 0.68rem; font-weight: 600; padding: 1px 6px; border-radius: 4px; cursor: help;">📈 Composite B-Tree</span>
+              </div>
+            </div>
             <span id="studio-stats-text" style="font-family: var(--font-mono); color: var(--accent); font-weight: 600;"></span>
           </div>
 
@@ -998,12 +1008,14 @@
         </div>
         <div class="modal-body">
           <div style="display: flex; gap: 0.5rem; align-items: center; justify-content: space-between;">
-            <div style="display: flex; gap: 0.5rem; align-items: center;">
+            <div style="display: flex; gap: 0.4rem; align-items: center; flex-wrap: wrap;">
               <span style="font-size: 0.8rem; font-weight: 600; color: var(--text-muted);">Quick Templates:</span>
               <button class="btn btn-outline" style="padding: 3px 8px; font-size: 0.75rem;" onclick="setTemplateSql('vector')">Vector Status</button>
               <button class="btn btn-outline" style="padding: 3px 8px; font-size: 0.75rem;" onclick="setTemplateSql('sentiment')">Today's Sentiment</button>
               <button class="btn btn-outline" style="padding: 3px 8px; font-size: 0.75rem;" onclick="setTemplateSql('alerts')">Breaking Alerts</button>
               <button class="btn btn-outline" style="padding: 3px 8px; font-size: 0.75rem;" onclick="setTemplateSql('tickers')">Stock Tickers</button>
+              <button class="btn btn-outline" style="padding: 3px 8px; font-size: 0.75rem; border-color: rgba(14,165,233,0.4); color: #0284c7;" onclick="setTemplateSql('trgm')">⚡ Trigram GIN (ILIKE)</button>
+              <button class="btn btn-outline" style="padding: 3px 8px; font-size: 0.75rem; border-color: rgba(168,85,247,0.4); color: #9333ea;" onclick="setTemplateSql('jsonb')">🏷️ JSONB GIN (@>)</button>
             </div>
             <button class="btn btn-primary" style="padding: 0.4rem 1.25rem; font-size: 0.85rem;" onclick="runModalSql()">▶ Execute Query</button>
           </div>
@@ -1666,7 +1678,7 @@ LIMIT 10;</textarea>
             formatted = `<span style="padding: 2px 8px; border-radius: 4px; font-weight: 600; font-size: 0.7rem; background: ${bg}; color: ${color};">${val || 'FLAT'}</span>`;
           } else if (col === 'tickers' && Array.isArray(val)) {
             formatted = val.length > 0 
-              ? val.map(t => `<span style="background: rgba(37,99,235,0.1); color: var(--accent); padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; font-weight: 600;">${t}</span>`).join(' ')
+              ? val.map(t => `<span onclick="filterByTicker('${t}')" title="Click to filter by ${t} (JSONB GIN)" style="background: rgba(37,99,235,0.1); color: var(--accent); padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; font-weight: 600; cursor: pointer; transition: all 0.15s;" onmouseover="this.style.background='rgba(37,99,235,0.25)'" onmouseout="this.style.background='rgba(37,99,235,0.1)'">${t}</span>`).join(' ')
               : '<span style="color: var(--text-muted);">-</span>';
           } else if (col === 'raw_content' || col === 'summary') {
             const txt = String(val || '');
@@ -1722,6 +1734,16 @@ LIMIT 10;</textarea>
       renderStudioTable(filtered);
     }
 
+    function filterByTicker(ticker) {
+      const input = document.getElementById('studio-filter-input');
+      if (input) {
+        input.value = ticker;
+        filterStudioGrid();
+        const stats = document.getElementById('studio-stats-text');
+        if (stats) stats.innerText += ` (Filtered by Ticker: ${ticker} [JSONB GIN])`;
+      }
+    }
+
     // Modal Dialog Controls
     function openPlaygroundModal() {
       const modal = document.getElementById('playground-modal');
@@ -1768,7 +1790,21 @@ LIMIT 10;`,
 FROM flash_news 
 WHERE jsonb_array_length(tickers) > 0 
 ORDER BY created_at DESC 
-LIMIT 5;`
+LIMIT 5;`,
+      trgm: `-- Accelerated by pg_trgm GIN index (sub-millisecond substring scan)
+SELECT id, time_hkt, direction, 
+       LEFT(raw_content, 85) AS matched_news
+FROM flash_news 
+WHERE raw_content ILIKE '%指數%' OR raw_content ILIKE '%降息%'
+ORDER BY created_at DESC 
+LIMIT 10;`,
+      jsonb: `-- Accelerated by JSONB GIN index on tickers array (@> containment)
+SELECT id, time_hkt, tickers, direction, 
+       LEFT(raw_content, 85) AS ticker_news
+FROM flash_news 
+WHERE tickers @> '["NVDA"]'::jsonb OR tickers @> '["META"]'::jsonb
+ORDER BY created_at DESC 
+LIMIT 10;`
     };
 
     function setTemplateSql(type) {
@@ -2143,6 +2179,16 @@ LIMIT 5;`
                   ${statusBadge}
                   ${dataSourceBadge(log.dataSource)}
                   ${sourceBadge(log.source)}
+                  ${
+                    log.args && log.args.sql && String(log.args.sql).toUpperCase().includes('ILIKE')
+                      ? '<span style="background: rgba(14,165,233,0.15); color: #0284c7; border: 1px solid rgba(14,165,233,0.3); font-size: 0.65rem; font-weight: 700; padding: 1px 6px; border-radius: 4px;" title="Accelerated by pg_trgm GIN index">⚡ TRGM ACCELERATED</span>'
+                      : ''
+                  }
+                  ${
+                    log.args && log.args.sql && String(log.args.sql).includes('@>')
+                      ? '<span style="background: rgba(168,85,247,0.15); color: #9333ea; border: 1px solid rgba(168,85,247,0.3); font-size: 0.65rem; font-weight: 700; padding: 1px 6px; border-radius: 4px;" title="Accelerated by JSONB GIN index on tickers">🏷️ JSONB GIN</span>'
+                      : ''
+                  }
                 </div>
                 <div style="display: flex; gap: 0.5rem; align-items: center;">
                   <button class="btn-pill-icon" title="Copy this log entry" onclick="copySingleAuditLog(${idx}, this)">
