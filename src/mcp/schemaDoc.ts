@@ -20,13 +20,16 @@ Stores 7x24 real-time financial flash news feeds with time-series and ticker ann
 - \`direction\` (VARCHAR(16)): Market sentiment tag: 'UP' (surge/gain), 'DOWN' (drop/fall), 'FLAT'.
 - \`embedding\` (VECTOR(1536)): 1536-dimensional semantic embedding vector (pgvector).
 
-### Recommended Query Patterns:
-1. **Query by Ticker**:
+### Recommended Query Patterns & Index Accelerations:
+1. **Query by Ticker (Accelerated by JSONB GIN Index)**:
    SELECT id, time_hkt, raw_content, direction FROM flash_news WHERE tickers @> '["NVDA"]'::jsonb ORDER BY created_at DESC LIMIT 10;
 
 2. **Query Latest Urgent News for Today**:
    SELECT time_hkt, raw_content FROM flash_news WHERE date_hkt = CURRENT_DATE AND (importance >= 2 OR is_alert = true) ORDER BY created_at DESC LIMIT 20;
 
-3. **Keyword Full-Text Matching**:
+3. **Keyword Substring Matching (Accelerated by pg_trgm GIN Index)**:
    SELECT time_hkt, raw_content, direction FROM flash_news WHERE raw_content ILIKE '%降息%' ORDER BY created_at DESC LIMIT 10;
+
+4. **Sentiment Direction (Accelerated by Composite Index)**:
+   SELECT time_hkt, raw_content FROM flash_news WHERE direction = 'UP' ORDER BY created_at DESC LIMIT 10;
 `;

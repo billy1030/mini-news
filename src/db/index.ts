@@ -28,8 +28,9 @@ export const db = drizzle(pool, { schema });
 export async function initDatabase() {
   const client = await pool.connect();
   try {
-    // Enable pgvector extension
+    // Enable pgvector and pg_trgm extensions
     await client.query("CREATE EXTENSION IF NOT EXISTS vector;");
+    await client.query("CREATE EXTENSION IF NOT EXISTS pg_trgm;");
     // Ensure UTF8 client encoding
     await client.query("SET client_encoding = 'UTF8';");
     // Ensure HNSW index on embedding column exists with enhanced graph recall (m=32, ef_construction=128)
@@ -37,6 +38,21 @@ export async function initDatabase() {
       CREATE INDEX IF NOT EXISTS idx_flash_news_embedding_hnsw 
       ON flash_news USING hnsw (embedding vector_cosine_ops)
       WITH (m = 32, ef_construction = 128);
+    `);
+    // Ensure pg_trgm GIN index on raw_content exists for sub-millisecond SQL LIKE / ILIKE queries
+    await client.query(`
+      CREATE INDEX IF NOT EXISTS idx_flash_news_trgm_content 
+      ON flash_news USING gin (raw_content gin_trgm_ops);
+    `);
+    // Ensure JSONB GIN index on tickers exists for O(1) containment queries (@> '["TICKER"]')
+    await client.query(`
+      CREATE INDEX IF NOT EXISTS idx_flash_news_tickers_gin 
+      ON flash_news USING gin (tickers);
+    `);
+    // Ensure composite index on direction + created_at for instant sentiment filtering without sort overhead
+    await client.query(`
+      CREATE INDEX IF NOT EXISTS idx_flash_news_direction_time 
+      ON flash_news (direction, created_at DESC);
     `);
     // Ensure mcp_audit_logs table exists for cross-process audit trails
     await client.query(`
