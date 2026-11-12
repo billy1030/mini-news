@@ -3,11 +3,17 @@ import pg from "pg";
 import * as dotenv from "dotenv";
 import * as schema from "./schema.js";
 
-dotenv.config();
+import path from "path";
+import { fileURLToPath } from "url";
+
+// Load .env by absolute project path (independent of CWD, and before pool creation)
+dotenv.config({
+  path: path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../../.env"),
+});
 
 const connectionString =
   process.env.DATABASE_URL ||
-  "postgresql://postgres:postgrespassword@localhost:5232/mini_news";
+  "postgresql://postgres:postgrespassword@localhost:15232/mini_news";
 
 /**
  * PostgreSQL Connection Pool configuration

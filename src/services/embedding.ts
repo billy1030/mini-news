@@ -1,5 +1,5 @@
 import * as dotenv from "dotenv";
-dotenv.config();
+dotenv.config({ override: true });
 
 const DEFAULT_URL = "https://api.minimaxi.com/v1/embeddings";
 const DEFAULT_MODEL = "embo-01";

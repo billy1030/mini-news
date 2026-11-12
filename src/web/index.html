@@ -1,12 +1,15 @@
 <!DOCTYPE html>
 <html lang="zh-HK" data-theme="light">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Mini-News Financial Command Center</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+    rel="stylesheet">
   <style>
     /* Default: Clean Financial Light Theme */
     :root {
@@ -26,8 +29,8 @@
       --font-sans: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
       --font-mono: 'JetBrains Mono', monospace;
       --font-hei: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微軟雅黑", "Noto Sans SC", sans-serif;
-      --shadow-sm: 0 1px 3px rgba(0,0,0,0.05), 0 1px 2px rgba(0,0,0,0.03);
-      --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.07), 0 2px 4px -2px rgba(0,0,0,0.05);
+      --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.03);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
     }
 
     /* Dark Mode (Toggleable) */
@@ -46,14 +49,18 @@
       --input-bg: rgba(0, 0, 0, 0.4);
       --code-bg: #050811;
       --shadow-sm: none;
-      --shadow-md: 0 4px 20px rgba(0,0,0,0.3);
+      --shadow-md: 0 4px 20px rgba(0, 0, 0, 0.3);
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
     body {
       background-color: var(--bg);
-      background-image: 
+      background-image:
         radial-gradient(at 0% 0%, rgba(37, 99, 235, 0.08) 0px, transparent 50%),
         radial-gradient(at 100% 100%, rgba(22, 163, 74, 0.05) 0px, transparent 50%);
       color: var(--text-main);
@@ -97,8 +104,21 @@
       box-shadow: 0 0 15px var(--accent-glow);
     }
 
-    .brand h1 { font-size: 1.25rem; font-weight: 600; letter-spacing: -0.02em; }
-    .brand span { font-size: 0.75rem; color: var(--accent); background: rgba(37, 99, 235, 0.1); padding: 2px 8px; border-radius: 9999px; margin-left: 6px; font-weight: 500; }
+    .brand h1 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+    }
+
+    .brand span {
+      font-size: 0.75rem;
+      color: var(--accent);
+      background: rgba(37, 99, 235, 0.1);
+      padding: 2px 8px;
+      border-radius: 9999px;
+      margin-left: 6px;
+      font-weight: 500;
+    }
 
     .header-actions {
       display: flex;
@@ -122,12 +142,14 @@
       outline: none;
       box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
     }
+
     .btn:hover {
       background: #e2e8f0;
       color: #1e293b;
       border-color: #cbd5e1;
       transform: translateY(-1px);
     }
+
     .btn:active {
       transform: translateY(0);
       background: #cbd5e1;
@@ -139,6 +161,7 @@
       color: #94a3b8;
       box-shadow: none;
     }
+
     [data-theme="dark"] .btn:hover {
       background: rgba(51, 65, 85, 0.95);
       border-color: rgba(71, 85, 105, 1);
@@ -151,8 +174,9 @@
       border: 1px solid transparent;
       box-shadow: 0 2px 6px var(--accent-glow);
     }
-    .btn-primary:hover { 
-      background: #1d4ed8; 
+
+    .btn-primary:hover {
+      background: #1d4ed8;
       color: #fff;
     }
 
@@ -175,7 +199,9 @@
     }
 
     @keyframes spin {
-      100% { transform: rotate(360deg); }
+      100% {
+        transform: rotate(360deg);
+      }
     }
 
     main {
@@ -190,7 +216,9 @@
     }
 
     @media (max-width: 1024px) {
-      main { grid-template-columns: 1fr; }
+      main {
+        grid-template-columns: 1fr;
+      }
     }
 
     .card {
@@ -228,15 +256,32 @@
       border: 1px solid var(--card-border);
       text-align: center;
     }
-    .stat-label { font-size: 0.6875rem; color: var(--text-muted); text-transform: uppercase; margin-bottom: 0.2rem; font-weight: 600; white-space: nowrap; }
-    .stat-val { font-size: 1.15rem; font-weight: 700; color: var(--text-main); font-family: var(--font-mono); line-height: 1.2; }
+
+    .stat-label {
+      font-size: 0.6875rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      margin-bottom: 0.2rem;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .stat-val {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--text-main);
+      font-family: var(--font-mono);
+      line-height: 1.2;
+    }
 
     .setting-group {
       margin-bottom: 0.75rem;
     }
+
     .setting-group:last-child {
       margin-bottom: 0;
     }
+
     .setting-label {
       font-size: 0.75rem;
       font-weight: 500;
@@ -244,6 +289,7 @@
       margin-bottom: 0.3rem;
       display: block;
     }
+
     .setting-input {
       width: 100%;
       padding: 0.45rem 0.65rem;
@@ -271,6 +317,7 @@
       position: relative;
       box-shadow: var(--shadow-sm);
     }
+
     .news-card:hover {
       border-color: var(--accent);
       transform: translateY(-1px);
@@ -297,14 +344,50 @@
       font-weight: 600;
       font-size: 0.7rem;
     }
-    .tag-up { background: rgba(22, 163, 74, 0.15); color: var(--success); }
-    .tag-down { background: rgba(220, 38, 38, 0.15); color: var(--danger); }
-    .tag-flat { background: rgba(100, 116, 139, 0.15); color: var(--text-muted); }
-    .tag-alert { background: rgba(220, 38, 38, 0.2); color: var(--danger); }
-    .tag-match-high { background: rgba(22, 163, 74, 0.18); color: var(--success); border: 1px solid rgba(22, 163, 74, 0.35); }
-    .tag-match-relevant { background: rgba(37, 99, 235, 0.18); color: var(--accent); border: 1px solid rgba(37, 99, 235, 0.35); }
-    .tag-match-moderate { background: rgba(234, 179, 8, 0.18); color: #d97706; border: 1px solid rgba(234, 179, 8, 0.35); }
-    .tag-match-low { background: rgba(148, 163, 184, 0.18); color: var(--text-muted); border: 1px solid rgba(148, 163, 184, 0.35); }
+
+    .tag-up {
+      background: rgba(22, 163, 74, 0.15);
+      color: var(--success);
+    }
+
+    .tag-down {
+      background: rgba(220, 38, 38, 0.15);
+      color: var(--danger);
+    }
+
+    .tag-flat {
+      background: rgba(100, 116, 139, 0.15);
+      color: var(--text-muted);
+    }
+
+    .tag-alert {
+      background: rgba(220, 38, 38, 0.2);
+      color: var(--danger);
+    }
+
+    .tag-match-high {
+      background: rgba(22, 163, 74, 0.18);
+      color: var(--success);
+      border: 1px solid rgba(22, 163, 74, 0.35);
+    }
+
+    .tag-match-relevant {
+      background: rgba(37, 99, 235, 0.18);
+      color: var(--accent);
+      border: 1px solid rgba(37, 99, 235, 0.35);
+    }
+
+    .tag-match-moderate {
+      background: rgba(234, 179, 8, 0.18);
+      color: #d97706;
+      border: 1px solid rgba(234, 179, 8, 0.35);
+    }
+
+    .tag-match-low {
+      background: rgba(148, 163, 184, 0.18);
+      color: var(--text-muted);
+      border: 1px solid rgba(148, 163, 184, 0.35);
+    }
 
     .filter-bar {
       display: flex;
@@ -375,6 +458,7 @@
       border-radius: 9999px;
       background: rgba(0, 0, 0, 0.08);
     }
+
     .filter-pill.active .filter-count {
       background: rgba(255, 255, 255, 0.25);
       color: #fff;
@@ -454,9 +538,18 @@
       border-left: 3px solid var(--accent);
       color: var(--text-main);
     }
-    .group-header.group-up { border-left-color: var(--success); }
-    .group-header.group-down { border-left-color: var(--danger); }
-    .group-header.group-flat { border-left-color: var(--text-muted); }
+
+    .group-header.group-up {
+      border-left-color: var(--success);
+    }
+
+    .group-header.group-down {
+      border-left-color: var(--danger);
+    }
+
+    .group-header.group-flat {
+      border-left-color: var(--text-muted);
+    }
 
     .news-body {
       font-size: 0.9375rem;
@@ -529,8 +622,13 @@
     }
 
     @keyframes modalSlideUp {
-      from { transform: translateY(20px) scale(0.97); }
-      to { transform: translateY(0) scale(1); }
+      from {
+        transform: translateY(20px) scale(0.97);
+      }
+
+      to {
+        transform: translateY(0) scale(1);
+      }
     }
 
     .modal-header {
@@ -561,6 +659,7 @@
       border-radius: 6px;
       transition: all 0.2s;
     }
+
     .modal-close:hover {
       background: var(--code-bg);
       color: var(--text-main);
@@ -582,26 +681,31 @@
       outline: none;
       padding: 0;
     }
+
     .btn-pill-icon:hover {
       background: #e2e8f0;
       color: #1e293b;
       border-color: #cbd5e1;
       transform: translateY(-1px);
     }
+
     .btn-pill-icon:active {
       transform: translateY(0);
       background: #cbd5e1;
     }
+
     [data-theme="dark"] .btn-pill-icon {
       background: rgba(30, 41, 59, 0.85);
       border-color: rgba(51, 65, 85, 0.8);
       color: #94a3b8;
     }
+
     [data-theme="dark"] .btn-pill-icon:hover {
       background: rgba(51, 65, 85, 0.95);
       border-color: rgba(71, 85, 105, 1);
       color: #f8fafc;
     }
+
     .btn-pill-icon.success {
       background: rgba(16, 185, 129, 0.15) !important;
       border-color: rgba(16, 185, 129, 0.4) !important;
@@ -631,6 +735,7 @@
       resize: vertical;
       outline: none;
     }
+
     .modal-editor:focus {
       border-color: var(--accent);
       box-shadow: 0 0 0 3px var(--accent-glow);
@@ -665,10 +770,12 @@
       align-items: center;
       gap: 0.4rem;
     }
+
     .studio-tab-btn:hover {
       color: var(--text-main);
       border-color: var(--accent);
     }
+
     .studio-tab-btn.active {
       background: var(--accent);
       color: #fff;
@@ -730,12 +837,14 @@
       width: 260px;
       transition: all 0.2s;
     }
+
     .studio-search-input:focus {
       border-color: var(--accent);
       box-shadow: 0 0 0 3px var(--accent-glow);
     }
   </style>
 </head>
+
 <body>
 
   <header>
@@ -746,8 +855,10 @@
       </div>
     </div>
     <div class="header-actions">
-      <button class="btn btn-outline" onclick="openAuditModal()" style="border-color: rgba(234, 179, 8, 0.4); color: #d97706;">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <button class="btn btn-outline" onclick="openAuditModal()"
+        style="border-color: rgba(234, 179, 8, 0.4); color: #d97706;">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
           <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
           <polyline points="14 2 14 8 20 8"></polyline>
           <line x1="16" y1="13" x2="8" y2="13"></line>
@@ -756,8 +867,10 @@
         </svg>
         <span>15m Audit Log</span>
       </button>
-      <button class="btn btn-outline" onclick="openStudioModal()" style="border-color: rgba(99, 102, 241, 0.4); color: var(--accent);">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <button class="btn btn-outline" onclick="openStudioModal()"
+        style="border-color: rgba(99, 102, 241, 0.4); color: var(--accent);">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
           <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
           <line x1="3" y1="9" x2="21" y2="9"></line>
           <line x1="9" y1="21" x2="9" y2="9"></line>
@@ -765,19 +878,22 @@
         <span>Data Studio</span>
       </button>
       <button class="btn btn-outline" onclick="openPlaygroundModal()">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
           <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
         </svg>
         <span>Playground</span>
       </button>
       <button class="btn btn-outline" id="btn-theme-toggle" onclick="toggleTheme()">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
           <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
         </svg>
         <span id="theme-btn-text">Dark</span>
       </button>
       <button class="btn btn-outline" id="btn-poll-now">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
           <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
           <polyline points="7 10 12 15 17 10"></polyline>
           <line x1="12" y1="15" x2="12" y2="3"></line>
@@ -786,7 +902,8 @@
       </button>
       <button class="btn btn-outline btn-refresh" id="btn-refresh" onclick="loadAllData()">
         <span class="icon">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
             <polyline points="23 4 23 10 17 10"></polyline>
             <polyline points="1 20 1 14 7 14"></polyline>
             <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
@@ -816,7 +933,7 @@
           </div>
           <div class="stat-item">
             <div class="stat-label">Port</div>
-            <div class="stat-val" id="stat-port">5200</div>
+            <div class="stat-val" id="stat-port">15200</div>
           </div>
         </div>
 
@@ -836,7 +953,7 @@
         </div>
 
         <div class="setting-group">
-          <label class="setting-label">Database URL (Host: 5232 / Zeabur)</label>
+          <label class="setting-label">Database URL (Host: 15232 / Zeabur)</label>
           <input type="text" class="setting-input" id="cfg-db" readonly />
         </div>
 
@@ -846,7 +963,8 @@
             <span id="cfg-poll-status" style="font-size: 0.7rem; color: var(--accent);"></span>
           </div>
           <div style="display: flex; gap: 0.5rem;">
-            <select class="setting-input" id="cfg-interval" onchange="updatePollFrequency(this.value)" style="cursor: pointer;">
+            <select class="setting-input" id="cfg-interval" onchange="updatePollFrequency(this.value)"
+              style="cursor: pointer;">
               <option value="15">15 Seconds (Ultra-Fast)</option>
               <option value="30">30 Seconds (Fast)</option>
               <option value="60" selected>60 Seconds (Default)</option>
@@ -859,7 +977,27 @@
 
         <div class="setting-group">
           <label class="setting-label">Data Source Endpoint</label>
-          <input type="text" class="setting-input" id="cfg-source" readonly />
+          <div style="display: flex; gap: 0.5rem;">
+            <input type="text" class="setting-input" id="cfg-source" placeholder="https://..." />
+            <button class="btn btn-outline" style="padding: 0 0.75rem; font-size: 0.75rem;" onclick="saveSourceUrl()">Save</button>
+          </div>
+        </div>
+
+        <div class="setting-group" style="background: rgba(99, 102, 241, 0.05); border: 1px solid rgba(99, 102, 241, 0.2); border-radius: 8px; padding: 0.75rem;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.4rem;">
+            <label class="setting-label" style="margin-bottom: 0; font-weight: 700; color: var(--accent);">MiniMax Embedding API Key</label>
+            <span id="cfg-key-status" style="font-size: 0.7rem; font-weight: 500;"></span>
+          </div>
+          <div style="display: flex; gap: 0.5rem; margin-bottom: 0.5rem;">
+            <input type="password" class="setting-input" id="cfg-minimax-key" placeholder="sk-cp-..." style="font-family: var(--font-mono); font-size: 0.8rem;" />
+            <button class="btn btn-outline" style="padding: 0 0.5rem; font-size: 0.75rem;" onclick="toggleKeyVisibility()" id="btn-toggle-key" title="Show/Hide">👁️</button>
+            <button class="btn btn-primary" style="padding: 0 0.75rem; font-size: 0.75rem; white-space: nowrap;" onclick="saveMinimaxKey()">Save Key</button>
+          </div>
+          <div style="display: flex; gap: 0.5rem; align-items: center;">
+            <span style="font-size: 0.7rem; color: var(--text-muted);">Model:</span>
+            <input type="text" class="setting-input" id="cfg-minimax-model" value="embo-01" style="font-size: 0.75rem; padding: 0.2rem 0.5rem; max-width: 110px;" />
+            <button class="btn btn-outline" style="padding: 0.2rem 0.5rem; font-size: 0.7rem;" onclick="testEmbeddingConnection()">⚡ Test Key</button>
+          </div>
         </div>
       </div>
 
@@ -870,48 +1008,72 @@
           <span style="font-size: 0.7rem; color: var(--accent); font-weight: 500;">embo-01</span>
         </div>
         <div style="margin-bottom: 0.65rem; position: relative;">
-          <input type="text" class="setting-input" id="semantic-query-input" placeholder="e.g. 美聯儲降息及國債走勢, 原油中東危機, 02513.HK..." onkeydown="if(event.key==='Enter') runSemanticSearch()" />
+          <input type="text" class="setting-input" id="semantic-query-input"
+            placeholder="e.g. 美聯儲降息及國債走勢, 原油中東危機, 02513.HK..."
+            onkeydown="if(event.key==='Enter') runSemanticSearch()" />
         </div>
         <!-- Confidence / Similarity Threshold Selector -->
-        <div style="margin-bottom: 0.75rem; background: var(--code-bg); padding: 0.5rem 0.65rem; border-radius: 8px; border: 1px solid var(--card-border);">
-          <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.75rem; margin-bottom: 0.35rem;">
+        <div
+          style="margin-bottom: 0.75rem; background: var(--code-bg); padding: 0.5rem 0.65rem; border-radius: 8px; border: 1px solid var(--card-border);">
+          <div
+            style="display: flex; justify-content: space-between; align-items: center; font-size: 0.75rem; margin-bottom: 0.35rem;">
             <span style="color: var(--text-muted); font-weight: 500;">Confidence Threshold:</span>
-            <span id="semantic-threshold-display" style="font-family: var(--font-mono); font-weight: 700; color: var(--accent);">50%</span>
+            <span id="semantic-threshold-display"
+              style="font-family: var(--font-mono); font-weight: 700; color: var(--accent);">50%</span>
           </div>
           <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
-            <input type="range" id="semantic-threshold-slider" min="20" max="90" step="5" value="50" style="flex: 1; accent-color: var(--accent); cursor: pointer;" oninput="updateConfidenceThreshold(this.value)" />
-            <input type="number" id="semantic-threshold-number" min="0" max="100" step="1" value="50" style="width: 52px; padding: 2px 4px; font-size: 0.75rem; font-family: var(--font-mono); text-align: center; background: var(--input-bg); border: 1px solid var(--card-border); border-radius: 4px; color: var(--text-main);" oninput="updateConfidenceThresholdFromNumber(this.value)" />
+            <input type="range" id="semantic-threshold-slider" min="20" max="90" step="5" value="50"
+              style="flex: 1; accent-color: var(--accent); cursor: pointer;"
+              oninput="updateConfidenceThreshold(this.value)" />
+            <input type="number" id="semantic-threshold-number" min="0" max="100" step="1" value="50"
+              style="width: 52px; padding: 2px 4px; font-size: 0.75rem; font-family: var(--font-mono); text-align: center; background: var(--input-bg); border: 1px solid var(--card-border); border-radius: 4px; color: var(--text-main);"
+              oninput="updateConfidenceThresholdFromNumber(this.value)" />
             <span style="font-size: 0.75rem; color: var(--text-muted);">%</span>
           </div>
 
           <!-- Min Characters to Index Control -->
-          <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.75rem; padding-top: 0.4rem; border-top: 1px dashed var(--card-border);">
-            <span style="color: var(--text-muted); font-weight: 500;" title="Exclude short fragments/noise below 3 chars from vector index">Min Chars to Index:</span>
+          <div
+            style="display: flex; justify-content: space-between; align-items: center; font-size: 0.75rem; padding-top: 0.4rem; border-top: 1px dashed var(--card-border);">
+            <span style="color: var(--text-muted); font-weight: 500;"
+              title="Exclude short fragments/noise below 3 chars from vector index">Min Chars to Index:</span>
             <div style="display: flex; align-items: center; gap: 0.3rem;">
-              <input type="number" id="semantic-min-char-input" min="3" max="50" step="1" value="3" style="width: 52px; padding: 2px 4px; font-size: 0.75rem; font-family: var(--font-mono); text-align: center; background: var(--input-bg); border: 1px solid var(--card-border); border-radius: 4px; color: var(--text-main);" />
+              <input type="number" id="semantic-min-char-input" min="3" max="50" step="1" value="3"
+                style="width: 52px; padding: 2px 4px; font-size: 0.75rem; font-family: var(--font-mono); text-align: center; background: var(--input-bg); border: 1px solid var(--card-border); border-radius: 4px; color: var(--text-main);" />
               <span style="font-size: 0.75rem; color: var(--text-muted);">chars</span>
             </div>
           </div>
 
           <!-- Time Window (Last X Days) for Reindex -->
-          <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.75rem; padding-top: 0.4rem; margin-top: 0.4rem; border-top: 1px dashed var(--card-border);">
-            <span style="color: var(--text-muted); font-weight: 500;" title="Reindex news within the last X days. Set to 0 for all time.">Reindex History:</span>
+          <div
+            style="display: flex; justify-content: space-between; align-items: center; font-size: 0.75rem; padding-top: 0.4rem; margin-top: 0.4rem; border-top: 1px dashed var(--card-border);">
+            <span style="color: var(--text-muted); font-weight: 500;"
+              title="Reindex news within the last X days. Set to 0 for all time.">Reindex History:</span>
             <div style="display: flex; align-items: center; gap: 0.3rem;">
-              <input type="number" id="semantic-days-input" min="0" max="3650" step="1" value="30" style="width: 52px; padding: 2px 4px; font-size: 0.75rem; font-family: var(--font-mono); text-align: center; background: var(--input-bg); border: 1px solid var(--card-border); border-radius: 4px; color: var(--text-main);" title="0 = All Time, default 30 days" />
+              <input type="number" id="semantic-days-input" min="0" max="3650" step="1" value="30"
+                style="width: 52px; padding: 2px 4px; font-size: 0.75rem; font-family: var(--font-mono); text-align: center; background: var(--input-bg); border: 1px solid var(--card-border); border-radius: 4px; color: var(--text-main);"
+                title="0 = All Time, default 30 days" />
               <span style="font-size: 0.75rem; color: var(--text-muted);">days</span>
             </div>
           </div>
         </div>
         <div style="display: flex; gap: 0.4rem; margin-bottom: 0.75rem;">
-          <button class="btn btn-outline" style="flex: 1; justify-content: center; font-size: 0.8rem; padding: 0.45rem 0.5rem;" id="btn-semantic-search" onclick="runSemanticSearch()">Vector Search</button>
-          <button class="btn btn-outline" style="justify-content: center; font-size: 0.8rem; padding: 0.45rem 0.6rem;" id="btn-clear-search" onclick="clearSemanticSearch()" title="Clear search and show live feed">✕ Clear</button>
-          <button class="btn btn-outline" style="justify-content: center; font-size: 0.8rem; padding: 0.45rem 0.6rem;" id="btn-reindex" onclick="triggerReindex()" title="Reindex embeddings with current min chars">⚡ Reindex</button>
+          <button class="btn btn-outline"
+            style="flex: 1; justify-content: center; font-size: 0.8rem; padding: 0.45rem 0.5rem;"
+            id="btn-semantic-search" onclick="runSemanticSearch()">Vector Search</button>
+          <button class="btn btn-outline" style="justify-content: center; font-size: 0.8rem; padding: 0.45rem 0.6rem;"
+            id="btn-clear-search" onclick="clearSemanticSearch()" title="Clear search and show live feed">✕
+            Clear</button>
+          <button class="btn btn-outline" style="justify-content: center; font-size: 0.8rem; padding: 0.45rem 0.6rem;"
+            id="btn-reindex" onclick="triggerReindex()" title="Reindex embeddings with current min chars">⚡
+            Reindex</button>
         </div>
         <div id="semantic-status" style="font-size: 0.75rem; color: var(--text-muted);"></div>
       </div>
 
       <!-- Data Studio Quick Card -->
-      <div class="card" style="cursor: pointer; transition: all 0.2s; border-color: rgba(99, 102, 241, 0.35); background: linear-gradient(180deg, rgba(99, 102, 241, 0.05) 0%, transparent 100%);" onclick="openStudioModal()">
+      <div class="card"
+        style="cursor: pointer; transition: all 0.2s; border-color: rgba(99, 102, 241, 0.35); background: linear-gradient(180deg, rgba(99, 102, 241, 0.05) 0%, transparent 100%);"
+        onclick="openStudioModal()">
         <div class="card-title" style="margin-bottom: 0.5rem;">
           <span style="display: flex; align-items: center; gap: 0.4rem;">
             <span>📊 Mini-News Data Studio</span>
@@ -919,7 +1081,8 @@
           <span style="font-size: 0.75rem; color: var(--accent); font-weight: 600;">Open &rarr;</span>
         </div>
         <p style="font-size: 0.8125rem; color: var(--text-muted); line-height: 1.5;">
-          Prisma-like visual data explorer on Port 5200. Inspect tables, vector index statuses, tickers, and raw records in an interactive grid.
+          Prisma-like visual data explorer on Port 5200. Inspect tables, vector index statuses, tickers, and raw records
+          in an interactive grid.
         </p>
       </div>
 
@@ -930,7 +1093,8 @@
           <span style="font-size: 0.75rem; color: var(--accent); font-weight: 600;">Open &rarr;</span>
         </div>
         <p style="font-size: 0.8125rem; color: var(--text-muted); line-height: 1.5;">
-          Click to open the fullscreen interactive SQL workspace with prebuilt templates, vector inspection, and table results.
+          Click to open the fullscreen interactive SQL workspace with prebuilt templates, vector inspection, and table
+          results.
         </p>
       </div>
     </aside>
@@ -941,51 +1105,76 @@
         <div class="modal-header">
           <div class="modal-title">
             <span>📊 Mini-News Data Studio</span>
-            <span style="font-size: 0.75rem; color: var(--accent); background: rgba(99, 102, 241, 0.12); padding: 3px 8px; border-radius: 9999px;">PORT 5200 EMBEDDED</span>
+            <span
+              style="font-size: 0.75rem; color: var(--accent); background: rgba(99, 102, 241, 0.12); padding: 3px 8px; border-radius: 9999px;">PORT
+              5200 EMBEDDED</span>
           </div>
           <button class="modal-close" onclick="closeStudioModal()" title="Close">&times;</button>
         </div>
         <div class="modal-body" style="padding: 1.25rem 1.5rem;">
           <!-- Studio Top Toolbar -->
-          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem;">
+          <div
+            style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem;">
             <div style="display: flex; align-items: center; gap: 0.5rem;">
               <span style="font-size: 0.75rem; color: var(--text-muted); font-weight: 600;">TABLE:</span>
               <button class="studio-tab-btn active" id="tab-studio-news" onclick="switchStudioTable('flash_news')">
                 <span>📰 flash_news</span>
-                <span id="studio-badge-news" style="font-family: var(--font-mono); font-size: 0.7rem; opacity: 0.85;">(898)</span>
+                <span id="studio-badge-news"
+                  style="font-family: var(--font-mono); font-size: 0.7rem; opacity: 0.85;">(898)</span>
               </button>
               <button class="studio-tab-btn" id="tab-studio-logs" onclick="switchStudioTable('mcp_audit_logs')">
                 <span>📋 mcp_audit_logs</span>
-                <span id="studio-badge-logs" style="font-family: var(--font-mono); font-size: 0.7rem; opacity: 0.85;">(...)</span>
+                <span id="studio-badge-logs"
+                  style="font-family: var(--font-mono); font-size: 0.7rem; opacity: 0.85;">(...)</span>
               </button>
             </div>
 
             <!-- Grid Controls: Filter, Limit & Refresh -->
             <div style="display: flex; align-items: center; gap: 0.5rem;">
-              <input type="text" class="studio-search-input" id="studio-filter-input" placeholder="🔍 Filter rows (id, ticker, text)..." oninput="filterStudioGrid()" />
-              <div style="display: flex; align-items: center; gap: 0.35rem; background: var(--code-bg); padding: 3px 8px; border-radius: 6px; border: 1px solid var(--card-border);">
+              <input type="text" class="studio-search-input" id="studio-filter-input"
+                placeholder="🔍 Filter rows (id, ticker, text)..." oninput="filterStudioGrid()" />
+              <div
+                style="display: flex; align-items: center; gap: 0.35rem; background: var(--code-bg); padding: 3px 8px; border-radius: 6px; border: 1px solid var(--card-border);">
                 <span style="font-size: 0.75rem; color: var(--text-muted); font-weight: 500;">Limit:</span>
-                <input type="number" id="studio-limit-input" min="1" max="1000000" step="100" value="1000" style="width: 82px; padding: 2px 6px; font-size: 0.75rem; font-family: var(--font-mono); text-align: center; background: var(--input-bg); border: 1px solid var(--card-border); border-radius: 4px; color: var(--text-main);" onchange="loadStudioData()" onkeydown="if(event.key==='Enter') loadStudioData()" title="Up to 1,000,000 rows" />
+                <input type="number" id="studio-limit-input" min="1" max="1000000" step="100" value="1000"
+                  style="width: 82px; padding: 2px 6px; font-size: 0.75rem; font-family: var(--font-mono); text-align: center; background: var(--input-bg); border: 1px solid var(--card-border); border-radius: 4px; color: var(--text-main);"
+                  onchange="loadStudioData()" onkeydown="if(event.key==='Enter') loadStudioData()"
+                  title="Up to 1,000,000 rows" />
                 <span style="font-size: 0.75rem; color: var(--text-muted);">rows</span>
               </div>
-              <button class="btn btn-outline" style="padding: 0.4rem 0.75rem; font-size: 0.8125rem;" onclick="loadStudioData()">🔄 Refresh</button>
+              <button class="btn btn-outline" style="padding: 0.4rem 0.75rem; font-size: 0.8125rem;"
+                onclick="loadStudioData()">🔄 Refresh</button>
             </div>
           </div>
 
           <!-- Studio Status & Record Count Bar -->
-          <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.75rem; color: var(--text-muted); flex-wrap: wrap; gap: 0.5rem;">
+          <div
+            style="display: flex; justify-content: space-between; align-items: center; font-size: 0.75rem; color: var(--text-muted); flex-wrap: wrap; gap: 0.5rem;">
             <div style="display: flex; align-items: center; gap: 0.4rem; flex-wrap: wrap;">
               <span id="studio-status-text">Loading table data...</span>
               <!-- Active Database Indexes Indicator Badges -->
-              <div style="display: inline-flex; align-items: center; gap: 0.35rem; margin-left: 0.5rem; padding-left: 0.6rem; border-left: 1px solid var(--card-border);">
-                <span style="font-size: 0.68rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">INDEXES:</span>
-                <span class="index-badge" title="HNSW Vector Index (cosine ops, m=32, ef=128) - powers semantic search" style="background: rgba(236,72,153,0.12); color: #ec4899; border: 1px solid rgba(236,72,153,0.3); font-size: 0.68rem; font-weight: 600; padding: 1px 6px; border-radius: 4px; cursor: help;">🧠 HNSW Vector</span>
-                <span class="index-badge" title="pg_trgm GIN Index - powers sub-millisecond LIKE/ILIKE and substring queries" style="background: rgba(14,165,233,0.12); color: #0284c7; border: 1px solid rgba(14,165,233,0.3); font-size: 0.68rem; font-weight: 600; padding: 1px 6px; border-radius: 4px; cursor: help;">⚡ pg_trgm GIN</span>
-                <span class="index-badge" title="JSONB GIN Index on tickers - powers O(1) containment queries (@>)" style="background: rgba(168,85,247,0.12); color: #9333ea; border: 1px solid rgba(168,85,247,0.3); font-size: 0.68rem; font-weight: 600; padding: 1px 6px; border-radius: 4px; cursor: help;">🏷️ JSONB GIN</span>
-                <span class="index-badge" title="Composite B-Tree Index (direction + created_at) - eliminates heap sorting" style="background: rgba(16,185,129,0.12); color: #059669; border: 1px solid rgba(16,185,129,0.3); font-size: 0.68rem; font-weight: 600; padding: 1px 6px; border-radius: 4px; cursor: help;">📈 Composite B-Tree</span>
+              <div
+                style="display: inline-flex; align-items: center; gap: 0.35rem; margin-left: 0.5rem; padding-left: 0.6rem; border-left: 1px solid var(--card-border);">
+                <span
+                  style="font-size: 0.68rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">INDEXES:</span>
+                <span class="index-badge" title="HNSW Vector Index (cosine ops, m=32, ef=128) - powers semantic search"
+                  style="background: rgba(236,72,153,0.12); color: #ec4899; border: 1px solid rgba(236,72,153,0.3); font-size: 0.68rem; font-weight: 600; padding: 1px 6px; border-radius: 4px; cursor: help;">🧠
+                  HNSW Vector</span>
+                <span class="index-badge"
+                  title="pg_trgm GIN Index - powers sub-millisecond LIKE/ILIKE and substring queries"
+                  style="background: rgba(14,165,233,0.12); color: #0284c7; border: 1px solid rgba(14,165,233,0.3); font-size: 0.68rem; font-weight: 600; padding: 1px 6px; border-radius: 4px; cursor: help;">⚡
+                  pg_trgm GIN</span>
+                <span class="index-badge" title="JSONB GIN Index on tickers - powers O(1) containment queries (@>)"
+                  style="background: rgba(168,85,247,0.12); color: #9333ea; border: 1px solid rgba(168,85,247,0.3); font-size: 0.68rem; font-weight: 600; padding: 1px 6px; border-radius: 4px; cursor: help;">🏷️
+                  JSONB GIN</span>
+                <span class="index-badge"
+                  title="Composite B-Tree Index (direction + created_at) - eliminates heap sorting"
+                  style="background: rgba(16,185,129,0.12); color: #059669; border: 1px solid rgba(16,185,129,0.3); font-size: 0.68rem; font-weight: 600; padding: 1px 6px; border-radius: 4px; cursor: help;">📈
+                  Composite B-Tree</span>
               </div>
             </div>
-            <span id="studio-stats-text" style="font-family: var(--font-mono); color: var(--accent); font-weight: 600;"></span>
+            <span id="studio-stats-text"
+              style="font-family: var(--font-mono); color: var(--accent); font-weight: 600;"></span>
           </div>
 
           <!-- Studio Spreadsheet Table Container -->
@@ -1002,7 +1191,9 @@
         <div class="modal-header">
           <div class="modal-title">
             <span>⚡ Interactive Financial Database Playground</span>
-            <span style="font-size: 0.75rem; color: var(--accent); background: rgba(37,99,235,0.1); padding: 3px 8px; border-radius: 9999px;">READ-ONLY & VECTOR READY</span>
+            <span
+              style="font-size: 0.75rem; color: var(--accent); background: rgba(37,99,235,0.1); padding: 3px 8px; border-radius: 9999px;">READ-ONLY
+              & VECTOR READY</span>
           </div>
           <button class="modal-close" onclick="closePlaygroundModal()" title="Close">&times;</button>
         </div>
@@ -1010,14 +1201,23 @@
           <div style="display: flex; gap: 0.5rem; align-items: center; justify-content: space-between;">
             <div style="display: flex; gap: 0.4rem; align-items: center; flex-wrap: wrap;">
               <span style="font-size: 0.8rem; font-weight: 600; color: var(--text-muted);">Quick Templates:</span>
-              <button class="btn btn-outline" style="padding: 3px 8px; font-size: 0.75rem;" onclick="setTemplateSql('vector')">Vector Status</button>
-              <button class="btn btn-outline" style="padding: 3px 8px; font-size: 0.75rem;" onclick="setTemplateSql('sentiment')">Today's Sentiment</button>
-              <button class="btn btn-outline" style="padding: 3px 8px; font-size: 0.75rem;" onclick="setTemplateSql('alerts')">Breaking Alerts</button>
-              <button class="btn btn-outline" style="padding: 3px 8px; font-size: 0.75rem;" onclick="setTemplateSql('tickers')">Stock Tickers</button>
-              <button class="btn btn-outline" style="padding: 3px 8px; font-size: 0.75rem; border-color: rgba(14,165,233,0.4); color: #0284c7;" onclick="setTemplateSql('trgm')">⚡ Trigram GIN (ILIKE)</button>
-              <button class="btn btn-outline" style="padding: 3px 8px; font-size: 0.75rem; border-color: rgba(168,85,247,0.4); color: #9333ea;" onclick="setTemplateSql('jsonb')">🏷️ JSONB GIN (@>)</button>
+              <button class="btn btn-outline" style="padding: 3px 8px; font-size: 0.75rem;"
+                onclick="setTemplateSql('vector')">Vector Status</button>
+              <button class="btn btn-outline" style="padding: 3px 8px; font-size: 0.75rem;"
+                onclick="setTemplateSql('sentiment')">Today's Sentiment</button>
+              <button class="btn btn-outline" style="padding: 3px 8px; font-size: 0.75rem;"
+                onclick="setTemplateSql('alerts')">Breaking Alerts</button>
+              <button class="btn btn-outline" style="padding: 3px 8px; font-size: 0.75rem;"
+                onclick="setTemplateSql('tickers')">Stock Tickers</button>
+              <button class="btn btn-outline"
+                style="padding: 3px 8px; font-size: 0.75rem; border-color: rgba(14,165,233,0.4); color: #0284c7;"
+                onclick="setTemplateSql('trgm')">⚡ Trigram GIN (ILIKE)</button>
+              <button class="btn btn-outline"
+                style="padding: 3px 8px; font-size: 0.75rem; border-color: rgba(168,85,247,0.4); color: #9333ea;"
+                onclick="setTemplateSql('jsonb')">🏷️ JSONB GIN (@>)</button>
             </div>
-            <button class="btn btn-primary" style="padding: 0.4rem 1.25rem; font-size: 0.85rem;" onclick="runModalSql()">▶ Execute Query</button>
+            <button class="btn btn-primary" style="padding: 0.4rem 1.25rem; font-size: 0.85rem;"
+              onclick="runModalSql()">▶ Execute Query</button>
           </div>
 
           <textarea class="modal-editor" id="modal-sql-input" placeholder="Type your SELECT or WITH query here...">SELECT id, time_hkt, direction, 
@@ -1029,7 +1229,8 @@ LIMIT 10;</textarea>
 
           <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.25rem;">
             <span style="font-size: 0.8rem; font-weight: 600; color: var(--text-muted);">Query Output & Results:</span>
-            <span id="modal-sql-stats" style="font-size: 0.75rem; color: var(--accent); font-family: var(--font-mono);"></span>
+            <span id="modal-sql-stats"
+              style="font-size: 0.75rem; color: var(--accent); font-family: var(--font-mono);"></span>
           </div>
 
           <div class="modal-result" id="modal-sql-output">// Click "Execute Query" to see tabular JSON records...</div>
@@ -1050,7 +1251,8 @@ LIMIT 10;</textarea>
           <div style="display: flex; flex-direction: column; gap: 0.6rem; width: 100%;">
             <!-- Row 1: Time Range Filter -->
             <div class="filter-pills-group">
-              <span style="font-size: 0.75rem; color: var(--text-muted); font-weight: 600; margin-right: 0.25rem; white-space: nowrap;">PERIOD:</span>
+              <span
+                style="font-size: 0.75rem; color: var(--text-muted); font-weight: 600; margin-right: 0.25rem; white-space: nowrap;">PERIOD:</span>
               <div class="filter-pill active" data-time-filter="TODAY" onclick="setTimeFilter('TODAY')">
                 <span>📅 Today only</span> <span class="filter-count" id="count-time-today">0</span>
               </div>
@@ -1066,9 +1268,11 @@ LIMIT 10;</textarea>
             </div>
 
             <!-- Row 2: Sentiment / Alert & Sorting Controls -->
-            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
+            <div
+              style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
               <div class="filter-pills-group">
-                <span style="font-size: 0.75rem; color: var(--text-muted); font-weight: 600; margin-right: 0.25rem; white-space: nowrap;">SENTIMENT:</span>
+                <span
+                  style="font-size: 0.75rem; color: var(--text-muted); font-weight: 600; margin-right: 0.25rem; white-space: nowrap;">SENTIMENT:</span>
                 <div class="filter-pill active" data-filter="ALL" onclick="setFilter('ALL')">
                   <span>All</span> <span class="filter-count" id="count-all">0</span>
                 </div>
@@ -1087,11 +1291,13 @@ LIMIT 10;</textarea>
               </div>
 
               <div class="filter-controls-group">
-                <label style="font-size: 0.75rem; color: var(--text-muted); display: flex; align-items: center; gap: 0.35rem; cursor: pointer; white-space: nowrap;">
+                <label
+                  style="font-size: 0.75rem; color: var(--text-muted); display: flex; align-items: center; gap: 0.35rem; cursor: pointer; white-space: nowrap;">
                   <input type="checkbox" id="chk-group-flag" onchange="toggleGrouping()" />
                   <span>Group by Flag</span>
                 </label>
-                <select id="sel-sort" onchange="changeSorting()" style="padding: 0.3rem 0.5rem; font-size: 0.75rem; background: var(--input-bg); color: var(--text-main); border: 1px solid var(--card-border); border-radius: 6px;">
+                <select id="sel-sort" onchange="changeSorting()"
+                  style="padding: 0.3rem 0.5rem; font-size: 0.75rem; background: var(--input-bg); color: var(--text-main); border: 1px solid var(--card-border); border-radius: 6px;">
                   <option value="time-desc">Newest First</option>
                   <option value="time-asc">Oldest First</option>
                   <option value="flag">Sort by Flag (UP > ALERT > DOWN > FLAT)</option>
@@ -1109,7 +1315,8 @@ LIMIT 10;</textarea>
         <div class="pagination-bar" id="pagination-controls">
           <div class="pagination-left">
             <span>Show</span>
-            <select id="sel-page-size" onchange="changePageSize(this.value)" style="padding: 0.3rem 0.5rem; font-size: 0.8125rem; background: var(--input-bg); color: var(--text-main); border: 1px solid var(--card-border); border-radius: 6px; cursor: pointer;">
+            <select id="sel-page-size" onchange="changePageSize(this.value)"
+              style="padding: 0.3rem 0.5rem; font-size: 0.8125rem; background: var(--input-bg); color: var(--text-main); border: 1px solid var(--card-border); border-radius: 6px; cursor: pointer;">
               <option value="5" selected>5</option>
               <option value="10">10</option>
               <option value="25">25</option>
@@ -1135,71 +1342,109 @@ LIMIT 10;</textarea>
       <div class="modal-header">
         <div class="modal-title">
           <span>📋 MCP 15-Minute In-Memory Audit Log</span>
-          <span style="font-size: 0.75rem; color: #eab308; background: rgba(234,179,8,0.1); padding: 3px 8px; border-radius: 9999px;">ROLLING TTL (15m)</span>
+          <span
+            style="font-size: 0.75rem; color: #eab308; background: rgba(234,179,8,0.1); padding: 3px 8px; border-radius: 9999px;">ROLLING
+            TTL (15m)</span>
         </div>
         <div style="display: flex; gap: 0.5rem; align-items: center;">
-          <span style="font-size: 0.7rem; color: var(--text-muted); font-family: var(--font-mono);" id="audit-last-updated"></span>
-          <button class="btn btn-outline" style="font-size: 0.75rem; padding: 4px 12px; display: inline-flex; align-items: center; gap: 6px; border-radius: 9px; background: var(--card-bg);" id="btn-copy-all-audit" onclick="copyAllAuditLogs()">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <span style="font-size: 0.7rem; color: var(--text-muted); font-family: var(--font-mono);"
+            id="audit-last-updated"></span>
+          <button class="btn btn-outline"
+            style="font-size: 0.75rem; padding: 4px 12px; display: inline-flex; align-items: center; gap: 6px; border-radius: 9px; background: var(--card-bg);"
+            id="btn-copy-all-audit" onclick="copyAllAuditLogs()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
               <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
               <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
             </svg>
             <span>Copy All</span>
           </button>
-          <button class="btn btn-outline" style="font-size: 0.75rem; padding: 4px 12px; border-radius: 9px;" onclick="fetchAuditLogs()">🔄 Refresh</button>
+          <button class="btn btn-outline" style="font-size: 0.75rem; padding: 4px 12px; border-radius: 9px;"
+            onclick="fetchAuditLogs()">🔄 Refresh</button>
           <button class="modal-close" onclick="closeAuditModal()" title="Close (Esc)">&times;</button>
         </div>
       </div>
       <div class="modal-body" style="padding: 1.25rem 2rem;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; flex-wrap: wrap; gap: 0.4rem;">
-          <span style="font-size: 0.8rem; color: var(--text-muted);" id="audit-stats-summary">Loading audit logs...</span>
+        <div
+          style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; flex-wrap: wrap; gap: 0.4rem;">
+          <span style="font-size: 0.8rem; color: var(--text-muted);" id="audit-stats-summary">Loading audit
+            logs...</span>
         </div>
-        <div style="display: flex; gap: 0.75rem; margin-bottom: 0.75rem; flex-wrap: wrap; align-items: center; padding: 0.6rem 1rem; background: var(--code-bg); border-radius: 8px; border: 1px solid var(--card-border);">
+        <div
+          style="display: flex; gap: 0.75rem; margin-bottom: 0.75rem; flex-wrap: wrap; align-items: center; padding: 0.6rem 1rem; background: var(--code-bg); border-radius: 8px; border: 1px solid var(--card-border);">
           <span style="font-size: 0.7rem; color: var(--text-muted); font-weight: 600;">Transport:</span>
-          <span style="background: #8b5cf622; color: #8b5cf6; font-size: 0.7rem; font-weight: 700; padding: 3px 9px; border-radius: 4px;">■ SSE · Remote multi-user</span>
-          <span style="background: #2563eb22; color: #2563eb; font-size: 0.7rem; font-weight: 700; padding: 3px 9px; border-radius: 4px;">■ STDIO · Local IDE</span>
-          <span style="background: #0891b222; color: #0891b2; font-size: 0.7rem; font-weight: 700; padding: 3px 9px; border-radius: 4px;">■ WEB · Dashboard</span>
-          <span style="margin-left: auto; font-size: 0.7rem; color: var(--text-muted);">Border: <span style="color: var(--success); font-weight: 600;">● OK</span> &nbsp;<span style="color: #eab308; font-weight: 600;">● Slow (&gt;1s)</span> &nbsp;<span style="color: var(--danger); font-weight: 600;">● Error</span></span>
+          <span
+            style="background: #8b5cf622; color: #8b5cf6; font-size: 0.7rem; font-weight: 700; padding: 3px 9px; border-radius: 4px;">■
+            SSE · Remote multi-user</span>
+          <span
+            style="background: #2563eb22; color: #2563eb; font-size: 0.7rem; font-weight: 700; padding: 3px 9px; border-radius: 4px;">■
+            STDIO · Local IDE</span>
+          <span
+            style="background: #0891b222; color: #0891b2; font-size: 0.7rem; font-weight: 700; padding: 3px 9px; border-radius: 4px;">■
+            WEB · Dashboard</span>
+          <span style="margin-left: auto; font-size: 0.7rem; color: var(--text-muted);">Border: <span
+              style="color: var(--success); font-weight: 600;">● OK</span> &nbsp;<span
+              style="color: #eab308; font-weight: 600;">● Slow (&gt;1s)</span> &nbsp;<span
+              style="color: var(--danger); font-weight: 600;">● Error</span></span>
         </div>
-        <div id="audit-logs-container" style="overflow-y: auto; flex: 1; min-height: 400px; display: flex; flex-direction: column; gap: 0.65rem;">
+        <div id="audit-logs-container"
+          style="overflow-y: auto; flex: 1; min-height: 400px; display: flex; flex-direction: column; gap: 0.65rem;">
           <!-- Rendered audit logs appear here -->
         </div>
 
         <!-- Audit Log Legend Footer -->
-        <div style="margin-top: 0.85rem; padding: 0.65rem 1rem; background: var(--code-bg); border: 1px solid var(--card-border); border-radius: 8px; display: flex; flex-direction: column; gap: 0.45rem; font-size: 0.72rem; color: var(--text-muted);">
-          <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem;">
+        <div
+          style="margin-top: 0.85rem; padding: 0.65rem 1rem; background: var(--code-bg); border: 1px solid var(--card-border); border-radius: 8px; display: flex; flex-direction: column; gap: 0.45rem; font-size: 0.72rem; color: var(--text-muted);">
+          <div
+            style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem;">
             <!-- Data Source Badges -->
             <div style="display: flex; align-items: center; gap: 0.4rem; flex-wrap: wrap;">
               <span style="font-weight: 700; color: var(--text-main); text-transform: uppercase;">Data Source:</span>
-              <span style="background: rgba(99,102,241,0.15); color: #6366f1; border: 1px solid rgba(99,102,241,0.3); font-weight: 700; padding: 1px 6px; border-radius: 4px;">💾 DB</span>
+              <span
+                style="background: rgba(99,102,241,0.15); color: #6366f1; border: 1px solid rgba(99,102,241,0.3); font-weight: 700; padding: 1px 6px; border-radius: 4px;">💾
+                DB</span>
               <span>PostgreSQL Relational Storage</span>
               <span style="color: var(--card-border);">|</span>
-              <span style="background: rgba(16,185,129,0.15); color: #10b981; border: 1px solid rgba(16,185,129,0.3); font-weight: 700; padding: 1px 6px; border-radius: 4px;">⚡ CACHE</span>
+              <span
+                style="background: rgba(16,185,129,0.15); color: #10b981; border: 1px solid rgba(16,185,129,0.3); font-weight: 700; padding: 1px 6px; border-radius: 4px;">⚡
+                CACHE</span>
               <span>In-Memory Hot Cache</span>
               <span style="color: var(--card-border);">|</span>
-              <span style="background: rgba(236,72,153,0.15); color: #ec4899; border: 1px solid rgba(236,72,153,0.3); font-weight: 700; padding: 1px 6px; border-radius: 4px;">🧠 VECTOR</span>
+              <span
+                style="background: rgba(236,72,153,0.15); color: #ec4899; border: 1px solid rgba(236,72,153,0.3); font-weight: 700; padding: 1px 6px; border-radius: 4px;">🧠
+                VECTOR</span>
               <span>MiniMax & HNSW Cosine Search</span>
               <span style="color: var(--card-border);">|</span>
-              <span style="background: rgba(100,116,139,0.15); color: #64748b; border: 1px solid rgba(100,116,139,0.3); font-weight: 700; padding: 1px 6px; border-radius: 4px;">📄 SCHEMA</span>
+              <span
+                style="background: rgba(100,116,139,0.15); color: #64748b; border: 1px solid rgba(100,116,139,0.3); font-weight: 700; padding: 1px 6px; border-radius: 4px;">📄
+                SCHEMA</span>
               <span>DDL Documentation</span>
             </div>
           </div>
-          <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem; padding-top: 0.35rem; border-top: 1px dashed var(--card-border);">
+          <div
+            style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem; padding-top: 0.35rem; border-top: 1px dashed var(--card-border);">
             <!-- Transport Protocols & Index Accelerations -->
             <div style="display: flex; align-items: center; gap: 0.4rem; flex-wrap: wrap;">
               <span style="font-weight: 700; color: var(--text-main); text-transform: uppercase;">Transports:</span>
-              <span style="background: rgba(37,99,235,0.15); color: #2563eb; font-weight: 700; padding: 1px 5px; border-radius: 4px;">STDIO</span>
+              <span
+                style="background: rgba(37,99,235,0.15); color: #2563eb; font-weight: 700; padding: 1px 5px; border-radius: 4px;">STDIO</span>
               <span>Local IDE / MiniBot CLI</span>
-              <span style="background: rgba(139,92,246,0.15); color: #8b5cf6; font-weight: 700; padding: 1px 5px; border-radius: 4px;">SSE</span>
+              <span
+                style="background: rgba(139,92,246,0.15); color: #8b5cf6; font-weight: 700; padding: 1px 5px; border-radius: 4px;">SSE</span>
               <span>Remote Stream / Multi-Client</span>
-              <span style="background: rgba(8,145,178,0.15); color: #0891b2; font-weight: 700; padding: 1px 5px; border-radius: 4px;">WEB</span>
+              <span
+                style="background: rgba(8,145,178,0.15); color: #0891b2; font-weight: 700; padding: 1px 5px; border-radius: 4px;">WEB</span>
               <span>Dashboard Control Panel</span>
             </div>
             <div style="display: flex; align-items: center; gap: 0.4rem; flex-wrap: wrap;">
               <span style="font-weight: 700; color: var(--text-main); text-transform: uppercase;">SQL Indexes:</span>
-              <span style="background: rgba(14,165,233,0.15); color: #0284c7; border: 1px solid rgba(14,165,233,0.3); font-weight: 700; padding: 1px 5px; border-radius: 4px;">⚡ TRGM</span>
+              <span
+                style="background: rgba(14,165,233,0.15); color: #0284c7; border: 1px solid rgba(14,165,233,0.3); font-weight: 700; padding: 1px 5px; border-radius: 4px;">⚡
+                TRGM</span>
               <span>pg_trgm GIN (ILIKE)</span>
-              <span style="background: rgba(168,85,247,0.15); color: #9333ea; border: 1px solid rgba(168,85,247,0.3); font-weight: 700; padding: 1px 5px; border-radius: 4px;">🏷️ JSONB</span>
+              <span
+                style="background: rgba(168,85,247,0.15); color: #9333ea; border: 1px solid rgba(168,85,247,0.3); font-weight: 700; padding: 1px 5px; border-radius: 4px;">🏷️
+                JSONB</span>
               <span>GIN Tickers (@>)</span>
             </div>
           </div>
@@ -1262,13 +1507,19 @@ LIMIT 10;</textarea>
         if (dailyElem) dailyElem.innerText = data.dailyRecords !== undefined ? data.dailyRecords : '--';
         const dateElem = document.getElementById('metric-date');
         if (dateElem && data.todayHkt) dateElem.innerText = data.todayHkt;
-        document.getElementById('stat-port').innerText = data.port || '5200';
+        document.getElementById('stat-port').innerText = data.port || '15200';
         document.getElementById('cfg-db').value = data.dbUrl || '';
         const intervalSelect = document.getElementById('cfg-interval');
         if (intervalSelect && data.pollInterval) {
           intervalSelect.value = String(data.pollInterval);
         }
         document.getElementById('cfg-source').value = data.sourceUrl || '';
+        if (data.minimaxApiKey !== undefined && !document.getElementById('cfg-minimax-key').value) {
+          document.getElementById('cfg-minimax-key').value = data.minimaxApiKey;
+        }
+        if (data.minimaxModel) {
+          document.getElementById('cfg-minimax-model').value = data.minimaxModel;
+        }
 
         // Fetch MCP Multi-Session & Micro-batcher Metrics
         try {
@@ -1284,7 +1535,7 @@ LIMIT 10;</textarea>
             const cacheElem = document.getElementById('stat-cache-keys');
             if (cacheElem) cacheElem.innerText = mcpData.cache?.size ?? 0;
           }
-        } catch (_) {}
+        } catch (_) { }
       } catch (err) {
         console.error('Failed to load status:', err);
       }
@@ -1315,6 +1566,105 @@ LIMIT 10;</textarea>
         }
       } catch (err) {
         if (statusSpan) statusSpan.innerText = '❌ Error';
+      }
+    }
+
+    function toggleKeyVisibility() {
+      const input = document.getElementById('cfg-minimax-key');
+      const btn = document.getElementById('btn-toggle-key');
+      if (input.type === 'password') {
+        input.type = 'text';
+        btn.innerText = '🔒';
+      } else {
+        input.type = 'password';
+        btn.innerText = '👁️';
+      }
+    }
+
+    async function saveMinimaxKey() {
+      const key = document.getElementById('cfg-minimax-key').value.trim();
+      const model = document.getElementById('cfg-minimax-model').value.trim() || 'embo-01';
+      const status = document.getElementById('cfg-key-status');
+      if (status) {
+        status.style.color = 'var(--accent)';
+        status.innerText = 'Saving...';
+      }
+
+      try {
+        const res = await fetch('/api/config', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ minimaxApiKey: key, minimaxModel: model })
+        });
+        const data = await res.json();
+        if (data.success) {
+          if (status) {
+            status.style.color = '#10b981';
+            status.innerText = '✓ Key Saved to .env';
+            setTimeout(() => { status.innerText = ''; }, 3500);
+          }
+        } else {
+          if (status) {
+            status.style.color = '#ef4444';
+            status.innerText = '❌ Failed: ' + (data.error || 'Unknown error');
+          }
+        }
+      } catch (err) {
+        if (status) {
+          status.style.color = '#ef4444';
+          status.innerText = '❌ Save error';
+        }
+      }
+    }
+
+    async function saveSourceUrl() {
+      const url = document.getElementById('cfg-source').value.trim();
+      try {
+        const res = await fetch('/api/config', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ sourceUrl: url })
+        });
+        const data = await res.json();
+        if (data.success) {
+          alert('Data source endpoint updated successfully!');
+        }
+      } catch (err) {
+        alert('Failed to update data source: ' + err.message);
+      }
+    }
+
+    async function testEmbeddingConnection() {
+      const status = document.getElementById('cfg-key-status');
+      if (status) {
+        status.style.color = 'var(--accent)';
+        status.innerText = 'Testing key with API...';
+      }
+
+      try {
+        const res = await fetch('/api/semantic-search', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ query: '測試金鑰連線', threshold: 0.1, limit: 1 })
+        });
+        const data = await res.json();
+        if (res.ok) {
+          if (status) {
+            status.style.color = '#10b981';
+            status.innerText = '✓ Connected! API Key is Valid';
+            setTimeout(() => { status.innerText = ''; }, 4000);
+          }
+        } else {
+          if (status) {
+            status.style.color = '#ef4444';
+            status.innerText = '❌ ' + (data.error || 'API Key Invalid');
+          }
+        }
+      } catch (err) {
+        if (status) {
+          status.style.color = '#ef4444';
+          status.innerText = '❌ Connection failed';
+        }
       }
     }
 
@@ -1676,7 +2026,7 @@ LIMIT 10;</textarea>
         studioRawRows = result.rows || [];
         statusText.innerText = `Table: ${currentStudioTable}`;
         statsText.innerText = `${studioRawRows.length} rows loaded`;
-        
+
         if (currentStudioTable === 'flash_news') {
           document.getElementById('studio-badge-news').innerText = `(${rawNewsItems.length || studioRawRows.length})`;
         } else {
@@ -1717,14 +2067,14 @@ LIMIT 10;</textarea>
             const bg = val === 'UP' ? 'rgba(22,163,74,0.15)' : val === 'DOWN' ? 'rgba(220,38,38,0.15)' : 'rgba(100,116,139,0.15)';
             formatted = `<span style="padding: 2px 8px; border-radius: 4px; font-weight: 600; font-size: 0.7rem; background: ${bg}; color: ${color};">${val || 'FLAT'}</span>`;
           } else if (col === 'tickers' && Array.isArray(val)) {
-            formatted = val.length > 0 
+            formatted = val.length > 0
               ? val.map(t => `<span onclick="filterByTicker('${t}')" title="Click to filter by ${t} (JSONB GIN)" style="background: rgba(37,99,235,0.1); color: var(--accent); padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; font-weight: 600; cursor: pointer; transition: all 0.15s;" onmouseover="this.style.background='rgba(37,99,235,0.25)'" onmouseout="this.style.background='rgba(37,99,235,0.1)'">${t}</span>`).join(' ')
               : '<span style="color: var(--text-muted);">-</span>';
           } else if (col === 'raw_content' || col === 'summary') {
             const txt = String(val || '');
             formatted = `<span style="display: block; max-width: 480px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${txt.replace(/"/g, '&quot;')}">${txt}</span>`;
           } else if (col === 'is_alert' || col === 'is_error') {
-            formatted = val 
+            formatted = val
               ? `<span style="color: var(--danger); font-weight: 700;">TRUE 🔥</span>`
               : `<span style="color: var(--text-muted);">false</span>`;
           } else if (col === 'args' && val && typeof val === 'object') {
@@ -1948,10 +2298,10 @@ LIMIT 10;`
         const res = await fetch('/api/semantic-search', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ 
-            query, 
-            limit: 100, 
-            minSimilarity: currentConfidenceThreshold 
+          body: JSON.stringify({
+            query,
+            limit: 100,
+            minSimilarity: currentConfidenceThreshold
           })
         });
         const rows = await res.json();
@@ -2146,14 +2496,14 @@ LIMIT 10;`
         // Distinct colors and icons per MCP tool
         const TOOL_COLOR_MAP = {
           'get_latest_financial_flash': { color: '#0284c7', bg: 'rgba(2, 132, 199, 0.12)', border: 'rgba(2, 132, 199, 0.35)', icon: '⚡' },
-          'get_latest_alerts':          { color: '#f59e0b', bg: 'rgba(245, 158, 11, 0.15)', border: 'rgba(245, 158, 11, 0.35)', icon: '🚨' },
-          'query_financial_news_sql':   { color: '#8b5cf6', bg: 'rgba(139, 92, 246, 0.15)', border: 'rgba(139, 92, 246, 0.35)', icon: '🔍' },
-          'search_news_semantic':       { color: '#ec4899', bg: 'rgba(236, 72, 153, 0.15)', border: 'rgba(236, 72, 153, 0.35)', icon: '🧠' },
-          'semantic_search_news':       { color: '#ec4899', bg: 'rgba(236, 72, 153, 0.15)', border: 'rgba(236, 72, 153, 0.35)', icon: '🧠' },
-          'search_news_hybrid':         { color: '#10b981', bg: 'rgba(16, 185, 129, 0.15)', border: 'rgba(16, 185, 129, 0.35)', icon: '🏷️' },
-          'search_flash_by_time_window':{ color: '#14b8a6', bg: 'rgba(20, 184, 166, 0.15)', border: 'rgba(20, 184, 166, 0.35)', icon: '⏱️' },
-          'describe_news_schema':       { color: '#64748b', bg: 'rgba(100, 116, 139, 0.15)', border: 'rgba(100, 116, 139, 0.35)', icon: '📄' },
-          'reindex_news_embeddings':    { color: '#e11d48', bg: 'rgba(225, 29, 72, 0.15)', border: 'rgba(225, 29, 72, 0.35)', icon: '🔄' },
+          'get_latest_alerts': { color: '#f59e0b', bg: 'rgba(245, 158, 11, 0.15)', border: 'rgba(245, 158, 11, 0.35)', icon: '🚨' },
+          'query_financial_news_sql': { color: '#8b5cf6', bg: 'rgba(139, 92, 246, 0.15)', border: 'rgba(139, 92, 246, 0.35)', icon: '🔍' },
+          'search_news_semantic': { color: '#ec4899', bg: 'rgba(236, 72, 153, 0.15)', border: 'rgba(236, 72, 153, 0.35)', icon: '🧠' },
+          'semantic_search_news': { color: '#ec4899', bg: 'rgba(236, 72, 153, 0.15)', border: 'rgba(236, 72, 153, 0.35)', icon: '🧠' },
+          'search_news_hybrid': { color: '#10b981', bg: 'rgba(16, 185, 129, 0.15)', border: 'rgba(16, 185, 129, 0.35)', icon: '🏷️' },
+          'search_flash_by_time_window': { color: '#14b8a6', bg: 'rgba(20, 184, 166, 0.15)', border: 'rgba(20, 184, 166, 0.35)', icon: '⏱️' },
+          'describe_news_schema': { color: '#64748b', bg: 'rgba(100, 116, 139, 0.15)', border: 'rgba(100, 116, 139, 0.35)', icon: '📄' },
+          'reindex_news_embeddings': { color: '#e11d48', bg: 'rgba(225, 29, 72, 0.15)', border: 'rgba(225, 29, 72, 0.35)', icon: '🔄' },
         };
 
         const getToolStyle = (toolName) => {
@@ -2194,7 +2544,7 @@ LIMIT 10;`
           const isErr = log.isError;
           const toolStyle = getToolStyle(log.tool);
           const borderColor = isErr ? 'var(--danger)' : toolStyle.color;
-          const statusBadge = isErr 
+          const statusBadge = isErr
             ? `<span style="background: rgba(239,68,68,0.15); color: var(--danger); font-size: 0.7rem; font-weight: 700; padding: 2px 7px; border-radius: 4px;">✗ ERROR</span>`
             : `<span style="background: rgba(16,185,129,0.15); color: var(--success); font-size: 0.7rem; font-weight: 700; padding: 2px 7px; border-radius: 4px;">✓ ${log.durationMs}ms</span>`;
 
@@ -2219,16 +2569,14 @@ LIMIT 10;`
                   ${statusBadge}
                   ${dataSourceBadge(log.dataSource)}
                   ${sourceBadge(log.source)}
-                  ${
-                    log.args && log.args.sql && String(log.args.sql).toUpperCase().includes('ILIKE')
-                      ? '<span style="background: rgba(14,165,233,0.15); color: #0284c7; border: 1px solid rgba(14,165,233,0.3); font-size: 0.65rem; font-weight: 700; padding: 1px 6px; border-radius: 4px;" title="Accelerated by pg_trgm GIN index">⚡ TRGM ACCELERATED</span>'
-                      : ''
-                  }
-                  ${
-                    log.args && log.args.sql && String(log.args.sql).includes('@>')
-                      ? '<span style="background: rgba(168,85,247,0.15); color: #9333ea; border: 1px solid rgba(168,85,247,0.3); font-size: 0.65rem; font-weight: 700; padding: 1px 6px; border-radius: 4px;" title="Accelerated by JSONB GIN index on tickers">🏷️ JSONB GIN</span>'
-                      : ''
-                  }
+                  ${log.args && log.args.sql && String(log.args.sql).toUpperCase().includes('ILIKE')
+              ? '<span style="background: rgba(14,165,233,0.15); color: #0284c7; border: 1px solid rgba(14,165,233,0.3); font-size: 0.65rem; font-weight: 700; padding: 1px 6px; border-radius: 4px;" title="Accelerated by pg_trgm GIN index">⚡ TRGM ACCELERATED</span>'
+              : ''
+            }
+                  ${log.args && log.args.sql && String(log.args.sql).includes('@>')
+              ? '<span style="background: rgba(168,85,247,0.15); color: #9333ea; border: 1px solid rgba(168,85,247,0.3); font-size: 0.65rem; font-weight: 700; padding: 1px 6px; border-radius: 4px;" title="Accelerated by JSONB GIN index on tickers">🏷️ JSONB GIN</span>'
+              : ''
+            }
                 </div>
                 <div style="display: flex; gap: 0.5rem; align-items: center;">
                   <button class="btn-pill-icon" title="Copy this log entry" onclick="copySingleAuditLog(${idx}, this)">
@@ -2311,4 +2659,5 @@ LIMIT 10;`
     setupAutoRefresh();
   </script>
 </body>
+
 </html>

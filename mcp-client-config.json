@@ -7,7 +7,7 @@
         "--mcp-only"
       ],
       "env": {
-        "DATABASE_URL": "postgresql://postgres:postgrespassword@localhost:5232/mini_news",
+        "DATABASE_URL": "postgresql://postgres:postgrespassword@localhost:15232/mini_news",
         "NODE_ENV": "production"
       }
     }

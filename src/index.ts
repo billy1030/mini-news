@@ -4,10 +4,10 @@ import { fileURLToPath } from "node:url";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-// Load .env relative to project root
-dotenv.config({ path: path.resolve(__dirname, "../../.env") });
-dotenv.config({ path: path.resolve(__dirname, "../.env") });
-dotenv.config();
+// Load .env relative to project root with override: true so .env takes precedence over stale system env vars
+dotenv.config({ path: path.resolve(__dirname, "../../.env"), override: true });
+dotenv.config({ path: path.resolve(__dirname, "../.env"), override: true });
+dotenv.config({ override: true });
 
 import { startPoller } from "./poller/index.js";
 import { startMcpServer } from "./mcp/server.js";
@@ -29,9 +29,9 @@ async function main() {
     });
   }
 
-  // 1. Start Web Dashboard on port 5200 (unless strictly MCP only)
+  // 1. Start Web Dashboard on port 15200 (unless strictly MCP only)
   if (!isMcpOnly) {
-    const port = Number(process.env.PORT) || 5200;
+    const port = Number(process.env.PORT) || 15200;
     startWebServer(port);
   }
 

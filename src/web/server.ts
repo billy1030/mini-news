@@ -14,7 +14,7 @@ import { cacheService } from "../services/cache.js";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-export function startWebServer(port: number = Number(process.env.PORT) || 5200) {
+export function startWebServer(port: number = Number(process.env.PORT) || 15200) {
   const server = http.createServer(async (req, res) => {
     const url = new URL(req.url || "/", `http://${req.headers.host}`);
 
@@ -86,6 +86,9 @@ export function startWebServer(port: number = Number(process.env.PORT) || 5200) 
           dbUrl: (process.env.DATABASE_URL || "").replace(/:[^:@]+@/, ":****@"),
           pollInterval: Number(process.env.POLL_INTERVAL_SECONDS) || 60,
           sourceUrl: process.env.SOURCE_API_URL || "https://mutemute.com/mutenews/ajax/app-news.php",
+          minimaxApiKey: process.env.MINIMAX_API_KEY || "",
+          minimaxModel: process.env.MINIMAX_EMBEDDING_MODEL || "embo-01",
+          minimaxUrl: process.env.MINIMAX_EMBEDDING_URL || "https://api.minimaxi.com/v1/embeddings",
           totalRecords: totalCount?.value || 0,
           dailyRecords: dailyCount?.value || 0,
           todayHkt,
@@ -96,23 +99,63 @@ export function startWebServer(port: number = Number(process.env.PORT) || 5200) 
         return;
       }
 
-      // 1.1 API: Update System Configuration (Poll Frequency)
+      // 1.1 API: Update System Configuration (Poll Frequency, Keys, URLs)
       if (url.pathname === "/api/config" && req.method === "POST") {
         let body = "";
         req.on("data", (chunk) => (body += chunk));
         req.on("end", async () => {
           try {
-            const { pollInterval } = JSON.parse(body || "{}");
-            const seconds = Number(pollInterval);
-            if (!seconds || seconds < 15 || seconds > 300) {
-              res.writeHead(400, { "Content-Type": "application/json" });
-              res.end(JSON.stringify({ error: "Poll frequency must be between 15 and 300 seconds." }));
-              return;
+            const payload = JSON.parse(body || "{}");
+            const { pollInterval, minimaxApiKey, minimaxModel, sourceUrl } = payload;
+            
+            // Helper to update or append in .env file
+            const envPath = path.resolve(__dirname, "../../.env");
+            let envContent = fs.existsSync(envPath) ? fs.readFileSync(envPath, "utf-8") : "";
+
+            function updateEnvVar(key: string, val: string) {
+              process.env[key] = val;
+              const regex = new RegExp(`^${key}=.*$`, "m");
+              if (regex.test(envContent)) {
+                envContent = envContent.replace(regex, `${key}=${val}`);
+              } else {
+                envContent += `\n${key}=${val}`;
+              }
             }
-            setPollInterval(seconds);
+
+            if (pollInterval !== undefined) {
+              const seconds = Number(pollInterval);
+              if (!seconds || seconds < 15 || seconds > 300) {
+                res.writeHead(400, { "Content-Type": "application/json" });
+                res.end(JSON.stringify({ error: "Poll frequency must be between 15 and 300 seconds." }));
+                return;
+              }
+              setPollInterval(seconds);
+              updateEnvVar("POLL_INTERVAL_SECONDS", String(seconds));
+            }
+
+            if (typeof minimaxApiKey === "string") {
+              const trimmedKey = minimaxApiKey.trim();
+              updateEnvVar("MINIMAX_API_KEY", trimmedKey);
+            }
+
+            if (typeof minimaxModel === "string" && minimaxModel.trim()) {
+              updateEnvVar("MINIMAX_EMBEDDING_MODEL", minimaxModel.trim());
+            }
+
+            if (typeof sourceUrl === "string" && sourceUrl.trim()) {
+              updateEnvVar("SOURCE_API_URL", sourceUrl.trim());
+            }
+
+            fs.writeFileSync(envPath, envContent.trim() + "\n", "utf-8");
 
             res.writeHead(200, { "Content-Type": "application/json" });
-            res.end(JSON.stringify({ success: true, pollInterval: seconds }));
+            res.end(JSON.stringify({
+              success: true,
+              pollInterval: Number(process.env.POLL_INTERVAL_SECONDS) || 60,
+              minimaxApiKey: process.env.MINIMAX_API_KEY || "",
+              minimaxModel: process.env.MINIMAX_EMBEDDING_MODEL || "embo-01",
+              sourceUrl: process.env.SOURCE_API_URL || "",
+            }));
           } catch (err: any) {
             console.error("[Web Server] /api/config error:", err);
             res.writeHead(500, { "Content-Type": "application/json" });

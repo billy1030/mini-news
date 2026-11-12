@@ -30,7 +30,7 @@ if %ERRORLEVEL% equ 0 (
         set /a retries=60
         :wait_docker
         docker info >nul 2>&1
-        if errorlevel 1 (
+        if !errorlevel! neq 0 (
             set /a retries-=1
             if !retries! leq 0 (
                 echo.
@@ -38,23 +38,23 @@ if %ERRORLEVEL% equ 0 (
                 pause
                 exit /b 1
             )
-            <nul set /p=.
-            timeout /t 2 /nobreak >nul
+            echo Waiting for Docker daemon...
+            ping 127.0.0.1 -n 3 >nul
             goto :wait_docker
         )
         echo.
         echo Docker daemon is ready!
     )
-    echo Ensuring PostgreSQL container is running on Port 5232...
+    echo Ensuring PostgreSQL container is running on Port 15232...
     docker compose up -d
 )
 
 ping 127.0.0.1 -n 2 >nul
 
-echo Starting Mini-News Node.js service on port 5200...
+echo Starting Mini-News Node.js service on port 15200...
 start "Mini-News Service" cmd /k "title Mini-News Service & npm run dev"
 
 echo Mini-News started successfully!
-echo Web Dashboard: http://localhost:5200
-echo Database: localhost:5232
+echo Web Dashboard: http://localhost:15200
+echo Database: localhost:15232
 echo To stop, run stop.bat
