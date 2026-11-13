@@ -933,7 +933,7 @@
           </div>
           <div class="stat-item">
             <div class="stat-label">Port</div>
-            <div class="stat-val" id="stat-port">15200</div>
+            <div class="stat-val" id="stat-port">5200</div>
           </div>
         </div>
 
@@ -953,7 +953,7 @@
         </div>
 
         <div class="setting-group">
-          <label class="setting-label">Database URL (Host: 15232 / Zeabur)</label>
+          <label class="setting-label">Database URL (Host: 5232 / Zeabur)</label>
           <input type="text" class="setting-input" id="cfg-db" readonly />
         </div>
 
@@ -1507,7 +1507,7 @@ LIMIT 10;</textarea>
         if (dailyElem) dailyElem.innerText = data.dailyRecords !== undefined ? data.dailyRecords : '--';
         const dateElem = document.getElementById('metric-date');
         if (dateElem && data.todayHkt) dateElem.innerText = data.todayHkt;
-        document.getElementById('stat-port').innerText = data.port || '15200';
+        document.getElementById('stat-port').innerText = data.port || '5200';
         document.getElementById('cfg-db').value = data.dbUrl || '';
         const intervalSelect = document.getElementById('cfg-interval');
         if (intervalSelect && data.pollInterval) {

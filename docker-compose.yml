@@ -10,8 +10,8 @@ services:
       # Ensure PostgreSQL initializes with UTF-8 encoding
       POSTGRES_INITDB_ARGS: "--encoding=UTF8 --lc-collate=C --lc-ctype=C"
     ports:
-      # Host port 15232 mapped to internal 5432
-      - "15232:5432"
+      # Host port 5232 mapped to internal 5432
+      - "5232:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:

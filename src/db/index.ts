@@ -13,7 +13,7 @@ dotenv.config({
 
 const connectionString =
   process.env.DATABASE_URL ||
-  "postgresql://postgres:postgrespassword@localhost:15232/mini_news";
+  "postgresql://postgres:postgrespassword@localhost:5232/mini_news";
 
 /**
  * PostgreSQL Connection Pool configuration

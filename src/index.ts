@@ -29,9 +29,9 @@ async function main() {
     });
   }
 
-  // 1. Start Web Dashboard on port 15200 (unless strictly MCP only)
+  // 1. Start Web Dashboard on port 5200 (unless strictly MCP only)
   if (!isMcpOnly) {
-    const port = Number(process.env.PORT) || 15200;
+    const port = Number(process.env.PORT) || 5200;
     startWebServer(port);
   }
 

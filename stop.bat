@@ -11,8 +11,8 @@ REM 1. Terminate Mini-News Service window/processes
 echo [1/2] Terminating Mini-News Node.js processes...
 taskkill /FI "WINDOWTITLE eq Mini-News Service*" /T /F >nul 2>&1
 
-REM Also kill any remaining processes listening on port 15200 (Mini-News Web)
-for /f "tokens=5" %%a in ('netstat -aon ^| findstr ":15200"') do (
+REM Also kill any remaining processes listening on port 5200 (Mini-News Web)
+for /f "tokens=5" %%a in ('netstat -aon ^| findstr ":5200"') do (
     taskkill /PID %%a /F /T >nul 2>&1
 )
 

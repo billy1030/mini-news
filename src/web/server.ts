@@ -14,7 +14,7 @@ import { cacheService } from "../services/cache.js";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-export function startWebServer(port: number = Number(process.env.PORT) || 15200) {
+export function startWebServer(port: number = Number(process.env.PORT) || 5200) {
   const server = http.createServer(async (req, res) => {
     const url = new URL(req.url || "/", `http://${req.headers.host}`);
 
