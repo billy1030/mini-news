@@ -57,3 +57,4 @@ foreach ($file in ($targetFiles | Select-Object -Unique)) {
 }
 
 Write-Host "Sync completed successfully!" -ForegroundColor Green
+
